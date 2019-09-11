@@ -9,6 +9,7 @@
         }
     ],
     "require": {
+        "composer/installers": "~1.0",
         "johnbillion/extended-cpts": "^4.2",
         "a5hleyrich/wp-background-processing": "^1.0",
         "league/oauth2-client": "^2.4"
