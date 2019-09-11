@@ -1,0 +1,397 @@
+{
+    "key": "group_5cc3245256ec2",
+    "title": "Resource Data",
+    "fields": [
+        {
+            "key": "field_5cc8760aabbc2",
+            "label": "Related Courses\/Departments",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5cc3260215ce7",
+            "label": "Related Course(s)",
+            "name": "related_courses_resources",
+            "type": "relationship",
+            "instructions": "This resource should be suggested for these courses:",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "course"
+            ],
+            "taxonomy": "",
+            "filters": [
+                "search",
+                "taxonomy"
+            ],
+            "elements": "",
+            "min": "",
+            "max": "",
+            "return_format": "id"
+        },
+        {
+            "key": "field_5cc327908d3f4",
+            "label": "Related Department(s)",
+            "name": "related_departments",
+            "type": "taxonomy",
+            "instructions": "This resource should be suggested for all students taking any course in these academic departments:",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "academic_department",
+            "field_type": "checkbox",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 0,
+            "allow_null": 0
+        },
+        {
+            "key": "field_5cedef60a0fbb",
+            "label": "Institution",
+            "name": "institution",
+            "type": "taxonomy",
+            "instructions": "This resource is for students in this institution:",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "institution",
+            "field_type": "checkbox",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 0,
+            "allow_null": 0
+        },
+        {
+            "key": "field_5cc87610abbc3",
+            "label": "Resource Data",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5d5c682cb83a2",
+            "label": "Link to Catalyst",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "{\r\n    \"description\": \"Go to Catalyst: <a class='button button-primary' href='%s'>Catalyst<\/a>\",\r\n    \"links\": {\r\n        \"stolaf.edu\": \"https:\/\/bridge.primo.exlibrisgroup.com\/discovery\/search?vid=01BRC_INST:SOC\",\r\n        \"carleton.edu\": \"https:\/\/bridge.primo.exlibrisgroup.com\/discovery\/search?vid=01BRC_INST:CCO\"\r\n    }\r\n}",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_5d707ba9173d4",
+            "label": "Link to Course View",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "This field is replaced with links to related courses.",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_5cc327c78d3f5",
+            "label": "Resource URL",
+            "name": "url",
+            "type": "url",
+            "instructions": "URL for this resource:",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "100",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5cc327e28d3f6",
+            "label": "Resource Image URL",
+            "name": "image_url",
+            "type": "image",
+            "instructions": "Optional image URL for this resource (overrides the Primo thumbnail URL):",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "34",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "return_format": "url",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_5cd9abad8a9cb",
+            "label": "Primo Image URL",
+            "name": "primo_image_url",
+            "type": "url",
+            "instructions": "Retrieved automatically from the Primo API (actual image URL):",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5cc86dd2d9f71",
+            "label": "Primo Image Info",
+            "name": "primo_image_info",
+            "type": "url",
+            "instructions": "Retrieved automatically from the Primo API (info from Google Books with a callback to the <code>updateGBSCover<\/code> JS function to display the book cover):",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5cc86de3d9f72",
+            "label": "Alma ID",
+            "name": "alma_id",
+            "type": "text",
+            "instructions": "Alma resource ID (for reading lists):",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5cd5d862935fd",
+            "label": "Primo ID",
+            "name": "primo_id",
+            "type": "text",
+            "instructions": "Primo resource ID:",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5ce476b9500f7",
+            "label": "LibGuides ID",
+            "name": "libguides_id",
+            "type": "text",
+            "instructions": "LibGuides resource ID:",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "34",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5cc8762cabbc4",
+            "label": "Author",
+            "name": "author",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5cc87631abbc5",
+            "label": "ISBN",
+            "name": "isbn",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5cc87637abbc6",
+            "label": "Publication Year",
+            "name": "publication_year",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5cd9c06c4fa07",
+            "label": "Resource Format",
+            "name": "resource_format",
+            "type": "taxonomy",
+            "instructions": "Set by Alma\/Primo",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "resource_format",
+            "field_type": "radio",
+            "allow_null": 1,
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 0
+        },
+        {
+            "key": "field_5d5eb2edff3a8",
+            "label": "Resource Type",
+            "name": "resource_type",
+            "type": "taxonomy",
+            "instructions": "Set by Alma\/Primo",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "taxonomy": "resource_type",
+            "field_type": "checkbox",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 0,
+            "allow_null": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "resource"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "acf_after_title",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "show_in_graphql": 1,
+    "graphql_field_name": "resourceData",
+    "acfcdt_manage_table_definition": 1,
+    "acfcdt_table_name": "bridge_library_resource_meta",
+    "acfcdt_table_definition_file_name": "table_898x5cc3245265890",
+    "modified": 1567653246
+}

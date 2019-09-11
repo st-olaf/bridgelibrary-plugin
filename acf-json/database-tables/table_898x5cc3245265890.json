@@ -1,0 +1,139 @@
+{
+    "name": "bridge_library_resource_meta",
+    "relationship": {
+        "type": "post",
+        "post_type": "resource"
+    },
+    "primary_key": [
+        "id"
+    ],
+    "keys": [
+        {
+            "name": "post_id",
+            "columns": [
+                "post_id"
+            ],
+            "unique": true
+        }
+    ],
+    "columns": [
+        {
+            "name": "id",
+            "format": "%d",
+            "null": false,
+            "auto_increment": true,
+            "unsigned": true
+        },
+        {
+            "name": "post_id",
+            "format": "%d"
+        },
+        {
+            "name": "related_courses_resources",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "related_courses_resources"
+            }
+        },
+        {
+            "name": "related_departments",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "related_departments"
+            }
+        },
+        {
+            "name": "institution",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "institution"
+            }
+        },
+        {
+            "name": "url",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "url"
+            }
+        },
+        {
+            "name": "image_url",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "image_url"
+            }
+        },
+        {
+            "name": "primo_image_url",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "primo_image_url"
+            }
+        },
+        {
+            "name": "primo_image_info",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "primo_image_info"
+            }
+        },
+        {
+            "name": "alma_id",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "alma_id"
+            }
+        },
+        {
+            "name": "primo_id",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "primo_id"
+            }
+        },
+        {
+            "name": "libguides_id",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "libguides_id"
+            }
+        },
+        {
+            "name": "author",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "author"
+            }
+        },
+        {
+            "name": "isbn",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "isbn"
+            }
+        },
+        {
+            "name": "publication_year",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "publication_year"
+            }
+        },
+        {
+            "name": "resource_format",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "resource_format"
+            }
+        },
+        {
+            "name": "resource_type",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "resource_type"
+            }
+        }
+    ],
+    "hash": "e3233b9f1ab76afaf80b82d8b78d7a39",
+    "modified": 1567653246
+}

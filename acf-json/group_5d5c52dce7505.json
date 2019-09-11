@@ -1,0 +1,56 @@
+{
+    "key": "group_5d5c52dce7505",
+    "title": "Academic Department Resources",
+    "fields": [
+        {
+            "key": "field_5d5c52e7f882d",
+            "label": "Related Resources",
+            "name": "related_resources",
+            "type": "relationship",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "post_type": [
+                "resource"
+            ],
+            "taxonomy": "",
+            "filters": [
+                "search",
+                "post_type",
+                "taxonomy"
+            ],
+            "elements": "",
+            "min": "",
+            "max": "",
+            "return_format": "id"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "academic_department"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "show_in_graphql": 1,
+    "graphql_field_name": "academicDepartmentResources",
+    "acfcdt_manage_table_definition": 0,
+    "acfcdt_table_definition_file_name": "table_104924x5d5c52dd028be",
+    "modified": 1566333549
+}

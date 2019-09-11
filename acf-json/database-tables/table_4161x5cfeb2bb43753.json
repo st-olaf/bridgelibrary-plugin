@@ -1,0 +1,48 @@
+{
+    "name": "bridge_library_librarian_meta",
+    "relationship": {
+        "type": "post",
+        "post_type": "librarian"
+    },
+    "primary_key": [
+        "id"
+    ],
+    "keys": [
+        {
+            "name": "post_id",
+            "columns": [
+                "post_id"
+            ],
+            "unique": true
+        }
+    ],
+    "columns": [
+        {
+            "name": "id",
+            "format": "%d",
+            "null": false,
+            "auto_increment": true,
+            "unsigned": true
+        },
+        {
+            "name": "post_id",
+            "format": "%d"
+        },
+        {
+            "name": "librarian_user_id",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "librarian_user_id"
+            }
+        },
+        {
+            "name": "academic_department",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "academic_department"
+            }
+        }
+    ],
+    "hash": "387c5d840a7c060e7eb6c25535239a0c",
+    "modified": 1563896020
+}

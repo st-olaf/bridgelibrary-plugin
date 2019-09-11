@@ -1,0 +1,71 @@
+{
+    "key": "group_5cfeb2bb358d6",
+    "title": "Librarian Data",
+    "fields": [
+        {
+            "key": "field_5cfeb2c12d02d",
+            "label": "Librarian User ID",
+            "name": "librarian_user_id",
+            "type": "user",
+            "instructions": "Choose the user ID. Data is automatically pulled from the WP user profile and should be edited there.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "role": [
+                "bridge_library_staff"
+            ],
+            "allow_null": 0,
+            "multiple": 0,
+            "return_format": "object"
+        },
+        {
+            "key": "field_5cfeb3665bd0d",
+            "label": "Academic Department",
+            "name": "academic_department",
+            "type": "taxonomy",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "academic_department",
+            "field_type": "checkbox",
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "multiple": 0,
+            "allow_null": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "librarian"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "acf_after_title",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "show_in_graphql": 1,
+    "graphql_field_name": "librarianData",
+    "acfcdt_manage_table_definition": 1,
+    "acfcdt_table_name": "bridge_library_librarian_meta",
+    "acfcdt_table_definition_file_name": "table_4161x5cfeb2bb43753",
+    "modified": 1563896020
+}

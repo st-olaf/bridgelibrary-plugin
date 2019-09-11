@@ -1,0 +1,54 @@
+{
+    "key": "group_5d3207b5dee7f",
+    "title": "Course Options",
+    "fields": [
+        {
+            "key": "field_5d3207d0cd007",
+            "label": "Favorite",
+            "name": "favorite",
+            "type": "true_false",
+            "instructions": "Mark as favorite to appear at top of the admin dashboard.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "resource"
+            }
+        ],
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "course"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "show_in_graphql": 0,
+    "graphql_field_name": "courseoptions",
+    "acfcdt_manage_table_definition": 0,
+    "acfcdt_table_definition_file_name": "table_4196x5d3207b6011d2",
+    "modified": 1563982566
+}
