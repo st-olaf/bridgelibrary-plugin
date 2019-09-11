@@ -1,4 +1,13 @@
 {
+    "name": "luminfire/bridge-library-plugin",
+    "description": "Custom plugin for Bridge Library portal",
+    "type": "wordpress-plugin",
+    "authors": [
+        {
+            "name": "Andrew Minion",
+            "email": "andrew.minion@luminfire.com"
+        }
+    ],
     "require": {
         "johnbillion/extended-cpts": "^4.2",
         "a5hleyrich/wp-background-processing": "^1.0",
