@@ -4,8 +4,8 @@
     "type": "wordpress-plugin",
     "authors": [
         {
-            "name": "Andrew Minion",
-            "email": "andrew.minion@luminfire.com"
+            "name": "LuminFire",
+            "email": "help@luminfire.com"
         }
     ],
     "require": {
