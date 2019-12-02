@@ -1300,6 +1300,7 @@ class Bridge_Library_Users {
 	 * Automatically clean up user accounts.
 	 *
 	 * @since 1.0.0
+	 * @since 1.0.1 Fall back to wp_postmeta.
 	 *
 	 * @return void
 	 */

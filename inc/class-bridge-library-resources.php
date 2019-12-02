@@ -166,6 +166,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 * Get post ID for the given Alma ID.
 	 *
 	 * @since 1.0.0
+	 * @since 1.0.1 Fall back to wp_postmeta.
 	 *
 	 * @param int $alma_id Alma ID.
 	 *
@@ -202,6 +203,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 * Get post ID for the given Primo ID.
 	 *
 	 * @since 1.0.0
+	 * @since 1.0.1 Fall back to wp_postmeta.
 	 *
 	 * @param int $primo_id Primo ID.
 	 *
@@ -238,6 +240,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 * Get post ID for the given LibGuides ID.
 	 *
 	 * @since 1.0.0
+	 * @since 1.0.1 Fall back to wp_postmeta.
 	 *
 	 * @param int $libguides_id LibGuides ID.
 	 *

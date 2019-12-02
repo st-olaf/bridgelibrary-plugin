@@ -344,6 +344,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 * Get post ID for the given Alma ID.
 	 *
 	 * @since 1.0.0
+	 * @since 1.0.1 Fall back to wp_postmeta.
 	 *
 	 * @param int $alma_id Alma ID.
 	 *
@@ -375,6 +376,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 * Get post ID for the given course code.
 	 *
 	 * @since 1.0.0
+	 * @since 1.0.1 Fall back to wp_postmeta.
 	 *
 	 * @param string $course_code Course code.
 	 *
@@ -411,6 +413,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 * Get array of post IDs for the given course codes.
 	 *
 	 * @since 1.0.0
+	 * @since 1.0.1 Fall back to wp_postmeta.
 	 *
 	 * @param array $course_codes Course code.
 	 *
