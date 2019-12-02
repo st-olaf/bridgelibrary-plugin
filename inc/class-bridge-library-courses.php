@@ -351,12 +351,24 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 */
 	public function get_post_id_by_alma_id( $alma_id ) {
 		global $wpdb;
-		return $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
+		$post_id = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
 			$wpdb->prepare(
 				"SELECT post_id FROM {$wpdb->prefix}{$this->acf_meta_table} WHERE alma_id = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
 				$alma_id
 			)
 		);
+
+		// If ACF custom DB fails, search wp_postmeta.
+		if ( is_null( $post_id ) ) {
+			$post_id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'alma_id' AND meta_value = %s;",
+					$alma_id
+				)
+			);
+		}
+
+		return $post_id;
 	}
 
 	/**
@@ -370,12 +382,29 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 */
 	public function get_post_id_by_course_code( $course_code ) {
 		global $wpdb;
-		return (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
+		$post_id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
 			$wpdb->prepare(
 				"SELECT post_id FROM {$wpdb->prefix}{$this->acf_meta_table} WHERE course_code = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
 				$course_code
 			)
 		);
+
+		// If ACF custom DB fails, search wp_postmeta.
+		if ( 0 === $post_id ) {
+			$post_id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'course_code' AND meta_value = %s;",
+					$course_code
+				)
+			);
+		}
+
+		// Set to null for downstream behavior.
+		if ( 0 === $post_id ) {
+			$post_id = null;
+		}
+
+		return $post_id;
 	}
 
 	/**
@@ -400,9 +429,16 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 		$sql   = "SELECT post_id FROM {$wpdb->prefix}{$this->acf_meta_table} WHERE course_code IN (" . implode( ',', $course_codes ) . ')'; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
 		$posts = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
+
+		// If ACF fails, try wp_postmeta.
+		if ( is_null( $posts ) ) {
+			$posts = $wpdb->get_col( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'course_code' AND meta_value IN (" . implode( ',', $course_codes ) . ');' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
+		}
+
 		if ( is_null( $posts ) ) {
 			$posts = array();
 		}
+
 		return $posts;
 	}
 

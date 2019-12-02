@@ -1312,6 +1312,15 @@ class Bridge_Library_Users {
 		);
 		$old_users = $wpdb->get_col( $query, 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_users with meta_query would be, and query is prepared above.
 
+		// If empty, try wp_usermeta.
+		if ( empty( $old_users ) ) {
+			$query     = $wpdb->prepare(
+				"SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = 'expiration_date' AND meta_value IS NOT NULL AND meta_value < %d;",
+				gmdate( 'Ymd', strtotime( '3 months ago' ) )
+			);
+			$old_users = $wpdb->get_col( $query, 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
+		}
+
 		foreach ( $old_users as $old_user ) {
 			$user = get_user_by( 'id', $old_user );
 

@@ -173,12 +173,29 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 */
 	public function get_post_id_by_alma_id( $alma_id ) {
 		global $wpdb;
-		return $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
+		$post_id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
 			$wpdb->prepare(
 				"SELECT post_id FROM {$wpdb->prefix}{$this->acf_meta_table} WHERE alma_id = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
 				$alma_id
 			)
 		);
+
+		// If ACF custom DB fails, search wp_postmeta.
+		if ( 0 === $post_id ) {
+			$post_id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'alma_id' AND meta_value = %s;",
+					$alma_id
+				)
+			);
+		}
+
+		// Set to null for downstream behavior.
+		if ( 0 === $post_id ) {
+			$post_id = null;
+		}
+
+		return $post_id;
 	}
 
 	/**
@@ -192,12 +209,29 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 */
 	public function get_post_id_by_primo_id( $primo_id ) {
 		global $wpdb;
-		return $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
+		$post_id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
 			$wpdb->prepare(
 				"SELECT post_id FROM {$wpdb->prefix}{$this->acf_meta_table} WHERE primo_id = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
 				$primo_id
 			)
 		);
+
+		// If ACF custom DB fails, search wp_postmeta.
+		if ( 0 === $post_id ) {
+			$post_id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'primo_id' AND meta_value = %s;",
+					$primo_id
+				)
+			);
+		}
+
+		// Set to null for downstream behavior.
+		if ( 0 === $post_id ) {
+			$post_id = null;
+		}
+
+		return $post_id;
 	}
 
 	/**
@@ -211,12 +245,29 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 */
 	public function get_post_id_by_libguides_id( $libguides_id ) {
 		global $wpdb;
-		return $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
+		$post_id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- this is more performant than a get_posts with meta_query would be.
 			$wpdb->prepare(
 				"SELECT post_id FROM {$wpdb->prefix}{$this->acf_meta_table} WHERE libguides_id = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
 				$libguides_id
 			)
 		);
+
+		// If ACF custom DB fails, search wp_postmeta.
+		if ( 0 === $post_id ) {
+			$post_id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'libguides_id' AND meta_value = %s;",
+					$libguides_id
+				)
+			);
+		}
+
+		// Set to null for downstream behavior.
+		if ( 0 === $post_id ) {
+			$post_id = null;
+		}
+
+		return $post_id;
 	}
 
 	/**
