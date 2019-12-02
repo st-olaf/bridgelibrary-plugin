@@ -33,6 +33,10 @@ class ComposerStaticInitb714f90ae24068d19124a6c7781f4fdb
         array (
             'ExtCPTs\\Tests\\' => 14,
         ),
+        'C' => 
+        array (
+            'Composer\\Installers\\' => 20,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -59,6 +63,10 @@ class ComposerStaticInitb714f90ae24068d19124a6c7781f4fdb
         'ExtCPTs\\Tests\\' => 
         array (
             0 => __DIR__ . '/..' . '/johnbillion/extended-cpts/tests/phpunit',
+        ),
+        'Composer\\Installers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
         ),
     );
 
