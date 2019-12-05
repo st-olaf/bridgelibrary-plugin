@@ -1071,7 +1071,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		} else {
 			$results = array();
 			foreach ( $stolaf_results as $guide ) {
-				$results[] = $this->create_resource_from_libguides_guide( $guide, 'stolaf' );
+				$results[] = $this->create_resource_from_libguides_guide( $guide, 'st-olaf' );
 			}
 			foreach ( $carleton_results as $guide ) {
 				$results[] = $this->create_resource_from_libguides_guide( $guide, 'carleton' );
