@@ -1091,15 +1091,15 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 * @return string              Post title.
 	 */
 	public function modify_course_acf_titles( $title, $post ) {
-		$departments   = get_the_terms( $post, 'academic_department' );
 		$course_number = get_field( 'course_number', $post );
 		$institution   = get_the_terms( $post, 'institution' );
+		$course_code   = explode( '|', get_field( 'course_code', $post ) );
 
 		if ( ! empty( $institution ) ) {
 
 			return sprintf(
 				'%1$s%2$s: %3$s %4$s',
-				implode( ', ', wp_list_pluck( $departments, 'name' ) ),
+				$course_code[1],
 				$course_number ? ' ' . $course_number : '',
 				$title,
 				empty( $institution ) ? '' : '(' . implode( ', ', wp_list_pluck( $institution, 'name' ) ) . ')'
