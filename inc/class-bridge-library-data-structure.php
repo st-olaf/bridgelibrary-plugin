@@ -114,14 +114,14 @@ class Bridge_Library_Data_Structure {
 		 */
 		register_extended_post_type(
 			'course',
-			[
+			array(
 				'menu_icon'           => 'dashicons-welcome-learn-more',
 				'show_in_rest'        => true,
 				'show_in_graphql'     => true,
 				'graphql_single_name' => 'Course',
 				'graphql_plural_name' => 'Courses',
 				'capability_type'     => 'course',
-				'capabilities'        => [
+				'capabilities'        => array(
 					'publish_posts'       => 'publish_courses',
 					'edit_posts'          => 'edit_courses',
 					'edit_others_posts'   => 'edit_others_courses',
@@ -131,22 +131,22 @@ class Bridge_Library_Data_Structure {
 					'edit_post'           => 'edit_course',
 					'delete_post'         => 'delete_course',
 					'read_post'           => 'read_course',
-				],
-				'admin_cols'          => [
-					'institution'         => [
+				),
+				'admin_cols'          => array(
+					'institution'         => array(
 						'title'    => 'Institution',
 						'taxonomy' => 'institution',
-					],
-					'academic_department' => [
+					),
+					'academic_department' => array(
 						'title'    => 'Academic Department',
 						'taxonomy' => 'academic_department',
-					],
-					'course_term'         => [
+					),
+					'course_term'         => array(
 						'title'    => 'Course Term',
 						'taxonomy' => 'course_term',
-					],
-				],
-			]
+					),
+				),
+			)
 		);
 
 		/**
@@ -154,14 +154,14 @@ class Bridge_Library_Data_Structure {
 		 */
 		register_extended_post_type(
 			'resource',
-			[
+			array(
 				'menu_icon'           => 'dashicons-book-alt',
 				'show_in_rest'        => true,
 				'show_in_graphql'     => true,
 				'graphql_single_name' => 'Resource',
 				'graphql_plural_name' => 'Resources',
 				'capability_type'     => 'resource',
-				'capabilities'        => [
+				'capabilities'        => array(
 					'publish_posts'       => 'publish_resources',
 					'edit_posts'          => 'edit_resources',
 					'edit_others_posts'   => 'edit_others_resources',
@@ -171,18 +171,18 @@ class Bridge_Library_Data_Structure {
 					'edit_post'           => 'edit_resource',
 					'delete_post'         => 'delete_resource',
 					'read_post'           => 'read_resource',
-				],
-				'admin_cols'          => [
-					'resource_type'       => [
+				),
+				'admin_cols'          => array(
+					'resource_type'       => array(
 						'title'    => 'Resource Type',
 						'taxonomy' => 'resource_type',
-					],
-					'academic_department' => [
+					),
+					'academic_department' => array(
 						'title'    => 'Academic Department',
 						'taxonomy' => 'academic_department',
-					],
-				],
-			]
+					),
+				),
+			)
 		);
 
 		/**
@@ -190,14 +190,14 @@ class Bridge_Library_Data_Structure {
 		 */
 		register_extended_post_type(
 			'librarian',
-			[
+			array(
 				'menu_icon'           => 'dashicons-groups',
 				'show_in_rest'        => true,
 				'show_in_graphql'     => true,
 				'graphql_single_name' => 'Librarian',
 				'graphql_plural_name' => 'Librarians',
 				'capability_type'     => 'librarian',
-				'capabilities'        => [
+				'capabilities'        => array(
 					'publish_posts'       => 'publish_librarians',
 					'edit_posts'          => 'edit_librarians',
 					'edit_others_posts'   => 'edit_others_librarians',
@@ -207,14 +207,14 @@ class Bridge_Library_Data_Structure {
 					'edit_post'           => 'edit_librarian',
 					'delete_post'         => 'delete_librarian',
 					'read_post'           => 'read_librarian',
-				],
-				'admin_cols'          => [
-					'academic_department' => [
+				),
+				'admin_cols'          => array(
+					'academic_department' => array(
 						'title'    => 'Academic Department',
 						'taxonomy' => 'academic_department',
-					],
-				],
-			]
+					),
+				),
+			)
 		);
 
 		/**
@@ -222,20 +222,20 @@ class Bridge_Library_Data_Structure {
 		 */
 		register_extended_taxonomy(
 			'resource_type',
-			[
+			array(
 				'resource',
-			],
-			[
-				'capabilities'        => [
+			),
+			array(
+				'capabilities'        => array(
 					'assign_terms' => 'assign_terms_bridge_library',
 					'delete_terms' => 'delete_terms_bridge_library',
 					'edit_terms'   => 'edit_terms_bridge_library',
 					'manage_terms' => 'manage_terms_bridge_library',
-				],
+				),
 				'show_in_graphql'     => true,
 				'graphql_single_name' => 'ResourceType',
 				'graphql_plural_name' => 'ResourceTypes',
-			]
+			)
 		);
 
 		/**
@@ -243,21 +243,21 @@ class Bridge_Library_Data_Structure {
 		 */
 		register_extended_taxonomy(
 			'resource_format',
-			[
+			array(
 				'resource',
-			],
-			[
+			),
+			array(
 				'meta_box_cb'         => false,
-				'capabilities'        => [
+				'capabilities'        => array(
 					'assign_terms' => 'assign_terms_bridge_library',
 					'delete_terms' => 'delete_terms_bridge_library',
 					'edit_terms'   => 'edit_terms_bridge_library',
 					'manage_terms' => 'manage_terms_bridge_library',
-				],
+				),
 				'show_in_graphql'     => true,
 				'graphql_single_name' => 'ResourceFormat',
 				'graphql_plural_name' => 'ResourceFormats',
-			]
+			)
 		);
 
 		/**
@@ -265,24 +265,24 @@ class Bridge_Library_Data_Structure {
 		 */
 		register_extended_taxonomy(
 			'institution',
-			[
+			array(
 				'course',
 				'resource',
 				'librarian',
-			],
-			[
+			),
+			array(
 				'meta_box_cb'           => false,
-				'capabilities'          => [
+				'capabilities'          => array(
 					'assign_terms' => 'assign_terms_bridge_library',
 					'delete_terms' => 'delete_terms_bridge_library',
 					'edit_terms'   => 'edit_terms_bridge_library',
 					'manage_terms' => 'manage_terms_bridge_library',
-				],
+				),
 				'update_count_callback' => array( $this, 'update_count_callback' ),
 				'show_in_graphql'       => true,
 				'graphql_single_name'   => 'Institution',
 				'graphql_plural_name'   => 'Institutions',
-			]
+			)
 		);
 
 		/**
@@ -290,17 +290,17 @@ class Bridge_Library_Data_Structure {
 		 */
 		register_extended_taxonomy(
 			'academic_department',
-			[
+			array(
 				'course',
 				'resource',
 				'librarian',
-			],
-			[
+			),
+			array(
 				'meta_box_cb'         => false,
 				'show_in_graphql'     => true,
 				'graphql_single_name' => 'AcademicDepartment',
 				'graphql_plural_name' => 'AcademicDepartments',
-			]
+			)
 		);
 
 		/**
@@ -308,14 +308,14 @@ class Bridge_Library_Data_Structure {
 		 */
 		register_extended_taxonomy(
 			'course_term',
-			[
+			array(
 				'course',
-			],
-			[
+			),
+			array(
 				'show_in_graphql'     => true,
 				'graphql_single_name' => 'CourseTerm',
 				'graphql_plural_name' => 'CourseTerms',
-			]
+			)
 		);
 
 	}
