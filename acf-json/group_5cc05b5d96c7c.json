@@ -30,10 +30,31 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "25",
                 "class": "",
                 "id": ""
             },
+            "show_in_graphql": 1,
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5dea86ee08933",
+            "label": "Academic Department Code",
+            "name": "academic_department_code",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
             "default_value": "",
             "placeholder": "",
             "prepend": "",
@@ -281,5 +302,5 @@
     "acfcdt_manage_table_definition": 1,
     "acfcdt_table_name": "bridge_library_course_meta",
     "acfcdt_table_definition_file_name": "table_8x5cc08b74179aa",
-    "modified": 1566402132
+    "modified": 1575651113
 }

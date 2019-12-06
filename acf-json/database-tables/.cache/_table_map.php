@@ -72,6 +72,16 @@
         ),
         4 => 
         array (
+          'name' => 'academic_department_code',
+          'map' => 
+          array (
+            'type' => 'acf_field_name',
+            'identifier' => 'academic_department_code',
+          ),
+          'format' => '%s',
+        ),
+        5 => 
+        array (
           'name' => 'course_number',
           'map' => 
           array (
@@ -80,7 +90,7 @@
           ),
           'format' => '%s',
         ),
-        5 => 
+        6 => 
         array (
           'name' => 'course_section',
           'map' => 
@@ -90,7 +100,7 @@
           ),
           'format' => '%s',
         ),
-        6 => 
+        7 => 
         array (
           'name' => 'start_date',
           'map' => 
@@ -100,7 +110,7 @@
           ),
           'format' => '%s',
         ),
-        7 => 
+        8 => 
         array (
           'name' => 'end_date',
           'map' => 
@@ -110,7 +120,7 @@
           ),
           'format' => '%s',
         ),
-        8 => 
+        9 => 
         array (
           'name' => 'institution',
           'map' => 
@@ -120,7 +130,7 @@
           ),
           'format' => '%s',
         ),
-        9 => 
+        10 => 
         array (
           'name' => 'academic_department',
           'map' => 
@@ -130,7 +140,7 @@
           ),
           'format' => '%s',
         ),
-        10 => 
+        11 => 
         array (
           'name' => 'degree_level',
           'map' => 
@@ -140,7 +150,7 @@
           ),
           'format' => '%s',
         ),
-        11 => 
+        12 => 
         array (
           'name' => 'course_term',
           'map' => 
@@ -150,7 +160,7 @@
           ),
           'format' => '%s',
         ),
-        12 => 
+        13 => 
         array (
           'name' => 'core_resources',
           'map' => 
@@ -160,7 +170,7 @@
           ),
           'format' => '%s',
         ),
-        13 => 
+        14 => 
         array (
           'name' => 'related_courses_resources',
           'map' => 
@@ -171,8 +181,8 @@
           'format' => '%s',
         ),
       ),
-      'hash' => 'e1fd273f44c0501d403b68842e0d0c0c',
-      'modified' => 1566402132,
+      'hash' => 'cf201e037ced0f6bd7dcf17c31548d1d',
+      'modified' => 1575651113,
       'type' => 'meta',
     ),
     'bridge_library_user_meta' => 
@@ -755,6 +765,10 @@
         0 => 0,
       ),
       'course_code' => 
+      array (
+        0 => 0,
+      ),
+      'academic_department_code' => 
       array (
         0 => 0,
       ),

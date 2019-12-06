@@ -43,6 +43,13 @@
             }
         },
         {
+            "name": "academic_department_code",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "academic_department_code"
+            }
+        },
+        {
             "name": "course_number",
             "map": {
                 "type": "acf_field_name",
@@ -113,6 +120,6 @@
             }
         }
     ],
-    "hash": "e1fd273f44c0501d403b68842e0d0c0c",
-    "modified": 1566402132
+    "hash": "cf201e037ced0f6bd7dcf17c31548d1d",
+    "modified": 1575651113
 }
