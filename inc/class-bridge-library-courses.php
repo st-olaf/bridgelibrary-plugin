@@ -58,18 +58,19 @@ class Bridge_Library_Courses extends Bridge_Library {
 	private $course_field_mapping = array(
 
 		// From Alma.
-		'id'                  => 'alma_id',
-		'section'             => 'course_section',
-		'start_date'          => 'start_date',
-		'end_date'            => 'end_date',
-		'code'                => 'course_code',
+		'id'                       => 'alma_id',
+		'section'                  => 'course_section',
+		'start_date'               => 'start_date',
+		'end_date'                 => 'end_date',
+		'code'                     => 'course_code',
 
 		// Added in extract_course_data() function.
-		'course_number'       => 'course_number',
-		'institution'         => 'institution',
-		'academic_department' => 'academic_department',
-		'degree_level'        => 'degree_level',
-		'course_term'         => 'course_term',
+		'course_number'            => 'course_number',
+		'institution'              => 'institution',
+		'academic_department'      => 'academic_department',
+		'academic_department_code' => 'academic_department_code',
+		'degree_level'             => 'degree_level',
+		'course_term'              => 'course_term',
 	);
 
 	/**
@@ -662,7 +663,8 @@ class Bridge_Library_Courses extends Bridge_Library {
 		if ( isset( $course['academic_department']['desc'] ) ) {
 			$academic_department_term = $this->get_or_create_term( $course['academic_department']['desc'], 'academic_department' );
 			wp_set_object_terms( $post_id, $academic_department_term, 'academic_department' );
-			$course['academic_department'] = array( $academic_department_term );
+			$course['academic_department_code'] = $course['academic_department']['value'];
+			$course['academic_department']      = array( $academic_department_term );
 		}
 
 		$alma_api    = Bridge_Library_API_Alma::get_instance();
