@@ -121,6 +121,10 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 		// Add institution and course number data to admin list view.
 		add_action( 'manage_posts_extra_tablenav', array( $this, 'include_course_data_in_title' ) );
+
+		// Include course code and number in searches.
+		add_action( 'posts_join', array( $this, 'search_acf_fields_join' ), 10, 2 );
+		add_action( 'posts_where', array( $this, 'search_acf_fields_where' ), 10, 2 );
 	}
 
 	/**
@@ -779,6 +783,50 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$resources = Bridge_Library_Resources::get_instance();
 			add_filter( 'the_title', array( $resources, 'modify_course_acf_titles' ), 10, 2 );
 		}
+	}
+
+	/**
+	 * Include custom DB table in search query JOIN clause.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @param string   $join  JOIN query clause.
+	 * @param WP_Query $query Query object, passed by reference.
+	 *
+	 * @return string         JOIN query clause.
+	 */
+	public function search_acf_fields_join( $join, $query ) {
+		if ( $query->is_main_query() && 'course' === $query->get( 'post_type' ) ) {
+			global $wpdb;
+			$join .= " JOIN {$wpdb->prefix}{$this->acf_meta_table} acfcourse ON acfcourse.post_id = {$wpdb->posts}.ID";
+		}
+
+		return $join;
+	}
+
+	/**
+	 * Include custom DB fields in search query WHERE clause.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @param string   $where WHERE query clause.
+	 * @param WP_Query $query Query object, passed by reference.
+	 *
+	 * @return string         WHERE query clause.
+	 */
+	public function search_acf_fields_where( $where, $query ) {
+		if ( $query->is_main_query() && 'course' === $query->get( 'post_type' ) ) {
+			global $wpdb;
+			$where .= $wpdb->prepare(
+				" OR (CONCAT(academic_department_code, ' ', course_number) LIKE %s OR course_code LIKE %s)",
+				array(
+					'%' . $query->get( 's' ) . '%',
+					'%' . str_replace( ' ', '|', $query->get( 's' ) ) . '%',
+				)
+			);
+		}
+
+		return $where;
 	}
 
 }
