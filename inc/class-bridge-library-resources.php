@@ -988,7 +988,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 			$libguides_api_12->async->save()->dispatch();
 		} else {
 			foreach ( $stolaf_results as $asset ) {
-				$this->create_resource_from_libguides_asset( $asset, 'stolaf' );
+				$this->create_resource_from_libguides_asset( $asset, 'st-olaf' );
 			}
 			foreach ( $carleton_results as $asset ) {
 				$this->create_resource_from_libguides_asset( $asset, 'carleton' );
