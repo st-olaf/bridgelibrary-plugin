@@ -89,6 +89,10 @@ class Bridge_Library_Data_Structure {
 		 */
 		add_filter( 'acfcdt/settings/store_acf_keys_in_core_meta', '__return_false' );
 
+		// Override LuminFire ACF JSON storage directory.
+		add_filter( 'acf/settings/save_json', array( $this, 'get_local_json_path' ), 25 );
+		add_filter( 'acf/settings/load_json', array( $this, 'add_local_json_path' ), 25 );
+
 		// Handle Post-2-Post quirks.
 		// TODO: revisit after https://github.com/Hube2/acf-post2post/pull/31/ is merged.
 		add_action( 'acf/post2post/relationship_updated', array( $this, 'post_2_post' ), 10, 3 );
@@ -423,4 +427,32 @@ class Bridge_Library_Data_Structure {
 			}
 		}
 	}
+
+	/**
+	 * Load ACF JSON from plugin directory.
+	 *
+	 * @return string
+	 */
+	public function get_local_json_path() {
+		$directory = BL_PLUGIN_DIR . '/acf-json';
+
+		if ( ! is_dir( $directory ) ) {
+			mkdir( $directory );
+		}
+
+		return $directory;
+	}
+
+	/**
+	 * Store ACF JSON in plugin directory.
+	 *
+	 * @param array $paths Storage paths.
+	 *
+	 * @return array
+	 */
+	public function add_local_json_path( $paths ) {
+		$paths[] = BL_PLUGIN_DIR . '/acf-json';
+		return $paths;
+	}
+
 }
