@@ -125,6 +125,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		// Include course code and number in searches.
 		add_action( 'posts_join', array( $this, 'search_acf_fields_join' ), 10, 2 );
 		add_action( 'posts_where', array( $this, 'search_acf_fields_where' ), 10, 2 );
+		add_filter( 'acf/fields/relationship/query/name=related_courses_resources', array( $this, 'search_acf_fields_from_acf' ), 10, 3 );
 
 		// Tweak course titles in admin list and resource related_courses ACF field.
 		add_filter( 'acf/fields/relationship/result/key=field_5cc3260215ce7', array( $this, 'modify_course_acf_titles' ), 10, 2 );
@@ -802,7 +803,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 * @return string         JOIN query clause.
 	 */
 	public function search_acf_fields_join( $join, $query ) {
-		if ( $query->is_main_query() && 'course' === $query->get( 'post_type' ) ) {
+		if ( $this->search_custom_columns( $query ) ) {
 			global $wpdb;
 			$join .= " JOIN {$wpdb->prefix}{$this->acf_meta_table} acfcourse ON acfcourse.post_id = {$wpdb->posts}.ID";
 		}
@@ -821,7 +822,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 * @return string         WHERE query clause.
 	 */
 	public function search_acf_fields_where( $where, $query ) {
-		if ( $query->is_main_query() && 'course' === $query->get( 'post_type' ) ) {
+		if ( $this->search_custom_columns( $query ) ) {
 			global $wpdb;
 			$where .= $wpdb->prepare(
 				" OR (CONCAT(academic_department_code, ' ', course_number) LIKE %s OR course_code LIKE %s)",
@@ -833,6 +834,41 @@ class Bridge_Library_Courses extends Bridge_Library {
 		}
 
 		return $where;
+	}
+
+	/**
+	 * Should we search custom DB columns?
+	 *
+	 * @since 1.0.4
+	 *
+	 * @param WP_Query $query WP_Query object.
+	 *
+	 * @return bool           Whether to use custom column or not.
+	 */
+	private function search_custom_columns( $query ) {
+		if ( $_POST && array_key_exists( 'action', $_POST ) && 'acf/fields/relationship/query' === $_POST['action'] && array_key_exists( 'field_key', $_POST ) && 'field_5cc3260215ce7' === $_POST['field_key'] ) { // phpcs:ignore WordPress.Security.NonceVerification -- ACF will handle this.
+			return true;
+		} elseif ( $query->is_main_query() && 'course' === $query->get( 'post_type' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Hook into ACF related_courses_resources search to include custom DB column.
+	 *
+	 * @since 1.0.4
+	 *
+	 * @param array $args    WP_Query args.
+	 * @param array $field   Field object.
+	 * @param int   $post_id Post ID.
+	 *
+	 * @return array         WP_Query args.
+	 */
+	public function search_acf_fields_from_acf( $args, $field, $post_id ) {
+		$this->should_search_custom_db = true;
+		return $args;
 	}
 
 	/**
