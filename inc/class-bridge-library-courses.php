@@ -757,11 +757,15 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 		// Include term results for GraphQL results. We don’t want to deal with tracking and unsetting changes to all posts when a resource->academic department relationship is updated.
 		if ( isset( $_SERVER['REQUEST_URI'] ) && '/graphql' === $_SERVER['REQUEST_URI'] ) {
+			if ( is_null( $value ) ) {
+				$value = array();
+			}
+
 			$academic_departments = wp_get_post_terms( $post_id, 'academic_department', array( 'fields' => 'ids' ) );
 			foreach ( $academic_departments as $term_id ) {
 				$department_resources = get_field( 'related_resources', 'category_' . $term_id );
 				if ( is_array( $department_resources ) && ! empty( $department_resources ) ) {
-					$value = array_merge( $department_resources );
+					$value = array_merge( $department_resources, $value );
 				}
 				// De-dupe it.
 				$value = array_unique( $value );
