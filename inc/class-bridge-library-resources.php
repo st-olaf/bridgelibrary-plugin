@@ -140,9 +140,6 @@ class Bridge_Library_Resources extends Bridge_Library {
 		add_action( 'wp_ajax_start_bg_libguides_assets_update', array( $this, 'ajax_start_bg_libguides_assets_update' ) );
 		add_action( 'wp_ajax_start_bg_libguides_guides_update', array( $this, 'ajax_start_bg_libguides_guides_update' ) );
 
-		// Tweak course titles in resource ACF group.
-		add_filter( 'acf/fields/relationship/result/key=field_5cc3260215ce7', array( $this, 'modify_course_acf_titles' ), 10, 2 );
-
 		// Force Publication Year to a string for GraphQL.
 		add_filter( 'acf/load_value/key=field_5cc87637abbc6', array( $this, 'force_publication_year_string_load' ) );
 		add_filter( 'acf/update_value/key=field_5cc87637abbc6', array( $this, 'force_publication_year_string_update' ) );
@@ -1078,35 +1075,6 @@ class Bridge_Library_Resources extends Bridge_Library {
 			}
 			return $results;
 		}
-	}
-
-	/**
-	 * Add more data to course title in ACF group.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string      $title   Post title.
-	 * @param int|WP_Post $post    Post ID or object.
-	 *
-	 * @return string              Post title.
-	 */
-	public function modify_course_acf_titles( $title, $post ) {
-		$course_number = get_field( 'course_number', $post );
-		$institution   = get_the_terms( $post, 'institution' );
-		$course_code   = explode( '|', get_field( 'course_code', $post ) );
-
-		if ( ! empty( $institution ) ) {
-
-			return sprintf(
-				'%1$s%2$s: %3$s %4$s',
-				$course_code[1],
-				$course_number ? ' ' . $course_number : '',
-				$title,
-				empty( $institution ) ? '' : '(' . implode( ', ', wp_list_pluck( $institution, 'name' ) ) . ')'
-			);
-		}
-
-		return $title;
 	}
 
 	/**

@@ -125,6 +125,9 @@ class Bridge_Library_Courses extends Bridge_Library {
 		// Include course code and number in searches.
 		add_action( 'posts_join', array( $this, 'search_acf_fields_join' ), 10, 2 );
 		add_action( 'posts_where', array( $this, 'search_acf_fields_where' ), 10, 2 );
+
+		// Tweak course titles in admin list and resource related_courses ACF field.
+		add_filter( 'acf/fields/relationship/result/key=field_5cc3260215ce7', array( $this, 'modify_course_acf_titles' ), 10, 2 );
 	}
 
 	/**
@@ -784,8 +787,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 */
 	public function include_course_data_in_title() {
 		if ( 'edit-course' === get_current_screen()->id ) {
-			$resources = Bridge_Library_Resources::get_instance();
-			add_filter( 'the_title', array( $resources, 'modify_course_acf_titles' ), 10, 2 );
+			add_filter( 'the_title', array( $this, 'modify_course_acf_titles' ), 10, 2 );
 		}
 	}
 
@@ -831,6 +833,35 @@ class Bridge_Library_Courses extends Bridge_Library {
 		}
 
 		return $where;
+	}
+
+	/**
+	 * Add more data to course title in ACF group.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string      $title   Post title.
+	 * @param int|WP_Post $post    Post ID or object.
+	 *
+	 * @return string              Post title.
+	 */
+	public function modify_course_acf_titles( $title, $post ) {
+		$course_number = get_field( 'course_number', $post );
+		$institution   = get_the_terms( $post, 'institution' );
+		$course_code   = explode( '|', get_field( 'course_code', $post ) );
+
+		if ( ! empty( $institution ) ) {
+
+			return sprintf(
+				'%1$s%2$s: %3$s %4$s',
+				$course_code[1],
+				$course_number ? ' ' . $course_number : '',
+				$title,
+				empty( $institution ) ? '' : '(' . implode( ', ', wp_list_pluck( $institution, 'name' ) ) . ')'
+			);
+		}
+
+		return $title;
 	}
 
 }
