@@ -1196,7 +1196,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 */
 	private function ensure_http_prefix( $asset, $key ) {
 		if ( false === strpos( $asset[ $key ], 'http' ) && 0 === strpos( $asset[ $key ], '//' ) ) {
-			$asset[ $key ] = 'http:' . $asset[ $key ];
+			$asset[ $key ] = 'https:' . $asset[ $key ];
 		}
 
 		return $asset;
