@@ -691,6 +691,9 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		// Metadata.
 		foreach ( $this->libguides_asset_mapping as $libguides_key => $acf_key ) {
+			if ( 'url' === $libguides_key ) {
+				$asset = $this->ensure_http_prefix( $asset, $libguides_key );
+			}
 			update_field( $acf_key, $asset[ $libguides_key ], $asset_id );
 		}
 
@@ -742,6 +745,9 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		// Metadata.
 		foreach ( $this->libguides_guide_mapping as $libguides_key => $acf_key ) {
+			if ( 'friendly_url' === $libguides_key ) {
+				$guide = $this->ensure_http_prefix( $guide, $libguides_key );
+			}
 			update_field( $acf_key, $guide[ $libguides_key ], $guide_id );
 		}
 
@@ -1176,6 +1182,24 @@ class Bridge_Library_Resources extends Bridge_Library {
 		}
 
 		return $field;
+	}
+
+	/**
+	 * Prepend URLs with http prefix.
+	 *
+	 * @since 1.0.5
+	 *
+	 * @param array  $asset LibGuides asset/guide.
+	 * @param string $key   Array key to check.
+	 *
+	 * @return array        LibGuides asset/guide.
+	 */
+	private function ensure_http_prefix( $asset, $key ) {
+		if ( false === strpos( $asset[ $key ], 'http' ) && 0 === strpos( $asset[ $key ], '//' ) ) {
+			$asset[ $key ] = 'http:' . $asset[ $key ];
+		}
+
+		return $asset;
 	}
 
 }
