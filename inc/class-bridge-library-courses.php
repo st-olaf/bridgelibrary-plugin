@@ -886,14 +886,22 @@ class Bridge_Library_Courses extends Bridge_Library {
 		$institution   = get_the_terms( $post, 'institution' );
 		$course_code   = explode( '|', get_field( 'course_code', $post ) );
 
+		// Add term to ACF fields but not course CPT list.
+		if ( 'edit-course' === get_current_screen()->id ) {
+			$course_term = array();
+		} else {
+			$course_term = get_the_terms( $post, 'course_term' );
+		}
+
 		if ( ! empty( $institution ) ) {
 
 			return sprintf(
-				'%1$s%2$s: %3$s %4$s',
+				'%1$s%2$s: %3$s %4$s %5$s',
 				$course_code[1],
 				$course_number ? ' ' . $course_number : '',
 				$title,
-				empty( $institution ) ? '' : '(' . implode( ', ', wp_list_pluck( $institution, 'name' ) ) . ')'
+				empty( $institution ) ? '' : '(' . implode( ', ', wp_list_pluck( $institution, 'name' ) ) . ')',
+				empty( $course_term ) ? '' : '(' . implode( ', ', wp_list_pluck( $course_term, 'name' ) ) . ')'
 			);
 		}
 
