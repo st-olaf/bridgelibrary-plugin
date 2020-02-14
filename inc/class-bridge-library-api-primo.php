@@ -94,8 +94,8 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 	 * @var array $institution_vid_mapping
 	 */
 	private $institution_vid_mapping = array(
-		'carleton.edu' => '01BRC_CCO',
-		'stolaf.edu'   => '01BRC_SOC',
+		'carleton.edu' => '01BRC_INST:CCO',
+		'stolaf.edu'   => '01BRC_INST:SOC',
 	);
 
 	/**
@@ -109,6 +109,18 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 		'carleton.edu' => 'CC Student',
 		'stolaf.edu'   => 'SO Student',
 	);
+
+    /**
+     * Map Google institution meta to Primo scopes.
+     *
+     * @since 1.1.0
+     *
+     * @var array $institution_scope_mapping
+     */
+    private $institution_scope_mapping = array(
+        'carleton.edu' => 'CCO_MyCampus_PCI',
+        'stolaf.edu'   => 'SOC_MyCampus_CI',
+    );
 
 	/**
 	 * Return only one instance of this class.
@@ -226,21 +238,16 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 			$wp_user  = get_user_by( 'id', $user_id );
 			$user_api = Bridge_Library_Users::get_instance();
 			$domain   = $user_api->get_domain( $user_id );
-
-			if ( 'stolaf.edu' === $domain ) {
-				$alternate_id = get_field( 'alternate_id', 'user_' . $user_id );
-			} elseif ( 'carleton.edu' === $domain ) {
-				$alternate_id = get_field( 'alma_id', 'user_' . $user_id );
-			}
+			$alternate_id = get_field( 'alma_id', 'user_' . $user_id );
 
 			$primo_user = array(
 				'viewId'      => $this->get_vid_by_user( $user_id ),
-				'institution' => $this->get_vid_by_user( $user_id ),
+				'institution' => '01BRC_INST',
 				'language'    => 'en_US',
-				'user'        => $alternate_id,
-				'userName'    => $wp_user->first_name . ' ' . $wp_user->last_name,
+				'userName'    => $alternate_id,
 				'userGroup'   => $this->institution_name_mapping[ $domain ],
 				'onCampus'    => true,
+                'displayName'    => $wp_user->first_name . ' ' . $wp_user->last_name,
 			);
 
 			$args = array(
@@ -292,7 +299,7 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 	 * @return string         Full URL.
 	 */
 	public function generate_full_view_url( $doc_id, $domain ) {
-		return 'https://' . str_replace( '.edu', '', $domain ) . '-primo.hosted.exlibrisgroup.com/primo-explore/fulldisplay?docid=' . $doc_id . '&vid=' . $this->get_vid_by_domain( $domain );
+		return 'https://bridge.primo.exlibrisgroup.com/discovery/fulldisplay?docid=' . $doc_id . '&vid=' . $this->get_vid_by_domain( $domain );
 	}
 
 	/**
@@ -333,14 +340,14 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 
 		$request_args = array(
 			'vid'   => $this->get_vid_by_user( $user_id ),
-			'tab'   => 'default_tab',
-			'scope' => 'everything',
+			'tab'   => 'Everything',
+            'scope'   => $this->institution_scope_mapping[ $domain ],
 		);
 
 		foreach ( $favorites['records'] as $favorite ) {
 
 			// Fetch each of the favorites by ID as a full Primo object.
-			$request_args['q'] = 'any,contains,' . $favorite['recordId'];
+			$request_args['q'] = 'any,contains,' . preg_replace("/alma/", "", $favorite['recordId']);
 
 			$records = $this->request( 'search', $request_args );
 
