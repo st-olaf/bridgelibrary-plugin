@@ -1123,13 +1123,16 @@ class Bridge_Library_Users {
 			$data['fees_count'] = $fees['total_record_count'];
 		}
 
-		update_field( 'circulation_data', $data, 'user_' . $user_id );
+        $cleandata = str_replace('\\', '\\\\', json_encode($data, true));
+
+		update_field( 'circulation_data', $cleandata, 'user_' . $user_id );
 
 		$this->update_cache_timestamp( 'circulation_data', $user_id );
 
 		do_action( 'bl_cache_data', 'circulation_data', $user_id );
 
 		$response = 'Retrieved ' . $data['loans_count'] . ' loans, ' . $data['requests_count'] . ' requests, and ' . $data['fees_count'] . ' fees.';
+
 
 		return $response;
 	}
