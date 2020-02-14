@@ -690,18 +690,14 @@ class Bridge_Library_Courses extends Bridge_Library {
 						$existing_resources = array();
 					}
 
-					// Add/update resources.
-					foreach ( $citations as $citation ) {
-						$resource_id = $resources->update_reading_list( $citation, $post_id );
+                    foreach ( $citations as $citation ) {
+                        $resource_id = $resources->update_reading_list( $citation, $post_id );
 
-						$active_resources[] = (int) $resource_id;
-						unset( $existing_resources[ array_search( (int) $resource_id, $existing_resources, true ) ] );
-					}
+                        $active_resources[] = (int) $resource_id;
+                    }
 
-					// Delete missing resources.
-					foreach ( array_flip( $existing_resources ) as $trash_id ) {
-						wp_delete_post( $trash_id );
-					}
+                    $active_resources = array_merge($active_resources, $existing_resources);
+                    $active_resources = array_unique($active_resources);
 
 					// Update the course post.
 					update_field( 'related_courses_resources', $active_resources, $post_id );
