@@ -481,7 +481,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		update_field( 'resource_format', $format['term_id'], $resource_id );
 
 		// Resource URL.
-		update_field( 'url', $citation['open_url'], $resource_id );
+		update_field( 'url', $citation['metadata']['mms_id'], $resource_id );
 
 		// Resource Type taxonomy.
 		wp_set_object_terms( $resource_id, 'reading-list', 'resource_type', true );
