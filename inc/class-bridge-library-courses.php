@@ -844,7 +844,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	private function search_custom_columns( $query ) {
 		if ( $_POST && array_key_exists( 'action', $_POST ) && 'acf/fields/relationship/query' === $_POST['action'] && array_key_exists( 'field_key', $_POST ) && 'field_5cc3260215ce7' === $_POST['field_key'] ) { // phpcs:ignore WordPress.Security.NonceVerification -- ACF will handle this.
 			return true;
-		} elseif ( $query->is_main_query() && 'course' === $query->get( 'post_type' ) ) {
+		} elseif ( $query->is_main_query() && 'course' === $query->get( 'post_type' ) && $query->is_search() ) {
 			return true;
 		}
 
