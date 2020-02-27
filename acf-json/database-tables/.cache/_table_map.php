@@ -180,9 +180,19 @@
           ),
           'format' => '%s',
         ),
+        15 => 
+        array (
+          'name' => 'librarians',
+          'map' => 
+          array (
+            'type' => 'acf_field_name',
+            'identifier' => 'librarians',
+          ),
+          'format' => '%s',
+        ),
       ),
-      'hash' => 'cf201e037ced0f6bd7dcf17c31548d1d',
-      'modified' => 1576868640,
+      'hash' => 'b4e6e7259544f3e6825cbc0d1712ba2e',
+      'modified' => 1582832353,
       'type' => 'meta',
     ),
     'bridge_library_user_meta' => 
@@ -425,7 +435,7 @@
         ),
       ),
       'hash' => 'a4750780407da5b99b11f6e2c8e2cb66',
-      'modified' => 1565716740,
+      'modified' => 1576860746,
       'type' => 'meta',
     ),
     'bridge_library_librarian_meta' => 
@@ -499,7 +509,7 @@
         ),
       ),
       'hash' => '387c5d840a7c060e7eb6c25535239a0c',
-      'modified' => 1563896020,
+      'modified' => 1576860741,
       'type' => 'meta',
     ),
     'bridge_library_resource_meta' => 
@@ -703,7 +713,7 @@
         ),
       ),
       'hash' => 'e3233b9f1ab76afaf80b82d8b78d7a39',
-      'modified' => 1567653246,
+      'modified' => 1576860744,
       'type' => 'meta',
     ),
   ),
@@ -809,6 +819,10 @@
         0 => 0,
       ),
       'related_courses_resources' => 
+      array (
+        0 => 0,
+      ),
+      'librarians' => 
       array (
         0 => 0,
       ),
