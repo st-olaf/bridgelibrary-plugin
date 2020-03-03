@@ -145,7 +145,18 @@ class Bridge_Library {
 	 * @return void
 	 */
 	public function clear_automatic_updates() {
-		wp_clear_scheduled_hook( 'bridge_library_schedule_daily' );
+		$hooks = array(
+			// Daily recurring updates.
+			'bridge_library_schedule_daily',
+
+			// Background processing cron jobs.
+			'wp_bridge_library_get_all_pages_cron',
+			'wp_bridge_library_get_all_libguides_cron',
+		);
+
+		foreach ( $hooks as $hook ) {
+			wp_clear_scheduled_hook( $hook );
+		}
 	}
 
 }
