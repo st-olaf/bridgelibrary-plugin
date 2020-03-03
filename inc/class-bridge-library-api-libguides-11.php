@@ -31,7 +31,7 @@ class Bridge_Library_API_LibGuides_11 extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var LibGuides_Async_Process $async
+	 * @var LibGuides_11_Async_Process $async
 	 */
 	public $async;
 
