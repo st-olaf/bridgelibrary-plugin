@@ -13,7 +13,7 @@ Deploy to Dev:
   environment:
     name: release
   only:
-    - master
+    - develop
   #when: manual
   script:
-    - ssh stolaf_dev "cd webapps/bridge-dev/wp-content/plugins/bridgelibrary-plugin && git checkout master && git pull --ff-only origin master && exit";
+    - ssh stolaf_dev "cd webapps/bridge-dev/wp-content/plugins/bridgelibrary-plugin && git checkout develop && git pull --ff-only origin develop && exit";
