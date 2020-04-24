@@ -277,6 +277,33 @@
             "min": "",
             "max": "",
             "return_format": "id"
+        },
+        {
+            "key": "field_5e5819970fbfd",
+            "label": "Librarians",
+            "name": "librarians",
+            "type": "relationship",
+            "instructions": "By default, librarians assigned to this course’s academic department will appear for this course. If any librarians are specified here, they will replace those assigned to the academic department.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "post_type": [
+                "librarian"
+            ],
+            "taxonomy": "",
+            "filters": [
+                "search",
+                "taxonomy"
+            ],
+            "elements": "",
+            "min": "",
+            "max": "",
+            "return_format": "id"
         }
     ],
     "location": [
@@ -301,5 +328,5 @@
     "acfcdt_manage_table_definition": 1,
     "acfcdt_table_name": "bridge_library_course_meta",
     "acfcdt_table_definition_file_name": "table_8x5cc08b74179aa",
-    "modified": 1576868640
+    "modified": 1582832353
 }
