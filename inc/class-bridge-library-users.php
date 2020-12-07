@@ -5,6 +5,10 @@
  * @package bridge-library
  */
 
+use GraphQL\Type\Definition\FieldDefinition;
+use GraphQL\Type\Definition\ResolveInfo;
+use WPGraphQL\AppContext;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -170,6 +174,7 @@ class Bridge_Library_Users {
 		add_action( 'pre_get_posts', array( $this, 'limit_to_user_favorites' ) );
 		add_filter( 'acf/fields/relationship/query/name=related_courses_resources', array( $this, 'acf_sort_user_sticky_posts' ), 10, 3 );
 		add_filter( 'acf/fields/relationship/query/name=core_resources', array( $this, 'acf_sort_user_sticky_posts' ), 10, 3 );
+		add_filter( 'graphql_resolve_field', array( $this, 'graphql_user_favorites' ), 10, 9 );
 
 		// Prevent non-admins from editing some ACF fields.
 		add_action( 'edit_user_profile', array( $this, 'maybe_load_admin_js' ) );
@@ -1582,6 +1587,34 @@ class Bridge_Library_Users {
 		}
 
 		return $title;
+	}
+
+	/**
+	 * Remove courses from GraphQL user favorites.
+	 *
+	 * @param mixed           $result         The result of the field resolution.
+	 * @param mixed           $source         The source passed down the Resolve Tree.
+	 * @param array           $args           The args for the field.
+	 * @param AppContext      $context        The AppContext passed down the ResolveTree.
+	 * @param ResolveInfo     $info           The ResolveInfo passed down the ResolveTree.
+	 * @param string          $type_name      The name of the type the fields belong to.
+	 * @param string          $field_key      The name of the field.
+	 * @param FieldDefinition $field          The Field Definition for the resolving field.
+	 * @param mixed           $field_resolver The default field resolver.
+
+	 * @return mixed                 The result of the field resolution.
+	 */
+	public function graphql_user_favorites( $result, $source, array $args, AppContext $context, ResolveInfo $info, string $type_name, string $field_key, FieldDefinition $field, $field_resolver ) {
+		if ( 'userFavorites' === $field_key ) {
+			$result = array_filter(
+				$result,
+				function ( $post ) {
+					return 'resource' === $post->post_type;
+				}
+			);
+		}
+
+		return $result;
 	}
 
 	/**
