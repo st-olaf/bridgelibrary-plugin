@@ -173,11 +173,6 @@ class Bridge_Library_Admin {
 
 							<p><label for="libguides_guide_id">LibGuides Guide ID: <input type="text" name="libguides_guide_id" placeholder="14174" /></label></p>
 
-							<p>Run:
-								<label><input type="radio" value="async" class="wait-for" name="async" checked="checked" />asynchronously</label>
-								<label><input type="radio" value="sync" class="wait-for" name="async" />synchronously</label>
-							</p>
-
 							<p><input type="submit" class="button button-primary" value="Import All Assets" /></p>
 						</td>
 					</tr>

@@ -139,6 +139,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		add_action( 'wp_ajax_update_libguides_resource_by_id', array( $this, 'ajax_update_libguides_resource_by_id' ) );
 		add_action( 'wp_ajax_start_bg_libguides_assets_update', array( $this, 'ajax_start_bg_libguides_assets_update' ) );
 		add_action( 'wp_ajax_start_bg_libguides_guides_update', array( $this, 'ajax_start_bg_libguides_guides_update' ) );
+		add_action( 'wp_ajax_import_libguides_to_course', array( $this, 'ajax_import_libguides_to_course' ) );
 
 		// Force Publication Year to a string for GraphQL.
 		add_filter( 'acf/load_value/key=field_5cc87637abbc6', array( $this, 'force_publication_year_string_load' ) );
@@ -1045,6 +1046,42 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$this->background_create_resource_from_libguides_guides( $async );
 
 		wp_send_json_success( 'Started background update.', 201 );
+	}
+
+	/**
+	 * Import specific LibGuides guides to a specific course.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void Sends WP JSON response.
+	 */
+	public function ajax_import_libguides_to_course() {
+		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+			wp_send_json_error( 'Access denied.', 401 );
+			wp_die();
+		}
+
+		if ( ! isset( $_REQUEST['post_id'] ) ) {
+			wp_send_json_error( 'Missing resource ID.', 400 );
+			wp_die();
+		}
+
+		if ( ! isset( $_REQUEST['libguides_guide_id'] ) ) {
+			wp_send_json_error( 'Missing LibGuides Guide ID.', 400 );
+			wp_die();
+		}
+
+		$post_id = absint( $_REQUEST['post_id'] );
+
+		$libguides = $this->background_create_resource_from_libguides_guides( false );
+
+		$core_resources = get_field( 'core_resources', $post_id );
+		if ( empty( $core_resources ) ) {
+			$core_resources = array();
+		}
+		update_field( 'core_resources', array_merge( $core_resources, $libguides ), $post_id );
+
+		wp_send_json_success( 'Finished update for ' . count( $libguides ) . ' resources. See the <a href="' . get_edit_post_link( $post_id ) . '">Core Resources field</a>.', 200 );
 	}
 
 	/**
