@@ -7,7 +7,9 @@
 
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\ResolveInfo;
+use GraphQLRelay\Relay;
 use WPGraphQL\AppContext;
+use WPGraphQL\Registry\TypeRegistry;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -168,13 +170,14 @@ class Bridge_Library_Users {
 		add_filter( 'acf/load_value/key=field_5d3207d0cd007', array( $this, 'acf_load_user_sticky_posts_meta' ), 10, 3 );
 		add_filter( 'acf/update_value/key=field_5d3207d0cd007', array( $this, 'acf_update_user_sticky_posts_meta' ), 10, 3 );
 
-		// Handle user favorites display and query.
+		// Handle user favorites display, query, and mutation.
 		add_filter( 'views_edit-course', array( $this, 'course_views' ) );
 		add_filter( 'views_edit-resource', array( $this, 'resource_views' ) );
 		add_action( 'pre_get_posts', array( $this, 'limit_to_user_favorites' ) );
 		add_filter( 'acf/fields/relationship/query/name=related_courses_resources', array( $this, 'acf_sort_user_sticky_posts' ), 10, 3 );
 		add_filter( 'acf/fields/relationship/query/name=core_resources', array( $this, 'acf_sort_user_sticky_posts' ), 10, 3 );
 		add_filter( 'graphql_resolve_field', array( $this, 'graphql_user_favorites' ), 10, 9 );
+		add_filter( 'graphql_register_types', array( $this, 'graphql_register_types' ), 10, 1 );
 
 		// Prevent non-admins from editing some ACF fields.
 		add_action( 'edit_user_profile', array( $this, 'maybe_load_admin_js' ) );
@@ -415,7 +418,7 @@ class Bridge_Library_Users {
 		add_role(
 			'bridge_library_staff',
 			'Bridge Library Staff',
-			[
+			array(
 				'read'                          => true,
 
 				'edit_others_courses'           => true,
@@ -441,7 +444,7 @@ class Bridge_Library_Users {
 				'manage_terms_bridge_library'   => true,
 
 				'manage_options_bridge_library' => true,
-			]
+			)
 		);
 
 		// Add permissions to admin role.
@@ -1128,16 +1131,15 @@ class Bridge_Library_Users {
 			$data['fees_count'] = $fees['total_record_count'];
 		}
 
-        $cleandata = str_replace('\\', '\\\\', json_encode($data, true));
+		$clean_data = str_replace( '\\', '\\\\', wp_json_encode( $data, true ) );
 
-		update_field( 'circulation_data', $cleandata, 'user_' . $user_id );
+		update_field( 'circulation_data', $clean_data, 'user_' . $user_id );
 
 		$this->update_cache_timestamp( 'circulation_data', $user_id );
 
 		do_action( 'bl_cache_data', 'circulation_data', $user_id );
 
 		$response = 'Retrieved ' . $data['loans_count'] . ' loans, ' . $data['requests_count'] . ' requests, and ' . $data['fees_count'] . ' fees.';
-
 
 		return $response;
 	}
@@ -1321,7 +1323,7 @@ class Bridge_Library_Users {
 		);
 		$old_users = $wpdb->get_col( $query, 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_users with meta_query would be, and query is prepared above.
 
-		// If empty, try wp_usermeta.
+		// If empty, try user meta.
 		if ( empty( $old_users ) ) {
 			$query     = $wpdb->prepare(
 				"SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = 'expiration_date' AND meta_value IS NOT NULL AND meta_value < %d;",
@@ -1433,7 +1435,7 @@ class Bridge_Library_Users {
 	 * @return mixed         Field value.
 	 */
 	public function acf_update_user_sticky_posts_meta( $value, $post_id, $field ) {
-		$this->save_favorite_posts( $post_id, (bool) $value );
+		$this->update_favorite_posts( $post_id, (bool) $value );
 
 		// Don’t save any postmeta.
 		return false;
@@ -1445,17 +1447,20 @@ class Bridge_Library_Users {
 	 * @since 1.0.0.0
 	 *
 	 * @param int  $post_id Post ID.
-	 * @param bool $value   Checkbox value.
+	 * @param bool $add     True to add, false to remove.
+	 * @param int  $user_id User ID; defaults to logged-in user.
 	 *
 	 * @return bool         Whether user profile was updated.
 	 */
-	public function save_favorite_posts( $post_id, $value ) {
-		$user_id = get_current_user_id();
+	public function update_favorite_posts( $post_id, $add, $user_id = 0 ) {
+		if ( 0 === $user_id ) {
+			$user_id = get_current_user_id();
+		}
 
 		$favorites = (array) $this->get_favorite_posts( $user_id );
 
-		if ( $value ) {
-			$favorites = array_merge( $favorites, array( (int) $post_id ) );
+		if ( $add ) {
+			$favorites = array_unique( array_merge( $favorites, array( (int) $post_id ) ) );
 		} else {
 			$key = array_search( $post_id, $favorites, true );
 			if ( false !== $key ) {
@@ -1666,5 +1671,127 @@ class Bridge_Library_Users {
 		$classes[] = 'institution-' . str_replace( '.edu', '', $domain );
 
 		return $classes;
+	}
+
+	/**
+	 * Register user favorites mutation.
+	 *
+	 * @param TypeRegistry $type_registry WPGraphQL type registry.
+	 *
+	 * @return void
+	 */
+	public function graphql_register_types( TypeRegistry $type_registry ) {
+		register_graphql_mutation(
+			'addUserFavorite',
+			array(
+
+				'inputFields'         => array(
+					'id'         => array(
+						'type'        => 'ID',
+						'description' => __( 'User ID', 'bridge-library' ),
+					),
+					'favoriteId' => array(
+						'type'        => 'ID',
+						'description' => __( 'Resource ID', 'bridge-library' ),
+					),
+				),
+
+				'outputFields'        => array(
+					'id'        => array(
+						'type'        => 'ID',
+						'description' => __( 'User ID', 'bridge-library' ),
+					),
+					'favorites' => array(
+						'type'        => array(
+							'list_of' => 'ID',
+						),
+						'description' => __( 'Resource ID', 'bridge-library' ),
+					),
+				),
+
+				'mutateAndGetPayload' => function( $input, $context, $info ) {
+					$user     = Relay::fromGlobalId( $input['id'] );
+					$resource = Relay::fromGlobalId( $input['favoriteId'] );
+
+					$this->update_favorite_posts( (int) $resource['id'], true, (int) $user['id'] );
+
+					$results = $this->get_favorite_posts( $user['id'] );
+
+					return array(
+						'id'        => $input['id'],
+						'favorites' => $this->convert_favorite_ids_for_graphql( $results, 'resource' ),
+					);
+				},
+			)
+		);
+
+		register_graphql_mutation(
+			'removeUserFavorite',
+			array(
+
+				'inputFields'         => array(
+					'id'         => array(
+						'type'        => 'ID',
+						'description' => __( 'User ID', 'bridge-library' ),
+					),
+					'favoriteId' => array(
+						'type'        => 'ID',
+						'description' => __( 'Resource ID', 'bridge-library' ),
+					),
+				),
+
+				'outputFields'        => array(
+					'id'        => array(
+						'type'        => 'ID',
+						'description' => __( 'User ID', 'bridge-library' ),
+					),
+					'favorites' => array(
+						'type'        => array(
+							'list_of' => 'ID',
+						),
+						'description' => __( 'Resource ID', 'bridge-library' ),
+					),
+				),
+
+				'mutateAndGetPayload' => function( $input, $context, $info ) {
+					$user     = Relay::fromGlobalId( $input['id'] );
+					$resource = Relay::fromGlobalId( $input['favoriteId'] );
+
+					$this->update_favorite_posts( (int) $resource['id'], false, (int) $user['id'] );
+
+					$results = $this->get_favorite_posts( $user['id'] );
+
+					return array(
+						'id'        => $input['id'],
+						'favorites' => $this->convert_favorite_ids_for_graphql( $results, 'resource' ),
+					);
+				},
+			)
+		);
+	}
+
+	/**
+	 * Convert CPT IDs to GraphQL IDs.
+	 *
+	 * @param int[]  $post_ids       CPT IDs.
+	 * @param string $filter_to_type Post type; if set, returns only posts of that type.
+	 *
+	 * @return string[] GraphQL IDs.
+	 */
+	public function convert_favorite_ids_for_graphql( array $post_ids, $filter_to_type = null ) {
+		$ids = array_map(
+			function( $post_id ) use ( $filter_to_type ) {
+				$post_type = get_post_type( $post_id );
+
+				if ( $filter_to_type && $post_type !== $filter_to_type ) {
+					return false;
+				}
+
+				return Relay::toGlobalId( 'post', $post_id );
+			},
+			$post_ids
+		);
+
+		return array_filter( $ids );
 	}
 }
