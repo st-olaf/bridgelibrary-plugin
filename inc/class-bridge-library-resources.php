@@ -956,9 +956,13 @@ class Bridge_Library_Resources extends Bridge_Library {
 			$async = true;
 		}
 
-		$this->background_create_resource_from_libguides_assets( $async );
+		$results = $this->background_create_resource_from_libguides_assets( $async );
 
-		wp_send_json_success( 'Started background update.', 201 );
+		if ( $async ) {
+			wp_send_json_success( 'Started background update.', 201 );
+		} else {
+			wp_send_json_success( 'Finished update for ' . count( $results ) . ' resources.', 200 );
+		}
 	}
 
 	/**
@@ -968,7 +972,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 *
 	 * @param bool $async Whether to run async or not.
 	 *
-	 * @return void Kicks off background update process.
+	 * @return void|array Kicks off background update process; if sync, returns array of CPT IDs.
 	 */
 	public function background_create_resource_from_libguides_assets( $async ) {
 
@@ -1005,14 +1009,17 @@ class Bridge_Library_Resources extends Bridge_Library {
 			}
 
 			// Now start the queue.
-			$libguides_api_12->async->save()->dispatch();
+			return $libguides_api_12->async->save()->dispatch();
 		} else {
+			$assets = array();
 			foreach ( $stolaf_results as $asset ) {
-				$this->create_resource_from_libguides_asset( $asset, 'st-olaf' );
+				$assets[] = $this->create_resource_from_libguides_asset( $asset, 'st-olaf' );
 			}
 			foreach ( $carleton_results as $asset ) {
-				$this->create_resource_from_libguides_asset( $asset, 'carleton' );
+				$assets[] = $this->create_resource_from_libguides_asset( $asset, 'carleton' );
 			}
+
+			return $assets;
 		}
 	}
 
