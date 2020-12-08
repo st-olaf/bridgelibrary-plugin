@@ -149,6 +149,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		add_filter( 'acf/prepare_field/key=field_5d707ba9173d4', array( $this, 'load_course_links_field' ) );
 		add_filter( 'acf/prepare_field/key=field_5cd9abad8a9cb', array( $this, 'disable_primo_image_url_field' ) );
 		add_filter( 'acf/prepare_field/key=field_5cc86dd2d9f71', array( $this, 'disable_primo_image_url_field' ) );
+		add_filter( 'acf/prepare_field/key=field_5fcff25f7b23b', array( $this, 'add_libguides_import_button' ) );
 
 		// Load backend JS.
 		add_action(
@@ -893,7 +894,6 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 * @return void Sends WP JSON response.
 	 */
 	public function ajax_update_libguides_resource_by_id() {
-		$query = array();
 
 		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
@@ -1216,4 +1216,22 @@ class Bridge_Library_Resources extends Bridge_Library {
 		return $asset;
 	}
 
+	/**
+	 * Add nonce and button to message field.
+	 *
+	 * @param array $field ACF field object.
+	 *
+	 * @return array
+	 */
+	public function add_libguides_import_button( $field ) {
+		$url_parts = array(
+			'page'      => 'bridge_library_import_libguides',
+			'nonce'     => wp_create_nonce( 'import_libguides' ),
+			'course_id' => get_the_ID(),
+		);
+
+		$field['message'] .= '<p><a href="' . esc_url( admin_url( 'admin.php?' . http_build_query( $url_parts ) ) ) . '" target="_blank" class="button button-primary">Begin</a></p>';
+
+		return $field;
+	}
 }

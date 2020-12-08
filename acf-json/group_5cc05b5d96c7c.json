@@ -22,6 +22,24 @@
             "maxlength": ""
         },
         {
+            "key": "field_5fcfee7f01690",
+            "label": "Instructions",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 0,
+            "message": "Use this field to associate all the assets from a specific LibGuides resource to this course.",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
             "key": "field_5cc05b642ba7f",
             "label": "Course Code",
             "name": "course_code",
@@ -279,6 +297,24 @@
             "return_format": "id"
         },
         {
+            "key": "field_5fcff25f7b23b",
+            "label": "Import LibGuides Assets",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 0,
+            "message": "Use this to import all assets from a specific LibGuides guide for this course.",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
             "key": "field_5e5819970fbfd",
             "label": "Librarians",
             "name": "librarians",
@@ -321,12 +357,12 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
     "show_in_graphql": 1,
     "graphql_field_name": "courseData",
     "acfcdt_manage_table_definition": 1,
     "acfcdt_table_name": "bridge_library_course_meta",
     "acfcdt_table_definition_file_name": "table_8x5cc08b74179aa",
-    "modified": 1582832353
+    "modified": 1607464724
 }

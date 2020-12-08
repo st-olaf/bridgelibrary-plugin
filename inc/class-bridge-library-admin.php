@@ -80,6 +80,17 @@ class Bridge_Library_Admin {
 			'dashicons-admin-generic'
 		);
 
+		// Add LibGuides import page.
+		add_submenu_page(
+			'bridge_library_settings',
+			__( 'Import LibGuides Assets to Course', 'bridge-library' ),
+			__( 'Import LibGuides Assets to Course', 'bridge-library' ),
+			'manage_options_bridge_library',
+			'bridge_library_import_libguides',
+			array( $this, 'import_libguides_page' ),
+			2
+		);
+
 		// Add ACF site options page.
 		acf_add_options_page(
 			array(
@@ -101,14 +112,14 @@ class Bridge_Library_Admin {
 
 		// Verify permissions.
 		if ( ! current_user_can( 'manage_options_bridge_library' ) ) {
-			echo '<p>Sorry, you’re not allowed to do that.</p>';
+			echo '<p>' . __( 'Sorry, you’re not allowed to do that.', 'bridge-library' ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			wp_die();
 		}
 
 		wp_enqueue_script( 'bridge-library-admin' );
 
 		echo '<div class="wrap">';
-		echo '<h2>Bridge Library Tools</h2>';
+		echo '<h2>' . __( 'Bridge Library Tools', 'bridge-library' ) . '</h2>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		/**
 		 * Run actions.
@@ -118,4 +129,66 @@ class Bridge_Library_Admin {
 		echo '</div>';
 	}
 
+	/**
+	 * Display settings page with LibGuides import utility.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function import_libguides_page() {
+
+		// Verify permissions.
+		if ( ! current_user_can( 'manage_options_bridge_library' ) ) {
+			echo '<p>' . __( 'Sorry, you’re not allowed to do that.', 'bridge-library' ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			wp_die();
+		}
+
+		wp_enqueue_script( 'bridge-library-admin' );
+		?>
+		<div class="wrap">
+		<h2><?php _e( 'Import LibGuides Assets', 'bridge-library' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></h2>
+
+		<p>Use this utility to import all the resources from the specified LibGuide guide and attach them to the course.</p>
+
+		<?php
+		if ( ! array_key_exists( 'course_id', $_GET ) || ! array_key_exists( 'nonce', $_GET ) || ! wp_verify_nonce( $_GET['nonce'], 'import_libguides' ) ) {
+			echo '<p>' . __( 'Please go to a specific course and click the button to start this process.', 'bridge-library' ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} else {
+			$course = get_post( absint( $_GET['course_id'] ) );
+			?>
+
+			<form class="bridge-library-admin-ajax">
+				<table class="form-table">
+					<tr>
+						<th>Import LibGuides Assets to Course</th>
+						<td>
+							<input type="hidden" name="action" value="import_libguides_to_course" />
+							<?php wp_nonce_field( 'import_libguides_to_course' ); ?>
+
+							<p class="messages"></p>
+
+							<p>Course: <?php echo get_the_title( $course ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+							<input type="hidden" name="post_id" value="<?php echo $course->ID; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
+
+							<p><label for="libguides_guide_id">LibGuides Guide ID: <input type="text" name="libguides_guide_id" placeholder="14174" /></label></p>
+
+							<p>Run:
+								<label><input type="radio" value="async" class="wait-for" name="async" checked="checked" />asynchronously</label>
+								<label><input type="radio" value="sync" class="wait-for" name="async" />synchronously</label>
+							</p>
+
+							<p><input type="submit" class="button button-primary" value="Import All Assets" /></p>
+						</td>
+					</tr>
+				</table>
+			</form>
+
+			<?php
+		}
+		?>
+
+		</div>
+		<?php
+	}
 }
