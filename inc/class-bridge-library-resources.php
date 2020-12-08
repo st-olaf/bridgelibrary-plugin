@@ -713,12 +713,14 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$libguides_term = get_term_by( 'name', 'LibGuides', 'resource_type' );
 
 		$terms = array( $libguides_term->term_id );
-		foreach ( $asset['az_types'] as $type ) {
-			$term = term_exists( $type['name'], 'resource_type' );
-			if ( ! $term ) {
-				$term = wp_insert_term( $type['name'], 'resource_type', array( 'parent' => $libguides_term->term_id ) );
+		if ( array_key_exists( 'az_types', $asset ) ) {
+			foreach ( $asset['az_types'] as $type ) {
+				$term = term_exists( $type['name'], 'resource_type' );
+				if ( ! $term ) {
+					$term = wp_insert_term( $type['name'], 'resource_type', array( 'parent' => $libguides_term->term_id ) );
+				}
+				$terms[] = (int) $term['term_id'];
 			}
-			$terms[] = (int) $term['term_id'];
 		}
 		wp_set_object_terms( $asset_id, $terms, 'resource_type', true );
 
