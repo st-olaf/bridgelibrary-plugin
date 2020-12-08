@@ -1352,6 +1352,8 @@ class Bridge_Library_Users {
 	public function admin_clean_up_users() {
 		wp_enqueue_script( 'bridge-library-admin' );
 		?>
+		<h2>Users</h2>
+
 		<form class="bridge-library-admin-ajax">
 			<table class="form-table">
 				<tr>
