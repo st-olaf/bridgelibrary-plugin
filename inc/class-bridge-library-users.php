@@ -1787,7 +1787,7 @@ class Bridge_Library_Users {
 					return false;
 				}
 
-				return Relay::toGlobalId( $post_type, $post_id );
+				return Relay::toGlobalId( 'post', $post_id );
 			},
 			$post_ids
 		);
