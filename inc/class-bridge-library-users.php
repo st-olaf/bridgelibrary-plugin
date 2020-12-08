@@ -415,7 +415,7 @@ class Bridge_Library_Users {
 		add_role(
 			'bridge_library_staff',
 			'Bridge Library Staff',
-			[
+			array(
 				'read'                          => true,
 
 				'edit_others_courses'           => true,
@@ -441,7 +441,7 @@ class Bridge_Library_Users {
 				'manage_terms_bridge_library'   => true,
 
 				'manage_options_bridge_library' => true,
-			]
+			)
 		);
 
 		// Add permissions to admin role.
@@ -1128,16 +1128,15 @@ class Bridge_Library_Users {
 			$data['fees_count'] = $fees['total_record_count'];
 		}
 
-        $cleandata = str_replace('\\', '\\\\', json_encode($data, true));
+		$clean_data = str_replace( '\\', '\\\\', wp_json_encode( $data, true ) );
 
-		update_field( 'circulation_data', $cleandata, 'user_' . $user_id );
+		update_field( 'circulation_data', $clean_data, 'user_' . $user_id );
 
 		$this->update_cache_timestamp( 'circulation_data', $user_id );
 
 		do_action( 'bl_cache_data', 'circulation_data', $user_id );
 
 		$response = 'Retrieved ' . $data['loans_count'] . ' loans, ' . $data['requests_count'] . ' requests, and ' . $data['fees_count'] . ' fees.';
-
 
 		return $response;
 	}
@@ -1321,7 +1320,7 @@ class Bridge_Library_Users {
 		);
 		$old_users = $wpdb->get_col( $query, 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_users with meta_query would be, and query is prepared above.
 
-		// If empty, try wp_usermeta.
+		// If empty, try user meta.
 		if ( empty( $old_users ) ) {
 			$query     = $wpdb->prepare(
 				"SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = 'expiration_date' AND meta_value IS NOT NULL AND meta_value < %d;",
