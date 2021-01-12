@@ -139,6 +139,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		add_action( 'wp_ajax_update_libguides_resource_by_id', array( $this, 'ajax_update_libguides_resource_by_id' ) );
 		add_action( 'wp_ajax_start_bg_libguides_assets_update', array( $this, 'ajax_start_bg_libguides_assets_update' ) );
 		add_action( 'wp_ajax_start_bg_libguides_guides_update', array( $this, 'ajax_start_bg_libguides_guides_update' ) );
+		add_action( 'wp_ajax_import_libguides_to_course', array( $this, 'ajax_import_libguides_to_course' ) );
 
 		// Force Publication Year to a string for GraphQL.
 		add_filter( 'acf/load_value/key=field_5cc87637abbc6', array( $this, 'force_publication_year_string_load' ) );
@@ -149,6 +150,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		add_filter( 'acf/prepare_field/key=field_5d707ba9173d4', array( $this, 'load_course_links_field' ) );
 		add_filter( 'acf/prepare_field/key=field_5cd9abad8a9cb', array( $this, 'disable_primo_image_url_field' ) );
 		add_filter( 'acf/prepare_field/key=field_5cc86dd2d9f71', array( $this, 'disable_primo_image_url_field' ) );
+		add_filter( 'acf/prepare_field/key=field_5fcff25f7b23b', array( $this, 'add_libguides_import_button' ) );
 
 		// Load backend JS.
 		add_action(
@@ -713,12 +715,14 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$libguides_term = get_term_by( 'name', 'LibGuides', 'resource_type' );
 
 		$terms = array( $libguides_term->term_id );
-		foreach ( $asset['az_types'] as $type ) {
-			$term = term_exists( $type['name'], 'resource_type' );
-			if ( ! $term ) {
-				$term = wp_insert_term( $type['name'], 'resource_type', array( 'parent' => $libguides_term->term_id ) );
+		if ( array_key_exists( 'az_types', $asset ) ) {
+			foreach ( $asset['az_types'] as $type ) {
+				$term = term_exists( $type['name'], 'resource_type' );
+				if ( ! $term ) {
+					$term = wp_insert_term( $type['name'], 'resource_type', array( 'parent' => $libguides_term->term_id ) );
+				}
+				$terms[] = (int) $term['term_id'];
 			}
-			$terms[] = (int) $term['term_id'];
 		}
 		wp_set_object_terms( $asset_id, $terms, 'resource_type', true );
 
@@ -891,7 +895,6 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 * @return void Sends WP JSON response.
 	 */
 	public function ajax_update_libguides_resource_by_id() {
-		$query = array();
 
 		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
@@ -954,9 +957,13 @@ class Bridge_Library_Resources extends Bridge_Library {
 			$async = true;
 		}
 
-		$this->background_create_resource_from_libguides_assets( $async );
+		$results = $this->background_create_resource_from_libguides_assets( $async );
 
-		wp_send_json_success( 'Started background update.', 201 );
+		if ( $async ) {
+			wp_send_json_success( 'Started background update.', 201 );
+		} else {
+			wp_send_json_success( 'Finished update for ' . count( $results ) . ' resources.', 200 );
+		}
 	}
 
 	/**
@@ -966,7 +973,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 *
 	 * @param bool $async Whether to run async or not.
 	 *
-	 * @return void Kicks off background update process.
+	 * @return void|array Kicks off background update process; if sync, returns array of CPT IDs.
 	 */
 	public function background_create_resource_from_libguides_assets( $async ) {
 
@@ -1003,14 +1010,17 @@ class Bridge_Library_Resources extends Bridge_Library {
 			}
 
 			// Now start the queue.
-			$libguides_api_12->async->save()->dispatch();
+			return $libguides_api_12->async->save()->dispatch();
 		} else {
+			$assets = array();
 			foreach ( $stolaf_results as $asset ) {
-				$this->create_resource_from_libguides_asset( $asset, 'st-olaf' );
+				$assets[] = $this->create_resource_from_libguides_asset( $asset, 'st-olaf' );
 			}
 			foreach ( $carleton_results as $asset ) {
-				$this->create_resource_from_libguides_asset( $asset, 'carleton' );
+				$assets[] = $this->create_resource_from_libguides_asset( $asset, 'carleton' );
 			}
+
+			return $assets;
 		}
 	}
 
@@ -1036,6 +1046,42 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$this->background_create_resource_from_libguides_guides( $async );
 
 		wp_send_json_success( 'Started background update.', 201 );
+	}
+
+	/**
+	 * Import specific LibGuides guides to a specific course.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void Sends WP JSON response.
+	 */
+	public function ajax_import_libguides_to_course() {
+		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+			wp_send_json_error( 'Access denied.', 401 );
+			wp_die();
+		}
+
+		if ( ! isset( $_REQUEST['post_id'] ) ) {
+			wp_send_json_error( 'Missing resource ID.', 400 );
+			wp_die();
+		}
+
+		if ( ! isset( $_REQUEST['libguides_guide_id'] ) ) {
+			wp_send_json_error( 'Missing LibGuides Guide ID.', 400 );
+			wp_die();
+		}
+
+		$post_id = absint( $_REQUEST['post_id'] );
+
+		$libguides = $this->background_create_resource_from_libguides_guides( false );
+
+		$core_resources = get_field( 'core_resources', $post_id );
+		if ( empty( $core_resources ) ) {
+			$core_resources = array();
+		}
+		update_field( 'core_resources', array_merge( $core_resources, $libguides ), $post_id );
+
+		wp_send_json_success( 'Finished update for ' . count( $libguides ) . ' resources. See the <a href="' . get_edit_post_link( $post_id ) . '">Core Resources field</a>.', 200 );
 	}
 
 	/**
@@ -1214,4 +1260,22 @@ class Bridge_Library_Resources extends Bridge_Library {
 		return $asset;
 	}
 
+	/**
+	 * Add nonce and button to message field.
+	 *
+	 * @param array $field ACF field object.
+	 *
+	 * @return array
+	 */
+	public function add_libguides_import_button( $field ) {
+		$url_parts = array(
+			'page'      => 'bridge_library_import_libguides',
+			'nonce'     => wp_create_nonce( 'import_libguides' ),
+			'course_id' => get_the_ID(),
+		);
+
+		$field['message'] .= '<p><a href="' . esc_url( admin_url( 'admin.php?' . http_build_query( $url_parts ) ) ) . '" target="_blank" class="button button-primary">Begin</a></p>';
+
+		return $field;
+	}
 }

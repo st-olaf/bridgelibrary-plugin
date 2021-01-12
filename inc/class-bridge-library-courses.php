@@ -116,8 +116,9 @@ class Bridge_Library_Courses extends Bridge_Library {
 		// Schedule automatic updates.
 		add_action( 'bridge_library_schedule_daily', array( $this, 'background_update_courses' ) );
 
-		// Add category-level resources to post related resources.
+		// Add category-level resources and librarians to course related resources and librarians.
 		add_filter( 'acf/load_value/key=field_5cc326f90696b', array( $this, 'include_academic_department_resources' ), 10, 3 );
+		add_filter( 'acf/load_value/key=field_5e5819970fbfd', array( $this, 'include_academic_department_librarians' ), 10, 3 );
 
 		// Add institution and course number data to admin list view.
 		add_action( 'manage_posts_extra_tablenav', array( $this, 'include_course_data_in_title' ) );
@@ -743,7 +744,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	}
 
 	/**
-	 * Include department-related resources for courses.
+	 * Include department-level related resources for courses.
 	 *
 	 * @since 1.0.0
 	 *
@@ -769,6 +770,53 @@ class Bridge_Library_Courses extends Bridge_Library {
 				}
 				// De-dupe it.
 				$value = array_unique( $value );
+			}
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Include department-level librarians for courses.
+	 * If any librarians are associated with the course, they should supersede the department-level librarian(s).
+	 *
+	 * @see https://git.luminfire.net/clients/stolaf-bridge/bridge-library-plugin-v1/issues/9.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param mixed $value   ACF field value.
+	 * @param int   $post_id Post ID.
+	 * @param array $field   ACF field object.
+	 *
+	 * @return mixed         ACF field value.
+	 */
+	public function include_academic_department_librarians( $value, $post_id, $field ) {
+
+		// Include term results for GraphQL results. We don’t want to deal with tracking and unsetting changes to all posts when a resource->academic department relationship is updated.
+		if ( isset( $_SERVER['REQUEST_URI'] ) && '/graphql' === $_SERVER['REQUEST_URI'] ) {
+			if ( is_null( $value ) ) {
+				$value = array();
+			}
+
+			// If no librarians are set for the course, get the department-level librarians.
+			if ( empty( $value ) ) {
+				$librarian_query = new WP_Query(
+					array(
+						'post_type'      => 'librarian',
+						'posts_per_page' => -1,
+						'fields'         => 'ids',
+						'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+							array(
+								'taxonomy' => 'academic_department',
+								'terms'    => wp_get_post_terms( $post_id, 'academic_department', array( 'fields' => 'ids' ) ),
+							),
+						),
+					)
+				);
+
+				if ( $librarian_query->have_posts() ) {
+					$value = $librarian_query->posts;
+				}
 			}
 		}
 

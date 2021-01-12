@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] — 2020-02
+- Feature: update some Primo API settings and fields to comply with their changes
+- Feature: add course-level librarians
+- Bugfix: prevent reading lists from overwriting related resources
+- Bugfix: prevent multiple courses from appearing on single course template
+
 ## [1.0.5] — 2019-12-20
 - Feature: add course term to resource/course mapping field
 - Bugfix: prepend resource URLs with `http` if no protocol is specified

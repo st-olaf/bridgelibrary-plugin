@@ -118,8 +118,15 @@
                 "type": "acf_field_name",
                 "identifier": "related_courses_resources"
             }
+        },
+        {
+            "name": "librarians",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "librarians"
+            }
         }
     ],
-    "hash": "cf201e037ced0f6bd7dcf17c31548d1d",
-    "modified": 1576868640
+    "hash": "b4e6e7259544f3e6825cbc0d1712ba2e",
+    "modified": 1607463554
 }
