@@ -691,9 +691,11 @@ class Bridge_Library_Courses extends Bridge_Library {
 						$existing_resources = array();
 					}
 
-					foreach ( $citations as $citation ) {
-						$resource_id        = $resources->update_reading_list( $citation, $post_id );
-						$active_resources[] = (int) $resource_id;
+					if ( is_array( $citations ) ) {
+						foreach ( $citations as $citation ) {
+							$resource_id        = $resources->update_reading_list( $citation, $post_id );
+							$active_resources[] = (int) $resource_id;
+						}
 					}
 
 					$active_resources = array_merge( $active_resources, $existing_resources );
