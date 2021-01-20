@@ -691,14 +691,13 @@ class Bridge_Library_Courses extends Bridge_Library {
 						$existing_resources = array();
 					}
 
-                    foreach ( $citations as $citation ) {
-                        $resource_id = $resources->update_reading_list( $citation, $post_id );
+					foreach ( $citations as $citation ) {
+						$resource_id        = $resources->update_reading_list( $citation, $post_id );
+						$active_resources[] = (int) $resource_id;
+					}
 
-                        $active_resources[] = (int) $resource_id;
-                    }
-
-                    $active_resources = array_merge($active_resources, $existing_resources);
-                    $active_resources = array_unique($active_resources);
+					$active_resources = array_merge( $active_resources, $existing_resources );
+					$active_resources = array_unique( $active_resources );
 
 					// Update the course post.
 					update_field( 'related_courses_resources', $active_resources, $post_id );
