@@ -220,9 +220,9 @@ class Bridge_Library_User_Interest_Feeds {
 	 * @return string
 	 */
 	public function get_feed_contents( $cpt_id, $institution ) {
-		// if ( get_transient( $this->get_cache_key( $cpt_id, $institution ) ) ) {
-		// 	return get_transient( $this->get_cache_key( $cpt_id, $institution ) );
-		// }
+		if ( get_transient( $this->get_cache_key( $cpt_id, $institution ) ) ) {
+			return get_transient( $this->get_cache_key( $cpt_id, $institution ) );
+		}
 
 		$feed_url = get_field( 'feed_url', $cpt_id );
 
@@ -244,6 +244,7 @@ class Bridge_Library_User_Interest_Feeds {
 			$url = $item->children( 'alma', true )->link;
 
 			$item->children( 'alma', true )->link = $this->replace_institution_url( $url, $institution );
+
 			$item->addChild( 'link' );
 			$item->link = $this->replace_institution_url( $url, $institution );
 			$item->addChild( 'guid' );
