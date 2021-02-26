@@ -148,7 +148,7 @@ class Bridge_Library_User_Interest_Feeds {
 		}
 
 		delete_transient( $this->get_cache_key( $post_id, 'carleton' ) );
-		delete_transient( $this->get_cache_key( $post_id, 'st-olaf' ) );
+		delete_transient( $this->get_cache_key( $post_id, 'stolaf' ) );
 	}
 
 	/**
@@ -246,10 +246,13 @@ class Bridge_Library_User_Interest_Feeds {
 		// Note: if we don’t replace the encoded '&amp;', it’ll be double-encoded.
 		$search = array( '&amp;', 'INST:CCO', 'scope=CCO' );
 		switch ( $institution ) {
+			case 'stolaf':
+			case 'stolaf.edu':
 			case 'st-olaf':
 				$replace = array( '&', 'INST:SOC', 'scope=SOC' );
 				break;
 			case 'carleton':
+			case 'carleton.edu':
 			default:
 				$replace = array( '&', 'INST:CCO', 'scope=CCO' );
 				break;
