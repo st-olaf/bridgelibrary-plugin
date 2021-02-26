@@ -58,6 +58,7 @@ class Bridge_Library_Users {
 		'course',
 		'resource',
 		'librarian',
+		'user_interest_feed',
 	);
 
 	/**
@@ -419,31 +420,37 @@ class Bridge_Library_Users {
 			'bridge_library_staff',
 			'Bridge Library Staff',
 			array(
-				'read'                          => true,
+				'read'                                 => true,
 
-				'edit_others_courses'           => true,
-				'edit_published_courses'        => true,
-				'publish_courses'               => true,
-				'delete_others_courses'         => false,
-				'delete_published_courses'      => false,
+				'edit_others_courses'                  => true,
+				'edit_published_courses'               => true,
+				'publish_courses'                      => true,
+				'delete_others_courses'                => false,
+				'delete_published_courses'             => false,
 
-				'edit_others_resources'         => true,
-				'edit_published_resources'      => true,
-				'publish_resources'             => true,
-				'delete_others_resources'       => true,
-				'delete_published_resources'    => true,
+				'edit_others_resources'                => true,
+				'edit_published_resources'             => true,
+				'publish_resources'                    => true,
+				'delete_others_resources'              => true,
+				'delete_published_resources'           => true,
 
-				'edit_others_librarians'        => true,
-				'edit_published_librarians'     => true,
-				'publish_librarians'            => true,
-				'delete_others_librarians'      => true,
-				'delete_published_librarians'   => true,
+				'edit_others_librarians'               => true,
+				'edit_published_librarians'            => true,
+				'publish_librarians'                   => true,
+				'delete_others_librarians'             => true,
+				'delete_published_librarians'          => true,
 
-				'add_terms_bridge_library'      => true,
-				'edit_terms_bridge_library'     => true,
-				'manage_terms_bridge_library'   => true,
+				'edit_others_user_interest_feeds'      => true,
+				'edit_published_user_interest_feeds'   => true,
+				'publish_user_interest_feeds'          => true,
+				'delete_others_user_interest_feeds'    => false,
+				'delete_published_user_interest_feeds' => false,
 
-				'manage_options_bridge_library' => true,
+				'add_terms_bridge_library'             => true,
+				'edit_terms_bridge_library'            => true,
+				'manage_terms_bridge_library'          => true,
+
+				'manage_options_bridge_library'        => true,
 			)
 		);
 
@@ -467,6 +474,12 @@ class Bridge_Library_Users {
 		$admin->add_cap( 'publish_librarians' );
 		$admin->add_cap( 'delete_others_librarians' );
 		$admin->add_cap( 'delete_published_librarians' );
+
+		$admin->add_cap( 'edit_others_user_interest_feeds' );
+		$admin->add_cap( 'edit_published_user_interest_feeds' );
+		$admin->add_cap( 'publish_user_interest_feeds' );
+		$admin->add_cap( 'delete_others_user_interest_feeds' );
+		$admin->add_cap( 'delete_published_user_interest_feeds' );
 
 		$admin->add_cap( 'add_terms_bridge_library' );
 		$admin->add_cap( 'edit_terms_bridge_library' );
