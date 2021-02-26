@@ -58,6 +58,8 @@ class Bridge_Library_User_Interest_Feeds {
 
 		// Feed.
 		add_action( 'init', array( $this, 'register_feed' ) );
+
+		add_filter( 'the_content', array( $this, 'maybe_render_our_feed_url' ) );
 	}
 
 	/**
@@ -149,6 +151,23 @@ class Bridge_Library_User_Interest_Feeds {
 
 		delete_transient( $this->get_cache_key( $post_id, 'carleton' ) );
 		delete_transient( $this->get_cache_key( $post_id, 'stolaf' ) );
+	}
+
+	/**
+	 * Display custom feed URL on single view.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $content Markup.
+	 *
+	 * @return string
+	 */
+	public function maybe_render_our_feed_url( $content ) {
+		if ( get_post_type() === $this->post_type ) {
+			$content .= $this->build_feed_url( get_the_ID() );
+		}
+
+		return $content;
 	}
 
 	/**
