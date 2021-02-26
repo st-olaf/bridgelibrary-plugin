@@ -75,6 +75,24 @@ class Bridge_Library_User_Interest_Feeds {
 	}
 
 	/**
+	 * Build our custom feed URL.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int    $cpt_id      CPT ID.
+	 * @param string $institution Institution slug.
+	 *
+	 * @return string
+	 */
+	public function build_feed_url( $cpt_id, $institution = null ) {
+		if ( is_null( $institution ) ) {
+			$institution = str_replace( '.edu', '', get_field( 'bridge_library_institution', 'user_' . get_current_user_id() ) );
+		}
+
+		return home_url( 'user-interest-feed/?feed_id=' . $cpt_id . '&institution=' . $institution );
+	}
+
+	/**
 	 * Register the CPT.
 	 *
 	 * @since 1.0.0
@@ -200,7 +218,7 @@ class Bridge_Library_User_Interest_Feeds {
 		$xml = simplexml_load_string( $contents );
 
 		// Replace feed URL.
-		$xml->channel->link = home_url( 'user-interest-feed/?feed_id=' . $cpt_id . '&institution=' . $institution );
+		$xml->channel->link = $this->build_feed_url( $cpt_id, $institution );
 
 		// Replace all item links.
 		foreach ( $xml->channel->item as $item ) {
