@@ -5,6 +5,8 @@
  * @package bridge-library
  */
 
+use GraphQLRelay\Node\Node;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -59,7 +61,11 @@ class Bridge_Library_User_Interest_Feeds {
 		// Feed.
 		add_action( 'init', array( $this, 'register_feed' ) );
 
+		// Display per-institution URL on single view.
 		add_filter( 'the_content', array( $this, 'maybe_render_our_feed_url' ) );
+
+		// Add per-institution URL to GraphQL fields.
+		add_action( 'graphql_register_types', array( $this, 'graphql_register_standalone_user_interest_feed' ) );
 	}
 
 	/**
@@ -300,5 +306,30 @@ class Bridge_Library_User_Interest_Feeds {
 		}
 
 		return str_replace( $search, $replace, $url );
+	}
+
+	/**
+	 * Register custom feed URL for GraphQL.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function graphql_register_standalone_user_interest_feed() {
+		$config = array(
+			'type'    => 'String',
+			'args'    => array(
+				'userId' => array(
+					'type'        => 'ID',
+					'description' => __( 'Enter your user ID to determine the correct institution', 'bridge-library' ),
+				),
+			),
+			'resolve' => function( $root, $args, $context, $info ) {
+				$user_object = Node::fromGlobalId( $args['userId'] );
+				return $this->build_feed_url( get_the_ID(), $this->get_user_institution( $user_object['id'] ) );
+			},
+		);
+		register_graphql_field( 'UserInterestFeed', 'subscribeUrl', $config );
+		register_graphql_field( 'UserInterestFeeds', 'subscribeUrl', $config );
 	}
 }
