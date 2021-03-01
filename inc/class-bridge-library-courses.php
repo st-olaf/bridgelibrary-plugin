@@ -955,7 +955,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		$course_code   = explode( '|', get_field( 'course_code', $post ) );
 
 		// Add term to ACF fields but not course CPT list.
-		if ( 'edit-course' === get_current_screen()->id ) {
+		if ( get_current_screen() && 'edit-course' === get_current_screen()->id ) {
 			$course_term = array();
 		} else {
 			$course_term = get_the_terms( $post, 'course_term' );

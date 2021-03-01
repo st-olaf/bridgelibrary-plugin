@@ -1500,7 +1500,12 @@ class Bridge_Library_Users {
 			$user_id = get_current_user_id();
 		}
 
-		return get_field( 'user_favorites', 'user_' . $user_id );
+		$user_favorites = get_field( 'user_favorites', 'user_' . $user_id );
+		if ( ! $user_favorites ) {
+			$user_favorites = array();
+		}
+
+		return $user_favorites;
 	}
 
 	/**
