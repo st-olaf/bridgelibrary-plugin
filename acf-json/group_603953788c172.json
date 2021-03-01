@@ -42,8 +42,8 @@
     "active": true,
     "description": "",
     "show_in_graphql": 0,
-    "graphql_field_name": "user_interest_feeds",
+    "graphql_field_name": "details",
     "acfcdt_manage_table_definition": 0,
     "acfcdt_table_definition_file_name": "table_159604x60395378924c0",
-    "modified": 1614370570
+    "modified": 1614617616
 }

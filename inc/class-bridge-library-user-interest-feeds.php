@@ -108,8 +108,8 @@ class Bridge_Library_User_Interest_Feeds {
 				'menu_icon'           => 'dashicons-rss',
 				'show_in_rest'        => true,
 				'show_in_graphql'     => true,
-				'graphql_single_name' => 'User Interest Feed',
-				'graphql_plural_name' => 'User Interest Feeds',
+				'graphql_single_name' => 'UserInterestFeed',
+				'graphql_plural_name' => 'UserInterestFeeds',
 				'capability_type'     => 'user_interest_feed',
 				'capabilities'        => array(
 					'publish_posts'       => 'publish_user_interest_feeds',
