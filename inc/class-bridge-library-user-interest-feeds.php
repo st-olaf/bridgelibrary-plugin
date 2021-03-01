@@ -77,6 +77,23 @@ class Bridge_Library_User_Interest_Feeds {
 	}
 
 	/**
+	 * Get the current user’s institution.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $user_id WP user ID.
+	 *
+	 * @return string
+	 */
+	private function get_user_institution( $user_id = null ) {
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		return str_replace( '.edu', '', get_field( 'bridge_library_institution', 'user_' . $user_id ) );
+	}
+
+	/**
 	 * Build our custom feed URL.
 	 *
 	 * @since 1.0.0
@@ -88,7 +105,7 @@ class Bridge_Library_User_Interest_Feeds {
 	 */
 	public function build_feed_url( $cpt_id, $institution = null ) {
 		if ( is_null( $institution ) ) {
-			$institution = str_replace( '.edu', '', get_field( 'bridge_library_institution', 'user_' . get_current_user_id() ) );
+			$institution = $this->get_user_institution();
 		}
 
 		return home_url( 'user-interest-feed/?feed_id=' . $cpt_id . '&institution=' . $institution );
