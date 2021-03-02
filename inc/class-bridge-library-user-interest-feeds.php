@@ -265,14 +265,22 @@ class Bridge_Library_User_Interest_Feeds {
 
 		// Replace all item links.
 		foreach ( $xml->channel->item as $item ) {
-			$url = $item->children( 'alma', true )->link;
+			$alma_url = $item->children( 'alma', true )->link;
 
-			$item->children( 'alma', true )->link = $this->replace_institution_url( $url, $institution );
+			// Handle items without alma:link details.
+			if ( empty( $alma_url ) ) {
+				$item->link = $this->replace_institution_url( $item->link, $institution );
+			} else {
 
-			$item->addChild( 'link' );
-			$item->link = $this->replace_institution_url( $url, $institution );
-			$item->addChild( 'guid' );
-			$item->guid = $this->replace_institution_url( $url, $institution );
+				$item->children( 'alma', true )->link = $this->replace_institution_url( $alma_url, $institution );
+				$item->addChild( 'link' );
+				$item->link = $this->replace_institution_url( $alma_url, $institution );
+			}
+
+			if ( empty( $item->guid ) ) {
+				$item->addChild( 'guid' );
+			}
+			$item->guid = $item->link;
 		}
 
 		set_transient( $this->get_cache_key( $cpt_id, $institution ), $xml->asXML(), 12 * HOUR_IN_SECONDS );
