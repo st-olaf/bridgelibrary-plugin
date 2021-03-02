@@ -66,6 +66,7 @@ class Bridge_Library_User_Interest_Feeds {
 
 		// Add per-institution URL to GraphQL fields.
 		add_action( 'graphql_register_types', array( $this, 'graphql_register_standalone_user_interest_feed' ) );
+		add_action( 'graphql_register_types', array( $this, 'graphql_register_all_feeds_for_user' ) );
 	}
 
 	/**
@@ -317,19 +318,90 @@ class Bridge_Library_User_Interest_Feeds {
 	 */
 	public function graphql_register_standalone_user_interest_feed() {
 		$config = array(
-			'type'    => 'String',
-			'args'    => array(
+			'type'        => 'String',
+			'description' => __( 'User interest feeds', 'bridge-library' ),
+			'args'        => array(
 				'userId' => array(
 					'type'        => 'ID',
 					'description' => __( 'Enter your user ID to determine the correct institution', 'bridge-library' ),
 				),
 			),
-			'resolve' => function( $root, $args, $context, $info ) {
-				$user_object = Node::fromGlobalId( $args['userId'] );
-				return $this->build_feed_url( get_the_ID(), $this->get_user_institution( $user_object['id'] ) );
+			'resolve'     => function( $root, $args, $context, $info ) {
+				// If $root is an array, it’s coming from the graphql_register_all_feeds_for_user() method and we can just pass it on through.
+				if ( is_array( $root ) && array_key_exists( 'subscribeUrl', $root ) ) {
+					return $root['subscribeUrl'];
+				}
+
+				$user_id = 0;
+				if ( array_key_exists( 'userId', $args ) ) {
+					$user_object = Node::fromGlobalId( $args['userId'] );
+					$user_id     = $user_object['id'];
+				} elseif ( array_key_exists( 'email', $info->variableValues ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$user = get_user_by( 'email', $info->variableValues['email'] ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					if ( is_a( $user, WP_User::class ) ) {
+						$user_id = $user->ID;
+					}
+				}
+				return $this->build_feed_url( get_the_ID(), $this->get_user_institution( $user_id ) );
 			},
 		);
 		register_graphql_field( 'UserInterestFeed', 'subscribeUrl', $config );
 		register_graphql_field( 'UserInterestFeeds', 'subscribeUrl', $config );
+
+		// Register a custom `feedName` field.
+		register_graphql_field(
+			'UserInterestFeed',
+			'feedName',
+			array(
+				'type'        => 'String',
+				'description' => __( 'Alias of the post title.', 'bridge-library' ),
+				'resolve'     => function( $root, $args, $context, $info ) {
+					if ( is_array( $root ) ) {
+						return get_the_title( $root['id'] );
+					} else {
+						return get_the_title( $root->fields['databaseId'] );
+					}
+				},
+			)
+		);
+	}
+
+	/**
+	 * Return all user interest feeds on a User graphql model.
+	 *
+	 * Simplifies the frontend React logic.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function graphql_register_all_feeds_for_user() {
+		$config = array(
+			'type'        => array( 'list_of' => 'UserInterestFeed' ),
+			'description' => __( 'All available user interest feeds', 'bridge-library' ),
+			'resolve'     => function( $root, $args, $context, $info ) {
+				$feeds = array();
+				$posts = new WP_Query(
+					array(
+						'post_type'      => $this->post_type,
+						'posts_per_page' => -1,
+					)
+				);
+
+				foreach ( $posts->posts as $post ) {
+					$feeds[] = array(
+						'id'           => $post->ID,
+						'title'        => get_the_title( $post ),
+						'name'         => get_the_title( $post ),
+						'slug'         => get_post_field( 'post_name', $post ),
+						'subscribeUrl' => $this->build_feed_url( $post->ID, $this->get_user_institution( $root->fields['userId'] ) ),
+					);
+				}
+
+				return $feeds;
+			},
+
+		);
+		register_graphql_field( 'User', 'userInterestFeeds', $config );
 	}
 }
