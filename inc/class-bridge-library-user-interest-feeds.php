@@ -134,6 +134,10 @@ class Bridge_Library_User_Interest_Feeds {
 				'show_in_graphql'     => true,
 				'graphql_single_name' => 'UserInterestFeed',
 				'graphql_plural_name' => 'UserInterestFeeds',
+				'supports'            => array(
+					'title',
+					'page-attributes',
+				),
 				'capability_type'     => 'user_interest_feed',
 				'capabilities'        => array(
 					'publish_posts'       => 'publish_user_interest_feeds',

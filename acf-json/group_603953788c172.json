@@ -34,16 +34,12 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": [
-        "the_content",
-        "excerpt",
-        "discussion"
-    ],
+    "hide_on_screen": "",
     "active": true,
     "description": "",
     "show_in_graphql": 1,
     "graphql_field_name": "details",
     "acfcdt_manage_table_definition": 0,
     "acfcdt_table_definition_file_name": "table_159604x60395378924c0",
-    "modified": 1614636852
+    "modified": 1614810238
 }
