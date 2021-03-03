@@ -151,6 +151,10 @@ class Bridge_Library_User_Interest_Feeds {
 					'read_post'           => 'read_user_interest_feed',
 				),
 				'admin_cols'          => array(
+					'order'    => array(
+						'title'      => 'Order',
+						'post_field' => 'menu_order',
+					),
 					'feed_url' => array(
 						'title'    => 'Feed URL',
 						'meta_key' => 'feed_url', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
