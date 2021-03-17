@@ -495,8 +495,14 @@ class Bridge_Library_User_Interest_Feeds {
 					),
 				),
 				'resolve'     => function( $root, $args, $context, $info ) {
+					if ( is_array( $root ) ) {
+						$cpt_id = $root['id'];
+					} else {
+						$cpt_id = get_the_ID();
+					}
+
 					$user_id = $this->get_user_id_from_args( $args, $info );
-					return $this->get_recent_feed_items( get_the_ID(), $this->get_user_institution( $user_id ) );
+					return $this->get_recent_feed_items( $cpt_id, $this->get_user_institution( $user_id ) );
 				},
 			)
 		);
@@ -533,6 +539,7 @@ class Bridge_Library_User_Interest_Feeds {
 						'name'         => get_the_title( $post ),
 						'slug'         => get_post_field( 'post_name', $post ),
 						'subscribeUrl' => $this->build_feed_url( $post->ID, $this->get_user_institution( $root->fields['userId'] ) ),
+						'recentItems'  => $this->get_recent_feed_items( $post->ID, $this->get_user_institution( $root->fields['userId'] ) ),
 					);
 				}
 
