@@ -70,7 +70,7 @@ class Bridge_Library_User_Interest_Feeds {
 	}
 
 	/**
-	 * Get the cache key.
+	 * Get the feed contents cache key.
 	 *
 	 * @since 1.0.0
 	 *
@@ -79,7 +79,7 @@ class Bridge_Library_User_Interest_Feeds {
 	 *
 	 * @return string
 	 */
-	private function get_cache_key( $cpt_id, $institution ) {
+	private function get_feed_contents_cache_key( $cpt_id, $institution ) {
 		return 'user-interest-feeds-' . $cpt_id . '-' . hash( 'sha256', $institution );
 	}
 
@@ -181,8 +181,8 @@ class Bridge_Library_User_Interest_Feeds {
 			return;
 		}
 
-		delete_transient( $this->get_cache_key( $post_id, 'carleton' ) );
-		delete_transient( $this->get_cache_key( $post_id, 'stolaf' ) );
+		delete_transient( $this->get_feed_contents_cache_key( $post_id, 'carleton' ) );
+		delete_transient( $this->get_feed_contents_cache_key( $post_id, 'stolaf' ) );
 	}
 
 	/**
@@ -252,8 +252,8 @@ class Bridge_Library_User_Interest_Feeds {
 	 * @return string
 	 */
 	public function get_feed_contents( $cpt_id, $institution ) {
-		if ( get_transient( $this->get_cache_key( $cpt_id, $institution ) ) ) {
-			return get_transient( $this->get_cache_key( $cpt_id, $institution ) );
+		if ( get_transient( $this->get_feed_contents_cache_key( $cpt_id, $institution ) ) ) {
+			return get_transient( $this->get_feed_contents_cache_key( $cpt_id, $institution ) );
 		}
 
 		$feed_url = get_field( 'feed_url', $cpt_id );
@@ -291,7 +291,7 @@ class Bridge_Library_User_Interest_Feeds {
 			$item->guid = $item->link;
 		}
 
-		set_transient( $this->get_cache_key( $cpt_id, $institution ), $xml->asXML(), 12 * HOUR_IN_SECONDS );
+		set_transient( $this->get_feed_contents_cache_key( $cpt_id, $institution ), $xml->asXML(), 12 * HOUR_IN_SECONDS );
 
 		return $xml->asXML();
 	}
