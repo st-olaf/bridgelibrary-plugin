@@ -84,6 +84,20 @@ class Bridge_Library_User_Interest_Feeds {
 	}
 
 	/**
+	 * Get the recent items cache key.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int    $cpt_id      CPT ID.
+	 * @param string $institution Institution slug.
+	 *
+	 * @return string
+	 */
+	private function get_recent_items_cache_key( $cpt_id, $institution ) {
+		return 'user-interest-feeds-' . $cpt_id . '-content-' . hash( 'sha256', $institution );
+	}
+
+	/**
 	 * Get the current user’s institution.
 	 *
 	 * @since 1.0.0
@@ -297,6 +311,45 @@ class Bridge_Library_User_Interest_Feeds {
 	}
 
 	/**
+	 * Retrieve recent feed items.
+	 *
+	 * @param string $cpt_id      User Interest Feed CPT.
+	 * @param string $institution Institution slug.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public function get_recent_feed_items( $cpt_id, $institution ) {
+		if ( get_transient( $this->get_recent_items_cache_key( $cpt_id, $institution ) ) ) {
+			return get_transient( $this->get_recent_items_cache_key( $cpt_id, $institution ) );
+		}
+
+		$xml = simplexml_load_string( $this->get_feed_contents( $cpt_id, $institution ) );
+
+		$recent_items = array();
+
+		$i = 1;
+		foreach ( $xml->channel->item as $item ) {
+			if ( $i > 5 ) {
+				break;
+			}
+
+			$recent_items[] = array(
+				'title'       => $item->title->__toString(),
+				'description' => $item->description->__toString(),
+				'link'        => $item->link->__toString(),
+			);
+
+			$i++;
+		}
+
+		set_transient( $this->get_recent_items_cache_key( $cpt_id, $institution ), $recent_items, 12 * HOUR_IN_SECONDS );
+
+		return $recent_items;
+	}
+
+	/**
 	 * Replace institution code in feed URL.
 	 *
 	 * @since 1.0.0
@@ -393,6 +446,57 @@ class Bridge_Library_User_Interest_Feeds {
 					} else {
 						return get_the_title( $root->fields['databaseId'] );
 					}
+				},
+			)
+		);
+
+		// Register a custom `recentItems` object.
+		register_graphql_object_type(
+			'UserInterestFeedItem',
+			array(
+				'description' => __( 'Recent items from this feed.', 'bridge-library' ),
+				'fields'      => array(
+					'title'       => array(
+						'type'        => 'String',
+						'description' => __( 'RSS Item title.', 'bridge-library' ),
+						'resolve'     => function( $root, $args, $context, $info ) {
+							return $root['title'];
+						},
+					),
+					'description' => array(
+						'type'        => 'String',
+						'description' => __( 'RSS Item description.', 'bridge-library' ),
+						'resolve'     => function( $root, $args, $context, $info ) {
+							return $root['description'];
+						},
+					),
+					'link'        => array(
+						'type'        => 'String',
+						'description' => __( 'RSS Item link.', 'bridge-library' ),
+						'resolve'     => function( $root, $args, $context, $info ) {
+							return $root['link'];
+						},
+					),
+				),
+			)
+		);
+
+		// Register a custom `recentItems` field.
+		register_graphql_field(
+			'UserInterestFeed',
+			'recentItems',
+			array(
+				'type'        => array( 'list_of' => 'UserInterestFeedItem' ),
+				'description' => __( 'Recent items from this feed.', 'bridge-library' ),
+				'args'        => array(
+					'userId' => array(
+						'type'        => 'ID',
+						'description' => __( 'Enter your user ID to determine the correct institution', 'bridge-library' ),
+					),
+				),
+				'resolve'     => function( $root, $args, $context, $info ) {
+					$user_id = $this->get_user_id_from_args( $args, $info );
+					return $this->get_recent_feed_items( get_the_ID(), $this->get_user_institution( $user_id ) );
 				},
 			)
 		);
