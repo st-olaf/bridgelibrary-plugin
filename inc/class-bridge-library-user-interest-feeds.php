@@ -326,6 +326,31 @@ class Bridge_Library_User_Interest_Feeds {
 	}
 
 	/**
+	 * Determine the current user ID from GraphQL args or info.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array                                $args Query arguments.
+	 * @param \GraphQL\Type\Definition\ResolveInfo $info Resolver info.
+	 *
+	 * @return int
+	 */
+	private function get_user_id_from_args( $args, $info ) {
+		$user_id = 0;
+		if ( array_key_exists( 'userId', $args ) ) {
+			$user_object = Node::fromGlobalId( $args['userId'] );
+			$user_id     = $user_object['id'];
+		} elseif ( array_key_exists( 'email', $info->variableValues ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$user = get_user_by( 'email', $info->variableValues['email'] ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( is_a( $user, WP_User::class ) ) {
+				$user_id = $user->ID;
+			}
+		}
+
+		return $user_id;
+	}
+
+	/**
 	 * Register custom feed URL for GraphQL.
 	 *
 	 * @since 1.0.0
@@ -348,16 +373,7 @@ class Bridge_Library_User_Interest_Feeds {
 					return $root['subscribeUrl'];
 				}
 
-				$user_id = 0;
-				if ( array_key_exists( 'userId', $args ) ) {
-					$user_object = Node::fromGlobalId( $args['userId'] );
-					$user_id     = $user_object['id'];
-				} elseif ( array_key_exists( 'email', $info->variableValues ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-					$user = get_user_by( 'email', $info->variableValues['email'] ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-					if ( is_a( $user, WP_User::class ) ) {
-						$user_id = $user->ID;
-					}
-				}
+				$user_id = $this->get_user_id_from_args( $args, $info );
 				return $this->build_feed_url( get_the_ID(), $this->get_user_institution( $user_id ) );
 			},
 		);
