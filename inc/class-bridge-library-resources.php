@@ -1069,15 +1069,15 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$post_id = absint( $_REQUEST['post_id'] );
 
-		$libguides = $this->background_create_resource_from_libguides_guides( false );
+		$assets = $this->create_resources_for_libguides_guide( absint( $_REQUEST['libguides_guide_id'] ), false );
 
 		$core_resources = get_field( 'core_resources', $post_id );
 		if ( empty( $core_resources ) ) {
 			$core_resources = array();
 		}
-		update_field( 'core_resources', array_merge( $core_resources, $libguides ), $post_id );
+		update_field( 'core_resources', array_merge( $core_resources, $assets ), $post_id );
 
-		wp_send_json_success( 'Finished update for ' . count( $libguides ) . ' resources. See the <a href="' . get_edit_post_link( $post_id ) . '">Core Resources field</a>.', 200 );
+		wp_send_json_success( 'Finished update for ' . count( $assets ) . ' resources. See the <a href="' . get_edit_post_link( $post_id ) . '">Core Resources field</a>.', 200 );
 	}
 
 	/**
@@ -1135,6 +1135,35 @@ class Bridge_Library_Resources extends Bridge_Library {
 			}
 			return $results;
 		}
+	}
+
+	/**
+	 * Cache LibGuides assets for a single guide to WP data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $guide_id LibGuides guide ID.
+	 *
+	 * @return int[] Array of post IDs for sync.
+	 */
+	public function create_resources_for_libguides_guide( $guide_id ) {
+
+		$libguides_api_12 = Bridge_Library_API_LibGuides_12::get_instance();
+
+		$libguides_api_12->set_institution( 'stolaf' );
+		$stolaf_results = $libguides_api_12->get_assets_for_guide( $guide_id );
+
+		$libguides_api_12->set_institution( 'carleton' );
+		$carleton_results = $libguides_api_12->get_assets_for_guide( $guide_id );
+
+		$results = array();
+		foreach ( $stolaf_results as $asset ) {
+			$results[] = $this->create_resource_from_libguides_asset( $asset, 'st-olaf' );
+		}
+		foreach ( $carleton_results as $asset ) {
+			$results[] = $this->create_resource_from_libguides_asset( $asset, 'carleton' );
+		}
+		return $results;
 	}
 
 	/**
