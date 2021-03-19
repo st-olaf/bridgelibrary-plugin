@@ -1081,7 +1081,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	}
 
 	/**
-	 * Cache LibGuides guides to WP data.
+	 * Cache all LibGuides assets to WP data.
 	 *
 	 * @since 1.0.0
 	 *
