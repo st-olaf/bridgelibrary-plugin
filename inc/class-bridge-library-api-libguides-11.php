@@ -215,7 +215,7 @@ class Bridge_Library_API_LibGuides_11 extends Bridge_Library {
 	}
 
 	/**
-	 * Retrieve LibGuides user object.
+	 * Retrieve all LibGuides guides.
 	 *
 	 * @since 1.0.0
 	 *
