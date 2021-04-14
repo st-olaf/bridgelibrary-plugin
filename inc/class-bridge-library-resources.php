@@ -403,10 +403,10 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $primo_resource  Primo docID.
-	 * @param int    $post_id WP post ID.
+	 * @param array $primo_resource  Primo resource.
+	 * @param int   $post_id WP post ID.
 	 *
-	 * @return bool           Whether value existed and was updated.
+	 * @return bool          Whether value existed and was updated.
 	 */
 	public function cache_primo_image( $primo_resource, $post_id ) {
 		// Find the thumbnail.
@@ -482,10 +482,6 @@ class Bridge_Library_Resources extends Bridge_Library {
 		}
 		update_field( 'resource_format', $format['term_id'], $resource_id );
 
-
-
-
-
 		// Resource Type taxonomy.
 		wp_set_object_terms( $resource_id, 'reading-list', 'resource_type', true );
 
@@ -493,16 +489,16 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$institution = wp_get_post_terms( $post_id, 'institution', array( 'fields' => 'ids' ) );
 		wp_set_object_terms( $resource_id, $institution, 'institution' );
 
-        // Manually generate URL.
-        if ($institution[0] == '8') {
-            $institution_primo = 'stolaf.edu';
-        } else {
-            $institution_primo = 'carleton.edu';
-        }
-        $mms_id_primo = $citation['metadata']['mms_id'];
-        $primo_api = Bridge_Library_API_Primo::get_instance();
-        $url       = $primo_api->generate_full_view_url( $mms_id_primo, $institution_primo );
-        update_field( 'url', $url, $resource_id );
+		// Manually generate URL.
+		if ( '8' == $institution[0] ) {
+			$institution_primo = 'stolaf.edu';
+		} else {
+			$institution_primo = 'carleton.edu';
+		}
+		$mms_id_primo = $citation['metadata']['mms_id'];
+		$primo_api    = Bridge_Library_API_Primo::get_instance();
+		$url          = $primo_api->generate_full_view_url( $mms_id_primo, $institution_primo );
+		update_field( 'url', $url, $resource_id );
 
 		// Related courses for the resource.
 		$related_courses = get_field( 'related_courses_resources', $resource_id );
@@ -1073,19 +1069,19 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$post_id = absint( $_REQUEST['post_id'] );
 
-		$libguides = $this->background_create_resource_from_libguides_guides( false );
+		$assets = $this->create_resources_for_libguides_guide( absint( $_REQUEST['libguides_guide_id'] ), false );
 
 		$core_resources = get_field( 'core_resources', $post_id );
 		if ( empty( $core_resources ) ) {
 			$core_resources = array();
 		}
-		update_field( 'core_resources', array_merge( $core_resources, $libguides ), $post_id );
+		update_field( 'core_resources', array_merge( $core_resources, $assets ), $post_id );
 
-		wp_send_json_success( 'Finished update for ' . count( $libguides ) . ' resources. See the <a href="' . get_edit_post_link( $post_id ) . '">Core Resources field</a>.', 200 );
+		wp_send_json_success( 'Finished update for ' . count( $assets ) . ' resources. See the <a href="' . get_edit_post_link( $post_id ) . '">Core Resources field</a>.', 200 );
 	}
 
 	/**
-	 * Cache LibGuides guides to WP data.
+	 * Cache all LibGuides assets to WP data.
 	 *
 	 * @since 1.0.0
 	 *
@@ -1139,6 +1135,44 @@ class Bridge_Library_Resources extends Bridge_Library {
 			}
 			return $results;
 		}
+	}
+
+	/**
+	 * Cache LibGuides assets for a single guide to WP data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $guide_id LibGuides guide ID.
+	 *
+	 * @return int[] Array of post IDs for sync.
+	 */
+	public function create_resources_for_libguides_guide( $guide_id ) {
+
+		$asset_args = array(
+			'guide_ids'   => $guide_id,
+			'asset_types' => array(
+				2, // Link.
+				5, // Book from the catalog.
+				10, // Database.
+			),
+		);
+
+		$libguides_api_11 = Bridge_Library_API_LibGuides_11::get_instance();
+
+		$libguides_api_11->set_institution( 'stolaf' );
+		$stolaf_results = $libguides_api_11->get_assets( $asset_args );
+
+		$libguides_api_11->set_institution( 'carleton' );
+		$carleton_results = $libguides_api_11->get_assets( $asset_args );
+
+		$results = array();
+		foreach ( $stolaf_results as $asset ) {
+			$results[] = $this->create_resource_from_libguides_asset( $asset, 'st-olaf' );
+		}
+		foreach ( $carleton_results as $asset ) {
+			$results[] = $this->create_resource_from_libguides_asset( $asset, 'carleton' );
+		}
+		return $results;
 	}
 
 	/**

@@ -110,17 +110,17 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 		'stolaf.edu'   => 'SO Student',
 	);
 
-    /**
-     * Map Google institution meta to Primo scopes.
-     *
-     * @since 1.1.0
-     *
-     * @var array $institution_scope_mapping
-     */
-    private $institution_scope_mapping = array(
-        'carleton.edu' => 'CCO_MyCampus_PCI',
-        'stolaf.edu'   => 'SOC_MyCampus_CI',
-    );
+	/**
+	 * Map Google institution meta to Primo scopes.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var array $institution_scope_mapping
+	 */
+	private $institution_scope_mapping = array(
+		'carleton.edu' => 'CCO_MyCampus_PCI',
+		'stolaf.edu'   => 'SOC_MyCampus_CI',
+	);
 
 	/**
 	 * Return only one instance of this class.
@@ -235,9 +235,9 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 	public function get_user_jwt( $user_id ) {
 
 		if ( empty( $this->user_jwt[ $user_id ] ) ) {
-			$wp_user  = get_user_by( 'id', $user_id );
-			$user_api = Bridge_Library_Users::get_instance();
-			$domain   = $user_api->get_domain( $user_id );
+			$wp_user      = get_user_by( 'id', $user_id );
+			$user_api     = Bridge_Library_Users::get_instance();
+			$domain       = $user_api->get_domain( $user_id );
 			$alternate_id = get_field( 'alma_id', 'user_' . $user_id );
 
 			$primo_user = array(
@@ -247,7 +247,7 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 				'userName'    => $alternate_id,
 				'userGroup'   => $this->institution_name_mapping[ $domain ],
 				'onCampus'    => true,
-                'displayName'    => $wp_user->first_name . ' ' . $wp_user->last_name,
+				'displayName' => $wp_user->first_name . ' ' . $wp_user->last_name,
 			);
 
 			$args = array(
@@ -341,13 +341,13 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 		$request_args = array(
 			'vid'   => $this->get_vid_by_user( $user_id ),
 			'tab'   => 'Everything',
-            'scope'   => $this->institution_scope_mapping[ $domain ],
+			'scope' => $this->institution_scope_mapping[ $domain ],
 		);
 
 		foreach ( $favorites['records'] as $favorite ) {
 
 			// Fetch each of the favorites by ID as a full Primo object.
-			$request_args['q'] = 'any,contains,' . preg_replace("/alma/", "", $favorite['recordId']);
+			$request_args['q'] = 'any,contains,' . preg_replace( '/alma/', '', $favorite['recordId'] );
 
 			$records = $this->request( 'search', $request_args );
 

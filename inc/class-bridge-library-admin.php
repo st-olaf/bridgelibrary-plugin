@@ -140,20 +140,20 @@ class Bridge_Library_Admin {
 
 		// Verify permissions.
 		if ( ! current_user_can( 'manage_options_bridge_library' ) ) {
-			echo '<p>' . __( 'Sorry, you’re not allowed to do that.', 'bridge-library' ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '<p>' . esc_html__( 'Sorry, you’re not allowed to do that.', 'bridge-library' ) . '</p>';
 			wp_die();
 		}
 
 		wp_enqueue_script( 'bridge-library-admin' );
 		?>
 		<div class="wrap">
-		<h2><?php _e( 'Import LibGuides Assets', 'bridge-library' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></h2>
+		<h2><?php esc_html_e( 'Import LibGuides Assets to Course', 'bridge-library' ); ?></h2>
 
 		<p>Use this utility to import all the resources from the specified LibGuide guide and attach them to the course.</p>
 
 		<?php
-		if ( ! array_key_exists( 'course_id', $_GET ) || ! array_key_exists( 'nonce', $_GET ) || ! wp_verify_nonce( $_GET['nonce'], 'import_libguides' ) ) {
-			echo '<p>' . __( 'Please go to a specific course and click the button to start this process.', 'bridge-library' ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		if ( ! array_key_exists( 'course_id', $_GET ) || ! array_key_exists( 'nonce', $_GET ) || ! wp_verify_nonce( sanitize_key( $_GET['nonce'] ), 'import_libguides' ) ) {
+			echo '<p>' . esc_html__( 'Please go to a specific course and click the button to start this process.', 'bridge-library' ) . '</p>';
 		} else {
 			$course = get_post( absint( $_GET['course_id'] ) );
 			?>
@@ -169,7 +169,7 @@ class Bridge_Library_Admin {
 							<p class="messages"></p>
 
 							<p>Course: <?php echo get_the_title( $course ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
-							<input type="hidden" name="post_id" value="<?php echo $course->ID; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
+							<input type="hidden" name="post_id" value="<?php echo esc_attr( $course->ID ); ?>" />
 
 							<p><label for="libguides_guide_id">LibGuides Guide ID: <input type="text" name="libguides_guide_id" placeholder="14174" /></label></p>
 

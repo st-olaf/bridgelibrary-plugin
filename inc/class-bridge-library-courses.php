@@ -670,7 +670,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		}
 
 		if ( isset( $course['academic_department']['desc'] ) ) {
-			$academic_department_term = $this->get_or_create_term( $course['academic_department']['desc'], 'academic_department' );
+			$academic_department_term = $this->get_or_create_term( $course['academic_department']['desc'], 'academic_department', $course_code['institution'] );
 			wp_set_object_terms( $post_id, $academic_department_term, 'academic_department' );
 			$course['academic_department_code'] = $course['academic_department']['value'];
 			$course['academic_department']      = array( $academic_department_term );
@@ -691,14 +691,15 @@ class Bridge_Library_Courses extends Bridge_Library {
 						$existing_resources = array();
 					}
 
-                    foreach ( $citations as $citation ) {
-                        $resource_id = $resources->update_reading_list( $citation, $post_id );
+					if ( is_array( $citations ) ) {
+						foreach ( $citations as $citation ) {
+							$resource_id        = $resources->update_reading_list( $citation, $post_id );
+							$active_resources[] = (int) $resource_id;
+						}
+					}
 
-                        $active_resources[] = (int) $resource_id;
-                    }
-
-                    $active_resources = array_merge($active_resources, $existing_resources);
-                    $active_resources = array_unique($active_resources);
+					$active_resources = array_merge( $active_resources, $existing_resources );
+					$active_resources = array_unique( $active_resources );
 
 					// Update the course post.
 					update_field( 'related_courses_resources', $active_resources, $post_id );
@@ -715,15 +716,38 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $term     Term name.
-	 * @param string $taxonomy Taxonomy.
+	 * @param string $term             Term name.
+	 * @param string $taxonomy         Taxonomy.
+	 * @param string $institution_name Institution name.
 	 *
-	 * @return int             Term ID.
+	 * @return int                     Term ID.
 	 */
-	private function get_or_create_term( $term, $taxonomy ) {
+	private function get_or_create_term( $term, $taxonomy, $institution_name = null ) {
 		require_once ABSPATH . '/wp-admin/includes/taxonomy.php';
-		$term = wp_create_term( $term, $taxonomy );
-		return (int) $term['term_id'];
+
+		if ( is_null( $institution_name ) ) {
+			$term = wp_create_term( $term, $taxonomy );
+			return (int) $term['term_id'];
+		} else {
+			$institution_term = wp_create_term( $institution_name, $taxonomy );
+
+			$term_query = new WP_Term_Query(
+				array(
+					'taxonomy'   => $taxonomy,
+					'name'       => $term,
+					'parent'     => $institution_term['term_id'],
+					'fields'     => 'ids',
+					'hide_empty' => false,
+				)
+			);
+
+			if ( $term_query->terms ) {
+				return (int) $term_query->terms[0];
+			} else {
+				$term = wp_insert_term( $term, $taxonomy, array( 'parent' => $institution_term['term_id'] ) );
+				return (int) $term['term_id'];
+			}
+		}
 	}
 
 	/**
@@ -931,7 +955,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		$course_code   = explode( '|', get_field( 'course_code', $post ) );
 
 		// Add term to ACF fields but not course CPT list.
-		if ( 'edit-course' === get_current_screen()->id ) {
+		if ( get_current_screen() && 'edit-course' === get_current_screen()->id ) {
 			$course_term = array();
 		} else {
 			$course_term = get_the_terms( $post, 'course_term' );

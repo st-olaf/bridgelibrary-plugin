@@ -83,6 +83,10 @@ class Bridge_Library {
 		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-logging.php';
 		$this->logging = Bridge_Library_Logging::get_instance();
 
+		// User Interest Feeds.
+		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-user-interest-feeds.php';
+		$this->user_interest_feeds = Bridge_Library_User_Interest_Feeds::get_instance();
+
 		// API provider.
 		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-api-provider-base.php';
 		new Bridge_Library_API_Provider_Base();
