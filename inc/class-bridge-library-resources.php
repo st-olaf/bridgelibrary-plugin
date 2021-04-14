@@ -1148,13 +1148,22 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 */
 	public function create_resources_for_libguides_guide( $guide_id ) {
 
-		$libguides_api_12 = Bridge_Library_API_LibGuides_12::get_instance();
+		$asset_args = array(
+			'guide_ids'   => $guide_id,
+			'asset_types' => array(
+				2, // Link.
+				5, // Book from the catalog.
+				10, // Database.
+			),
+		);
 
-		$libguides_api_12->set_institution( 'stolaf' );
-		$stolaf_results = $libguides_api_12->get_assets_for_guide( $guide_id );
+		$libguides_api_11 = Bridge_Library_API_LibGuides_11::get_instance();
 
-		$libguides_api_12->set_institution( 'carleton' );
-		$carleton_results = $libguides_api_12->get_assets_for_guide( $guide_id );
+		$libguides_api_11->set_institution( 'stolaf' );
+		$stolaf_results = $libguides_api_11->get_assets( $asset_args );
+
+		$libguides_api_11->set_institution( 'carleton' );
+		$carleton_results = $libguides_api_11->get_assets( $asset_args );
 
 		$results = array();
 		foreach ( $stolaf_results as $asset ) {
