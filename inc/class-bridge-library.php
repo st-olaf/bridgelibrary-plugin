@@ -95,6 +95,10 @@ class Bridge_Library {
 		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-acf-tables-compatibility.php';
 		$this->acf_tables_compat = Bridge_Library_ACF_Tables_Compatibility::get_instance();
 
+		// WPGraphQL.
+		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-graphql-authentication.php';
+		Bridge_Library_GraphQL_Authentication::get_instance();
+
 		// Scheduling.
 		register_activation_hook( BL_PLUGIN_FILE, array( $this, 'schedule_automatic_updates' ) );
 		register_deactivation_hook( BL_PLUGIN_FILE, array( $this, 'clear_automatic_updates' ) );
