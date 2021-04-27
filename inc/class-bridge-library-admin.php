@@ -164,7 +164,7 @@ class Bridge_Library_Admin {
 						<th>Import LibGuides Assets to Course</th>
 						<td>
 							<input type="hidden" name="action" value="import_libguides_to_course" />
-							<?php wp_nonce_field( 'import_libguides_to_course' ); ?>
+							<?php wp_nonce_field( 'import_libguides_to_course', 'import_libguides_to_course_nonce' ); ?>
 
 							<p class="messages"></p>
 

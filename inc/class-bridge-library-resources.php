@@ -804,7 +804,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 						<p class="messages"></p>
 
 						<input type="hidden" name="action" value="start_bg_libguides_assets_update" />
-						<?php wp_nonce_field( 'start_bg_libguides_assets_update' ); ?>
+						<?php wp_nonce_field( 'start_bg_libguides_assets_update', 'start_bg_libguides_assets_update_nonce' ); ?>
 
 						<p>Run:
 							<label><input type="radio" value="async" class="wait-for" name="async" checked="checked" />asynchronously</label>
@@ -825,7 +825,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 						<p>Use this utility to manually update just one resource by using the LibGuides ID.</p>
 
 						<input type="hidden" name="action" value="update_libguides_resource_by_id" />
-						<?php wp_nonce_field( 'update_libguides_resource_by_id' ); ?>
+						<?php wp_nonce_field( 'update_libguides_resource_by_id', 'update_libguides_resource_by_id_nonce' ); ?>
 
 						<p class="messages"></p>
 
@@ -846,7 +846,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 						<p class="messages"></p>
 
 						<input type="hidden" name="action" value="start_bg_libguides_guides_update" />
-						<?php wp_nonce_field( 'start_bg_libguides_guides_update' ); ?>
+						<?php wp_nonce_field( 'start_bg_libguides_guides_update', 'start_bg_libguides_guides_update_nonce' ); ?>
 
 						<p>Run:
 							<label><input type="radio" value="async" class="wait-for" name="async" checked="checked" />asynchronously</label>
@@ -867,7 +867,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 						<p>Use this utility to manually update just one resource by using the LibGuides ID.</p>
 
 						<input type="hidden" name="action" value="update_libguides_resource_by_id" />
-						<?php wp_nonce_field( 'update_libguides_resource_by_id' ); ?>
+						<?php wp_nonce_field( 'update_libguides_resource_by_id', 'update_libguides_resource_by_id_nonce' ); ?>
 
 						<p class="messages"></p>
 
@@ -892,7 +892,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 */
 	public function ajax_update_libguides_resource_by_id() {
 
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['update_libguides_resource_by_id_nonce'] ) || ! isset( $_REQUEST['update_libguides_resource_by_id_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['update_libguides_resource_by_id_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}
@@ -942,9 +942,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 * @return void Sends WP JSON response.
 	 */
 	public function ajax_start_bg_libguides_assets_update() {
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
-			wp_send_json_error( 'Access denied.', 401 );
-			wp_die();
+		if ( ! isset( $_REQUEST['start_bg_libguides_assets_update_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['start_bg_libguides_assets_update_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+			wp_send_json_error( 'Access denied.', 401 );ion_nonce();
 		}
 
 		if ( array_key_exists( 'async', $_REQUEST ) && isset( $_REQUEST['async'] ) && 'async' !== $_REQUEST['async'] ) {
@@ -1028,7 +1027,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 * @return void Sends WP JSON response.
 	 */
 	public function ajax_start_bg_libguides_guides_update() {
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['start_bg_libguides_guides_update_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['start_bg_libguides_guides_update_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}
@@ -1052,7 +1051,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 * @return void Sends WP JSON response.
 	 */
 	public function ajax_import_libguides_to_course() {
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['import_libguides_to_course_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['import_libguides_to_course_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}

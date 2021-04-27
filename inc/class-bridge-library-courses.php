@@ -152,7 +152,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 						<p>Use this utility to manually refresh the courses.</p>
 
 						<input type="hidden" name="action" value="update_courses" />
-						<?php wp_nonce_field( 'update_courses' ); ?>
+						<?php wp_nonce_field( 'update_courses', 'update_courses_nonce' ); ?>
 
 						<p class="messages"></p>
 
@@ -174,7 +174,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 						<p class="messages"></p>
 
 						<input type="hidden" name="action" value="start_background_update" />
-						<?php wp_nonce_field( 'start_background_update' ); ?>
+						<?php wp_nonce_field( 'start_background_update', 'start_background_update_nonce' ); ?>
 
 						<p><input type="submit" class="button button-primary" value="Start Background Update" /></p>
 					</td>
@@ -190,7 +190,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 						<p>Use this utility to manually update just one course giving an Alma ID or course code.</p>
 
 						<input type="hidden" name="action" value="update_course_by_id" />
-						<?php wp_nonce_field( 'update_course_by_id' ); ?>
+						<?php wp_nonce_field( 'update_course_by_id', 'update_course_by_id_nonce' ); ?>
 
 						<p class="messages"></p>
 
@@ -219,7 +219,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	public function ajax_update_courses() {
 		$query = array();
 
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['update_courses_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['update_courses_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}
@@ -254,7 +254,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	public function ajax_update_course_by_id() {
 		$query = array();
 
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['update_course_by_id_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['update_course_by_id_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}
@@ -301,7 +301,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 * @return void
 	 */
 	public function ajax_start_background_update() {
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['start_background_update_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['start_background_update_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}
