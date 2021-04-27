@@ -120,6 +120,13 @@
             }
         },
         {
+            "name": "description",
+            "map": {
+                "type": "acf_field_name",
+                "identifier": "description"
+            }
+        },
+        {
             "name": "resource_format",
             "map": {
                 "type": "acf_field_name",
@@ -134,6 +141,6 @@
             }
         }
     ],
-    "hash": "e3233b9f1ab76afaf80b82d8b78d7a39",
-    "modified": 1576860744
+    "hash": "f7120b57fa931e17384a220de5416694",
+    "modified": 1619493655
 }
