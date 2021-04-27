@@ -712,10 +712,11 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$terms = array( $libguides_term->term_id );
 		if ( array_key_exists( 'az_types', $asset ) ) {
-			foreach ( $asset['az_types'] as $type ) {
-				$term = term_exists( $type['name'], 'resource_type' );
+			foreach ( $asset['az_types'] as $az_type ) {
+				$type = $this->map_libguides_type_to_term_name( $az_type['name'] );
+				$term = term_exists( $type, 'resource_type' );
 				if ( ! $term ) {
-					$term = wp_insert_term( $type['name'], 'resource_type', array( 'parent' => $libguides_term->term_id ) );
+					$term = wp_insert_term( $type, 'resource_type', array( 'parent' => $libguides_term->term_id ) );
 				}
 				$terms[] = (int) $term['term_id'];
 			}
@@ -766,9 +767,10 @@ class Bridge_Library_Resources extends Bridge_Library {
 		// Taxonomies.
 		$libguides_term = get_term_by( 'name', 'LibGuides', 'resource_type' );
 
-		$guide_type = term_exists( $guide['type_label'], 'resource_type' );
+		$type_name  = $this->map_libguides_type_to_term_name( $guide['type_label'] );
+		$guide_type = term_exists( $type_name, 'resource_type' );
 		if ( ! $guide_type ) {
-			$guide_type = wp_insert_term( $guide['type_label'], 'resource_type', array( 'parent' => $libguides_term->term_id ) );
+			$guide_type = wp_insert_term( $type_name, 'resource_type', array( 'parent' => $libguides_term->term_id ) );
 		}
 		$terms = array(
 			$libguides_term->term_id,
@@ -780,6 +782,83 @@ class Bridge_Library_Resources extends Bridge_Library {
 		wp_set_object_terms( $guide_id, $institution, 'institution', true );
 
 		return $guide_id;
+	}
+
+	/**
+	 * Map LibGuides resource type to simplified hierarchy.
+	 *
+	 * @param string $type LibGuides type name.
+	 *
+	 * @return string WP term name.
+	 */
+	public function map_libguides_type_to_term_name( $type ) {
+		switch ( $type ) {
+			case 'Books & eBooks':
+			case 'Course Reserves':
+			case 'Data/Statistics':
+			case 'Government Information':
+			case 'Maps':
+				// Leave these alone.
+				break;
+
+			case 'Carleton Archives':
+			case 'Carleton Curricular Collections':
+			case 'Carleton Special Collections':
+				$type = 'Carleton Collections';
+				break;
+
+			case 'Course Guide':
+			case 'General Purpose Guide':
+			case 'Internal Guide':
+			case 'LibGuides':
+			case 'Subject Guide':
+			case 'Topic Guide':
+			default:
+				$type = 'Guide';
+				break;
+
+			case 'Digital Archive':
+			case 'Historical Documents':
+				$type = 'Historical Documents';
+				break;
+
+			case 'Digital Images':
+			case 'Images':
+				$type = 'Images';
+				break;
+
+			case 'News Database':
+			case 'Newspaper Articles':
+				$type = 'News Database';
+				break;
+
+			case 'Online Reference':
+			case 'Reference Sources':
+				$type = 'Reference Sources';
+				break;
+
+			case 'Business Information':
+			case 'Conference papers and proceedings':
+			case 'Dissertations':
+			case 'Grey Literature':
+			case 'Journal Articles':
+			case 'Literary Texts':
+			case 'Research Database':
+				$type = 'Research Database';
+				break;
+
+			case 'Sound Recordings':
+			case 'Streaming Audio':
+				$type = 'Sound Recordings';
+				break;
+
+			case 'Streaming Video':
+			case 'Video':
+				$type = 'Video';
+				break;
+		}
+
+		return $type;
 	}
 
 	/**
