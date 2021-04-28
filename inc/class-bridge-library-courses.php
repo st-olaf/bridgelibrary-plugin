@@ -112,6 +112,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		add_action( 'wp_ajax_update_courses', array( $this, 'ajax_update_courses' ) );
 		add_action( 'wp_ajax_update_course_by_id', array( $this, 'ajax_update_course_by_id' ) );
 		add_action( 'wp_ajax_start_background_update', array( $this, 'ajax_start_background_update' ) );
+		add_action( 'wp_ajax_copy_resources_to_course', array( $this, 'ajax_copy_resources_to_course' ) );
 
 		// Schedule automatic updates.
 		add_action( 'bridge_library_schedule_daily', array( $this, 'background_update_courses' ) );
@@ -348,6 +349,48 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 		// Process the first set.
 		$this->update_courses( $results['course'] );
+	}
+
+	/**
+	 * Start a full background update.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function ajax_copy_resources_to_course() {
+		if ( ! isset( $_REQUEST['copy_resources_to_course_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['copy_resources_to_course_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+			wp_send_json_error( 'Access denied.', 401 );
+			wp_die();
+		}
+
+		if ( ! isset( $_REQUEST['source_id'] ) || ! isset( $_REQUEST['destination_id'] ) || ! isset( $_REQUEST['which_resources'] ) ) {
+			wp_send_json_error( 'Invalid request.', 400 );
+			wp_die();
+		}
+
+		$which          = sanitize_key( wp_unslash( $_REQUEST['which_resources'] ) );
+		$source_id      = absint( $_REQUEST['source_id'] );
+		$destination_id = absint( $_REQUEST['destination_id'] );
+		$results        = array();
+
+		if ( in_array( $which, array( 'all_resources', 'core_resources' ), true ) ) {
+			$core_resources       = get_field( 'core_resources', $source_id );
+			$core_resources_count = count( $core_resources );
+			update_field( 'core_resources', $core_resources, $destination_id );
+			// Translators: %d is the count of resources.
+			$results[] = sprintf( __( 'copied %1$d core %2$s', 'bridge-library' ), $core_resources_count, _n( 'resource', 'resources', $core_resources_count, 'bridge-library' ) );
+		}
+
+		if ( in_array( $which, array( 'all_resources', 'other_resources' ), true ) ) {
+			$related_courses_resources       = get_field( 'related_courses_resources', $source_id );
+			$related_courses_resources_count = count( $related_courses_resources );
+			update_field( 'related_courses_resources', $related_courses_resources, $destination_id );
+			// Translators: %d is the count of resources.
+			$results[] = sprintf( __( 'copied %1$d related %2$s', 'bridge-library' ), $related_courses_resources_count, _n( 'resource', 'resources', $related_courses_resources_count, 'bridge-library' ) );
+		}
+
+		wp_send_json_success( __( 'Results', 'bridge-library' ) . ': ' . implode( '; ', $results ), 201 );
 	}
 
 	/**

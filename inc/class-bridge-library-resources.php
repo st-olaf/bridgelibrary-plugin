@@ -151,6 +151,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		add_filter( 'acf/prepare_field/key=field_5cd9abad8a9cb', array( $this, 'disable_primo_image_url_field' ) );
 		add_filter( 'acf/prepare_field/key=field_5cc86dd2d9f71', array( $this, 'disable_primo_image_url_field' ) );
 		add_filter( 'acf/prepare_field/key=field_5fcff25f7b23b', array( $this, 'add_libguides_import_button' ) );
+		add_filter( 'acf/prepare_field/key=field_60888661b7d91', array( $this, 'add_copy_resources_button' ) );
 
 		// Load backend JS.
 		add_action(
@@ -1373,7 +1374,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	}
 
 	/**
-	 * Add nonce and button to message field.
+	 * Add nonce and button to message field for LibGuides import.
 	 *
 	 * @param array $field ACF field object.
 	 *
@@ -1383,6 +1384,25 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$url_parts = array(
 			'page'      => 'bridge_library_import_libguides',
 			'nonce'     => wp_create_nonce( 'import_libguides' ),
+			'course_id' => get_the_ID(),
+		);
+
+		$field['message'] .= '<p><a href="' . esc_url( admin_url( 'admin.php?' . http_build_query( $url_parts ) ) ) . '" target="_blank" class="button button-primary">Begin</a></p>';
+
+		return $field;
+	}
+
+	/**
+	 * Add nonce and button to message field for copying resources.
+	 *
+	 * @param array $field ACF field object.
+	 *
+	 * @return array
+	 */
+	public function add_copy_resources_button( $field ) {
+		$url_parts = array(
+			'page'      => 'bridge_library_copy_resources',
+			'nonce'     => wp_create_nonce( 'copy_resources' ),
 			'course_id' => get_the_ID(),
 		);
 
