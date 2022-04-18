@@ -1023,7 +1023,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 */
 	public function ajax_start_bg_libguides_assets_update() {
 		if ( ! isset( $_REQUEST['start_bg_libguides_assets_update_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['start_bg_libguides_assets_update_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
-			wp_send_json_error( 'Access denied.', 401 );ion_nonce();
+			wp_send_json_error( 'Access denied.', 401 );
+			wp_die();
 		}
 
 		if ( array_key_exists( 'async', $_REQUEST ) && isset( $_REQUEST['async'] ) && 'async' !== $_REQUEST['async'] ) {
