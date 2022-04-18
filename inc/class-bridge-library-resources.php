@@ -972,7 +972,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 */
 	public function ajax_update_libguides_resource_by_id() {
 
-		if ( ! isset( $_REQUEST['update_libguides_resource_by_id_nonce'] ) || ! isset( $_REQUEST['update_libguides_resource_by_id_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['update_libguides_resource_by_id_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['update_libguides_resource_by_id_nonce'] ) || ! isset( $_REQUEST['update_libguides_resource_by_id_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['update_libguides_resource_by_id_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}
