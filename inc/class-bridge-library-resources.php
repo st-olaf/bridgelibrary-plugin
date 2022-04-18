@@ -491,7 +491,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		wp_set_object_terms( $resource_id, $institution, 'institution' );
 
 		// Manually generate URL.
-		if ( '8' == $institution[0] ) {
+		if ( 8 === absint( $institution[0] ) ) {
 			$institution_primo = 'stolaf.edu';
 		} else {
 			$institution_primo = 'carleton.edu';
