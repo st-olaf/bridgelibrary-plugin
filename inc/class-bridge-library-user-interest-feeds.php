@@ -280,6 +280,10 @@ class Bridge_Library_User_Interest_Feeds {
 
 		$contents = wp_remote_retrieve_body( $request );
 
+		if ( empty( $contents ) ) {
+			return $contents;
+		}
+
 		$xml = simplexml_load_string( $contents );
 
 		// Replace feed URL.
