@@ -112,7 +112,7 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 */
 	private function is_debugging() {
 		if ( ! isset( $this->debug ) ) {
-			$mode_setting = get_field( 'tracking_debug_mode', 'option' );
+			$mode_setting = get_option( 'option_tracking_debug_mode', false ); // Use get_option() instead of get_field() so we can get this before ACF has fully initialized.
 			$this->debug  = ( '1' === $mode_setting );
 		}
 
@@ -128,7 +128,7 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 */
 	private function get_tracking_id() {
 		if ( ! isset( $this->tracking_id ) ) {
-			$this->tracking_id = get_field( 'tracking_id', 'option' );
+			$this->tracking_id = get_option( 'option_tracking_id', '' ); // Use get_option() instead of get_field() so we can get this before ACF has fully initialized.
 		}
 
 		return $this->tracking_id;
