@@ -34,7 +34,7 @@
                 "class": "",
                 "id": ""
             },
-            "show_in_graphql": 0,
+            "show_in_graphql": 1,
             "message": "Use this field to associate all the assets from a specific LibGuides resource to this course.",
             "new_lines": "wpautop",
             "esc_html": 0
@@ -305,12 +305,28 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
-            "show_in_graphql": 0,
             "message": "Use this to import all assets from a specific LibGuides guide for this course.",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_60888661b7d91",
+            "label": "Copy Resources",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "Use this to copy core and related resources to another course.",
             "new_lines": "wpautop",
             "esc_html": 0
         },
@@ -364,5 +380,5 @@
     "acfcdt_manage_table_definition": 1,
     "acfcdt_table_name": "bridge_library_course_meta",
     "acfcdt_table_definition_file_name": "table_8x5cc08b74179aa",
-    "modified": 1607464724
+    "modified": 1619560071
 }

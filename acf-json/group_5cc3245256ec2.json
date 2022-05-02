@@ -326,6 +326,26 @@
             "maxlength": ""
         },
         {
+            "key": "field_608782f87b8d8",
+            "label": "Description",
+            "name": "description",
+            "type": "text",
+            "instructions": "Very brief description displayed in the frontend card",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
             "key": "field_5cd9c06c4fa07",
             "label": "Resource Format",
             "name": "resource_format",
@@ -386,12 +406,12 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
     "show_in_graphql": 1,
     "graphql_field_name": "resourceData",
     "acfcdt_manage_table_definition": 1,
     "acfcdt_table_name": "bridge_library_resource_meta",
     "acfcdt_table_definition_file_name": "table_898x5cc3245265890",
-    "modified": 1576860744
+    "modified": 1619493655
 }

@@ -112,6 +112,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		add_action( 'wp_ajax_update_courses', array( $this, 'ajax_update_courses' ) );
 		add_action( 'wp_ajax_update_course_by_id', array( $this, 'ajax_update_course_by_id' ) );
 		add_action( 'wp_ajax_start_background_update', array( $this, 'ajax_start_background_update' ) );
+		add_action( 'wp_ajax_copy_resources_to_course', array( $this, 'ajax_copy_resources_to_course' ) );
 
 		// Schedule automatic updates.
 		add_action( 'bridge_library_schedule_daily', array( $this, 'background_update_courses' ) );
@@ -152,7 +153,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 						<p>Use this utility to manually refresh the courses.</p>
 
 						<input type="hidden" name="action" value="update_courses" />
-						<?php wp_nonce_field( 'update_courses' ); ?>
+						<?php wp_nonce_field( 'update_courses', 'update_courses_nonce' ); ?>
 
 						<p class="messages"></p>
 
@@ -174,7 +175,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 						<p class="messages"></p>
 
 						<input type="hidden" name="action" value="start_background_update" />
-						<?php wp_nonce_field( 'start_background_update' ); ?>
+						<?php wp_nonce_field( 'start_background_update', 'start_background_update_nonce' ); ?>
 
 						<p><input type="submit" class="button button-primary" value="Start Background Update" /></p>
 					</td>
@@ -190,7 +191,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 						<p>Use this utility to manually update just one course giving an Alma ID or course code.</p>
 
 						<input type="hidden" name="action" value="update_course_by_id" />
-						<?php wp_nonce_field( 'update_course_by_id' ); ?>
+						<?php wp_nonce_field( 'update_course_by_id', 'update_course_by_id_nonce' ); ?>
 
 						<p class="messages"></p>
 
@@ -219,7 +220,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	public function ajax_update_courses() {
 		$query = array();
 
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['update_courses_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['update_courses_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}
@@ -254,7 +255,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	public function ajax_update_course_by_id() {
 		$query = array();
 
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['update_course_by_id_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['update_course_by_id_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}
@@ -301,7 +302,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 * @return void
 	 */
 	public function ajax_start_background_update() {
-		if ( isset( $_REQUEST['_wpnonce'] ) && isset( $_REQUEST['action'] ) && ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+		if ( ! isset( $_REQUEST['start_background_update_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['start_background_update_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
 			wp_send_json_error( 'Access denied.', 401 );
 			wp_die();
 		}
@@ -348,6 +349,48 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 		// Process the first set.
 		$this->update_courses( $results['course'] );
+	}
+
+	/**
+	 * Start a full background update.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function ajax_copy_resources_to_course() {
+		if ( ! isset( $_REQUEST['copy_resources_to_course_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['copy_resources_to_course_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+			wp_send_json_error( 'Access denied.', 401 );
+			wp_die();
+		}
+
+		if ( ! isset( $_REQUEST['source_id'] ) || ! isset( $_REQUEST['destination_id'] ) || ! isset( $_REQUEST['which_resources'] ) ) {
+			wp_send_json_error( 'Invalid request.', 400 );
+			wp_die();
+		}
+
+		$which          = sanitize_key( wp_unslash( $_REQUEST['which_resources'] ) );
+		$source_id      = absint( $_REQUEST['source_id'] );
+		$destination_id = absint( $_REQUEST['destination_id'] );
+		$results        = array();
+
+		if ( in_array( $which, array( 'all_resources', 'core_resources' ), true ) ) {
+			$core_resources       = get_field( 'core_resources', $source_id );
+			$core_resources_count = count( $core_resources );
+			update_field( 'core_resources', $core_resources, $destination_id );
+			// Translators: %d is the count of resources.
+			$results[] = sprintf( __( 'copied %1$d core %2$s', 'bridge-library' ), $core_resources_count, _n( 'resource', 'resources', $core_resources_count, 'bridge-library' ) );
+		}
+
+		if ( in_array( $which, array( 'all_resources', 'other_resources' ), true ) ) {
+			$related_courses_resources       = get_field( 'related_courses_resources', $source_id );
+			$related_courses_resources_count = count( $related_courses_resources );
+			update_field( 'related_courses_resources', $related_courses_resources, $destination_id );
+			// Translators: %d is the count of resources.
+			$results[] = sprintf( __( 'copied %1$d related %2$s', 'bridge-library' ), $related_courses_resources_count, _n( 'resource', 'resources', $related_courses_resources_count, 'bridge-library' ) );
+		}
+
+		wp_send_json_success( __( 'Results', 'bridge-library' ) . ': ' . implode( '; ', $results ), 201 );
 	}
 
 	/**
@@ -670,7 +713,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		}
 
 		if ( isset( $course['academic_department']['desc'] ) ) {
-			$academic_department_term = $this->get_or_create_term( $course['academic_department']['desc'], 'academic_department' );
+			$academic_department_term = $this->get_or_create_term( $course['academic_department']['desc'], 'academic_department', $course_code['institution'] );
 			wp_set_object_terms( $post_id, $academic_department_term, 'academic_department' );
 			$course['academic_department_code'] = $course['academic_department']['value'];
 			$course['academic_department']      = array( $academic_department_term );
@@ -691,14 +734,15 @@ class Bridge_Library_Courses extends Bridge_Library {
 						$existing_resources = array();
 					}
 
-                    foreach ( $citations as $citation ) {
-                        $resource_id = $resources->update_reading_list( $citation, $post_id );
+					if ( is_array( $citations ) ) {
+						foreach ( $citations as $citation ) {
+							$resource_id        = $resources->update_reading_list( $citation, $post_id );
+							$active_resources[] = (int) $resource_id;
+						}
+					}
 
-                        $active_resources[] = (int) $resource_id;
-                    }
-
-                    $active_resources = array_merge($active_resources, $existing_resources);
-                    $active_resources = array_unique($active_resources);
+					$active_resources = array_merge( $active_resources, $existing_resources );
+					$active_resources = array_unique( $active_resources );
 
 					// Update the course post.
 					update_field( 'related_courses_resources', $active_resources, $post_id );
@@ -715,15 +759,38 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $term     Term name.
-	 * @param string $taxonomy Taxonomy.
+	 * @param string $term             Term name.
+	 * @param string $taxonomy         Taxonomy.
+	 * @param string $institution_name Institution name.
 	 *
-	 * @return int             Term ID.
+	 * @return int                     Term ID.
 	 */
-	private function get_or_create_term( $term, $taxonomy ) {
+	private function get_or_create_term( $term, $taxonomy, $institution_name = null ) {
 		require_once ABSPATH . '/wp-admin/includes/taxonomy.php';
-		$term = wp_create_term( $term, $taxonomy );
-		return (int) $term['term_id'];
+
+		if ( is_null( $institution_name ) ) {
+			$term = wp_create_term( $term, $taxonomy );
+			return (int) $term['term_id'];
+		} else {
+			$institution_term = wp_create_term( $institution_name, $taxonomy );
+
+			$term_query = new WP_Term_Query(
+				array(
+					'taxonomy'   => $taxonomy,
+					'name'       => $term,
+					'parent'     => $institution_term['term_id'],
+					'fields'     => 'ids',
+					'hide_empty' => false,
+				)
+			);
+
+			if ( $term_query->terms ) {
+				return (int) $term_query->terms[0];
+			} else {
+				$term = wp_insert_term( $term, $taxonomy, array( 'parent' => $institution_term['term_id'] ) );
+				return (int) $term['term_id'];
+			}
+		}
 	}
 
 	/**
@@ -931,7 +998,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		$course_code   = explode( '|', get_field( 'course_code', $post ) );
 
 		// Add term to ACF fields but not course CPT list.
-		if ( 'edit-course' === get_current_screen()->id ) {
+		if ( get_current_screen() && 'edit-course' === get_current_screen()->id ) {
 			$course_term = array();
 		} else {
 			$course_term = get_the_terms( $post, 'course_term' );

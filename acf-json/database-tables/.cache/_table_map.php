@@ -192,7 +192,7 @@
         ),
       ),
       'hash' => 'b4e6e7259544f3e6825cbc0d1712ba2e',
-      'modified' => 1607463554,
+      'modified' => 1619560071,
       'type' => 'meta',
     ),
     'bridge_library_user_meta' => 
@@ -693,6 +693,16 @@
         ),
         15 => 
         array (
+          'name' => 'description',
+          'map' => 
+          array (
+            'type' => 'acf_field_name',
+            'identifier' => 'description',
+          ),
+          'format' => '%s',
+        ),
+        16 => 
+        array (
           'name' => 'resource_format',
           'map' => 
           array (
@@ -701,7 +711,7 @@
           ),
           'format' => '%s',
         ),
-        16 => 
+        17 => 
         array (
           'name' => 'resource_type',
           'map' => 
@@ -712,8 +722,8 @@
           'format' => '%s',
         ),
       ),
-      'hash' => 'e3233b9f1ab76afaf80b82d8b78d7a39',
-      'modified' => 1576860744,
+      'hash' => 'f7120b57fa931e17384a220de5416694',
+      'modified' => 1619493655,
       'type' => 'meta',
     ),
   ),
@@ -992,6 +1002,10 @@
         0 => 3,
       ),
       'publication_year' => 
+      array (
+        0 => 3,
+      ),
+      'description' => 
       array (
         0 => 3,
       ),

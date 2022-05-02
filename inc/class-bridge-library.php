@@ -83,6 +83,10 @@ class Bridge_Library {
 		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-logging.php';
 		$this->logging = Bridge_Library_Logging::get_instance();
 
+		// User Interest Feeds.
+		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-user-interest-feeds.php';
+		$this->user_interest_feeds = Bridge_Library_User_Interest_Feeds::get_instance();
+
 		// API provider.
 		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-api-provider-base.php';
 		new Bridge_Library_API_Provider_Base();
@@ -90,6 +94,10 @@ class Bridge_Library {
 		// ACF tables compatibility.
 		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-acf-tables-compatibility.php';
 		$this->acf_tables_compat = Bridge_Library_ACF_Tables_Compatibility::get_instance();
+
+		// WPGraphQL.
+		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-graphql-authentication.php';
+		Bridge_Library_GraphQL_Authentication::get_instance();
 
 		// Scheduling.
 		register_activation_hook( BL_PLUGIN_FILE, array( $this, 'schedule_automatic_updates' ) );
