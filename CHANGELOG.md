@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — 2022-05
+- Bugfix: fix some type errors
+
+## [1.1.0] — 2022-05
+- Feature: use academic institution as parent department ID
+- Feature: add user interest feeds
+- Feature: add the ability to import assets for a single guide
+- Feature: add ability to copy resources to another course
+- Chore: update dependencies
+
 ## [1.0.6] — 2020-02
 - Feature: update some Primo API settings and fields to comply with their changes
 - Feature: add course-level librarians
