@@ -825,7 +825,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 		// Include term results for GraphQL results. We don’t want to deal with tracking and unsetting changes to all posts when a resource->academic department relationship is updated.
 		if ( isset( $_SERVER['REQUEST_URI'] ) && '/graphql' === $_SERVER['REQUEST_URI'] ) {
-			if ( is_null( $value ) ) {
+			if ( ! is_array( $value ) ) {
 				$value = array();
 			}
 

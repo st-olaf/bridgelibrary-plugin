@@ -1632,7 +1632,7 @@ class Bridge_Library_Users {
 	public function graphql_user_favorites( $result, $source, array $args, AppContext $context, ResolveInfo $info, string $type_name, string $field_key, FieldDefinition $field, $field_resolver ) {
 		if ( 'userFavorites' === $field_key ) {
 			$result = array_filter(
-				$result,
+				(array) $result,
 				function ( $post ) {
 					return 'resource' === $post->post_type;
 				}
