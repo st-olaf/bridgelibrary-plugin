@@ -205,6 +205,8 @@ class Bridge_Library_API_Provider_Courses {
 	/**
 	 * Merge department-level resources with course-level core resources.
 	 *
+	 * @since 1.2.0
+	 *
 	 * @param array      $value   Field value.
 	 * @param int|string $post_id Post ID.
 	 * @param array      $field   ACF field.
@@ -222,6 +224,8 @@ class Bridge_Library_API_Provider_Courses {
 
 	/**
 	 * Get the academic department-level resources for the given course.
+	 *
+	 * @since 1.2.0
 	 *
 	 * @param int|string $post_id Post ID.
 	 *
