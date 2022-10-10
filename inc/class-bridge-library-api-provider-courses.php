@@ -63,6 +63,9 @@ class Bridge_Library_API_Provider_Courses {
 		// Add custom query parameters.
 		add_filter( "rest_{$this->post_type}_collection_params", array( $this, 'collection_params' ), 10, 2 );
 		add_filter( "rest_{$this->post_type}_query", array( $this, 'post_query' ), 10, 2 );
+
+		// Include department-level resources for each course.
+		add_filter( 'acf/load_value/name=core_resources', array( $this, 'merge_department_resources_with_course_resources' ), 10, 3 );
 	}
 
 	/**
@@ -199,4 +202,52 @@ class Bridge_Library_API_Provider_Courses {
 		return $args;
 	}
 
+	/**
+	 * Merge department-level resources with course-level core resources.
+	 *
+	 * @param array      $value   Field value.
+	 * @param int|string $post_id Post ID.
+	 * @param array      $field   ACF field.
+	 *
+	 * @return array
+	 */
+	public function merge_department_resources_with_course_resources( $value, $post_id, $field ) {
+		// Bypass on backend.
+		if ( is_admin() ) {
+			return $value;
+		}
+
+		return array_merge( self::get_department_level_resources( $post_id ), $value );
+	}
+
+	/**
+	 * Get the academic department-level resources for the given course.
+	 *
+	 * @param int|string $post_id Post ID.
+	 *
+	 * @return WP_Post[]
+	 */
+	public static function get_department_level_resources( $post_id ) {
+
+		/**
+		 * Get the departments this course belongs to.
+		 *
+		 * @var WP_Term[] $departments
+		 */
+		$departments = wp_get_post_terms( $post_id, 'academic_department' );
+
+		$all_department_resources = array();
+
+		foreach ( $departments as $department ) {
+			$department_resources = get_field( 'related_resources', 'term_' . $department->term_id );
+
+			if ( ! is_array( $department_resources ) || empty( $department_resources ) ) {
+				continue;
+			}
+
+			$all_department_resources = array_merge( $all_department_resources, $department_resources );
+		}
+
+		return array_unique( $all_department_resources );
+	}
 }
