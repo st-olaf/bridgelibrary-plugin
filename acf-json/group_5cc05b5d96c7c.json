@@ -297,23 +297,6 @@
             "return_format": "id"
         },
         {
-            "key": "field_5fcff25f7b23b",
-            "label": "Import LibGuides Assets",
-            "name": "",
-            "type": "message",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "message": "Use this to import all assets from a specific LibGuides guide for this course.",
-            "new_lines": "wpautop",
-            "esc_html": 0
-        },
-        {
             "key": "field_60888661b7d91",
             "label": "Copy Resources",
             "name": "",
@@ -322,7 +305,7 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "100",
                 "class": "",
                 "id": ""
             },
@@ -380,5 +363,5 @@
     "acfcdt_manage_table_definition": 1,
     "acfcdt_table_name": "bridge_library_course_meta",
     "acfcdt_table_definition_file_name": "table_8x5cc08b74179aa",
-    "modified": 1619560071
+    "modified": 1665420121
 }
