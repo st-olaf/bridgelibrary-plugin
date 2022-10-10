@@ -150,12 +150,14 @@ class Bridge_Library_API_LibGuides_12 extends Bridge_Library {
 	 *
 	 * @param string $institution Institution slug.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public function set_institution( $institution ) {
 		$this->client_id     = $this->client_ids[ $institution ];
 		$this->client_secret = $this->client_secrets[ $institution ];
 		$this->institution   = $institution;
+
+		return $this;
 	}
 
 	/**

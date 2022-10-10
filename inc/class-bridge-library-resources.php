@@ -979,15 +979,13 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$libguides_api_12 = Bridge_Library_API_LibGuides_12::get_instance();
 
-		$libguides_api_12->set_institution( 'stolaf' );
-		$stolaf_results = $libguides_api_12->get_assets();
+		$stolaf_results = $libguides_api_12->set_institution( 'stolaf' )->get_assets();
 
 		if ( is_wp_error( $stolaf_results ) ) {
 			wp_send_json_error( $stolaf_results );
 		}
 
-		$libguides_api_12->set_institution( 'carleton' );
-		$carleton_results = $libguides_api_12->get_assets();
+		$carleton_results = $libguides_api_12->set_institution( 'carleton' )->get_assets();
 
 		if ( is_wp_error( $carleton_results ) ) {
 			wp_send_json_error( $carleton_results );
@@ -1056,11 +1054,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 		// Get the data.
 		$libguides_api_12 = Bridge_Library_API_LibGuides_12::get_instance();
 
-		$libguides_api_12->set_institution( 'stolaf' );
-		$stolaf_results = $libguides_api_12->get_assets();
-
-		$libguides_api_12->set_institution( 'carleton' );
-		$carleton_results = $libguides_api_12->get_assets();
+		$stolaf_results   = $libguides_api_12->set_institution( 'stolaf' )->get_assets();
+		$carleton_results = $libguides_api_12->set_institution( 'carleton' )->get_assets();
 
 		// LibGuides doesn’t have a limit parameter, so we have to get everything in one call.
 		// If async, we’ll break it up into chunks and schedule them to be processed.
@@ -1174,11 +1169,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 		// Get the data.
 		$libguides_api_11 = Bridge_Library_API_LibGuides_11::get_instance();
 
-		$libguides_api_11->set_institution( 'stolaf' );
-		$stolaf_results = $libguides_api_11->get_guides();
-
-		$libguides_api_11->set_institution( 'carleton' );
-		$carleton_results = $libguides_api_11->get_guides();
+		$stolaf_results   = $libguides_api_11->set_institution( 'stolaf' )->get_guides();
+		$carleton_results = $libguides_api_11->set_institution( 'carleton' )->get_guides();
 
 		// LibGuides doesn’t have a limit parameter, so we have to get everything in one call.
 		// If async, we’ll break it up into chunks and schedule them to be processed.
@@ -1239,11 +1231,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$libguides_api_11 = Bridge_Library_API_LibGuides_11::get_instance();
 
-		$libguides_api_11->set_institution( 'stolaf' );
-		$stolaf_results = $libguides_api_11->get_assets( $asset_args );
-
-		$libguides_api_11->set_institution( 'carleton' );
-		$carleton_results = $libguides_api_11->get_assets( $asset_args );
+		$stolaf_results   = $libguides_api_11->set_institution( 'stolaf' )->get_assets( $asset_args );
+		$carleton_results = $libguides_api_11->set_institution( 'carleton' )->get_assets( $asset_args );
 
 		$results = array();
 		foreach ( $stolaf_results as $asset ) {
