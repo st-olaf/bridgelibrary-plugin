@@ -219,6 +219,10 @@ class Bridge_Library_API_Provider_Courses {
 			return $value;
 		}
 
+		if ( ! is_array( $value ) ) {
+			$value = array();
+		}
+
 		return array_merge( self::get_department_level_resources( $post_id ), $value );
 	}
 
