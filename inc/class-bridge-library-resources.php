@@ -886,11 +886,11 @@ class Bridge_Library_Resources extends Bridge_Library {
 						<?php wp_nonce_field( 'start_bg_libguides_assets_update', 'start_bg_libguides_assets_update_nonce' ); ?>
 
 						<p>Run:
-							<label><input type="radio" value="async" class="wait-for" name="async" checked="checked" />asynchronously</label>
-							<label><input type="radio" value="sync" class="wait-for" name="async" />synchronously</label>
+							<label><input type="radio" value="async" class="wait-for" name="async" checked="checked" disabled="disabled" />asynchronously</label>
+							<label><input type="radio" value="sync" class="wait-for" name="async" disabled="disabled" />synchronously</label>
 						</p>
 
-						<p><input type="submit" class="button button-primary" value="Update Assets" /></p>
+						<p><input type="submit" class="button button-primary" value="Update Assets" disabled="disabled" /> <em>Note: disabled to reduce the number of resources in the system.</em></p>
 					</td>
 				</tr>
 			</table>
@@ -908,8 +908,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 						<p class="messages"></p>
 
-						<p><label for="libguides_asset_id">LibGuides Asset ID: <input type="text" name="libguides_asset_id" placeholder="14174" /></label></p>
-						<p><input type="submit" class="button button-primary" value="Update an Asset" /></p>
+						<p><label for="libguides_asset_id">LibGuides Asset ID: <input type="text" name="libguides_asset_id" placeholder="14174" disabled="disabled" /></label></p>
+						<p><input type="submit" class="button button-primary" value="Update an Asset" disabled="disabled" /> <em>Note: disabled to reduce the number of resources in the system.</em></p>
 					</td>
 				</tr>
 			</table>
