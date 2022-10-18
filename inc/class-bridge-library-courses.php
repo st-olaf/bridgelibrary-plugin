@@ -770,27 +770,11 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 		if ( is_null( $institution_name ) ) {
 			$term = wp_create_term( $term, $taxonomy );
-			return (int) $term['term_id'];
 		} else {
-			$institution_term = wp_create_term( $institution_name, $taxonomy );
-
-			$term_query = new WP_Term_Query(
-				array(
-					'taxonomy'   => $taxonomy,
-					'name'       => $term,
-					'parent'     => $institution_term['term_id'],
-					'fields'     => 'ids',
-					'hide_empty' => false,
-				)
-			);
-
-			if ( $term_query->terms ) {
-				return (int) $term_query->terms[0];
-			} else {
-				$term = wp_insert_term( $term, $taxonomy, array( 'parent' => $institution_term['term_id'] ) );
-				return (int) $term['term_id'];
-			}
+			$term = wp_create_term( $term . ' (' . $institution_name . ')', $taxonomy );
 		}
+
+		return (int) $term['term_id'];
 	}
 
 	/**
