@@ -68,9 +68,9 @@ class Bridge_Library_API_Provider_Resources {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param WP_REST_Request  $response Response object.
+	 * @param WP_REST_Response $response Response object.
 	 * @param WP_Post          $post     Post object.
-	 * @param WP_REST_Response $request  Request object.
+	 * @param WP_REST_Request  $request  Request object.
 	 *
 	 * @return WP_REST_Response            Response object.
 	 */
