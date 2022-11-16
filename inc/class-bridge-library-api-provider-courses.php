@@ -66,6 +66,7 @@ class Bridge_Library_API_Provider_Courses {
 
 		// Include department-level resources for each course.
 		add_filter( 'acf/load_value/name=core_resources', array( $this, 'merge_department_resources_with_course_resources' ), 10, 3 );
+		add_filter( 'acf/load_value/key=field_5e5819970fbfd', array( $this, 'add_department_librarians' ), 10, 3 ); // Using name=librarians breaks the term librarians field.
 	}
 
 	/**
@@ -257,5 +258,65 @@ class Bridge_Library_API_Provider_Courses {
 		}
 
 		return array_unique( $all_department_resources );
+	}
+
+	/**
+	 * Use department-level librarians if course-level librarians are empty.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param array      $value   Field value.
+	 * @param int|string $post_id Post ID.
+	 * @param array      $field   ACF field.
+	 *
+	 * @return array
+	 */
+	public function add_department_librarians( $value, $post_id, $field ) {
+		// Bypass on backend.
+		if ( is_admin() ) {
+			return $value;
+		}
+
+		// Course-level librarians take precedence.
+		if ( ! empty( $value ) ) {
+			return $value;
+		}
+
+		return self::get_department_level_librarians( $post_id );
+	}
+
+	/**
+	 * Get the academic department-level resources for the given course.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param int|string $post_id Post ID.
+	 *
+	 * @return WP_Post[]
+	 */
+	public static function get_department_level_librarians( $post_id ) {
+
+		/**
+		 * Get the departments this course belongs to.
+		 *
+		 * @var WP_Term[] $departments
+		 */
+		$departments = wp_get_post_terms( $post_id, 'academic_department' );
+
+		$librarian_query = new WP_Query(
+			array(
+				'post_type'      => 'librarian',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					array(
+						'taxonomy' => 'academic_department',
+						'terms'    => wp_list_pluck( $departments, 'term_id' ),
+					),
+				),
+			)
+		);
+
+		return $librarian_query->posts;
 	}
 }
