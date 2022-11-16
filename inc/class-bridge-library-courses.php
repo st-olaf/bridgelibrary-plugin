@@ -709,12 +709,20 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$course['institution']    = array( $institution_term );
 			$course['course_number']  = $course_code['course_number'];
 			$course['course_section'] = $course_code['course_section'];
-			$course['course_term']    = array( $this->get_course_term( explode( '/', $course_code['course_term'] ) ) );
+			$course['course_term']    = array_filter( array( $this->get_course_term( explode( '/', $course_code['course_term'] ) ) ) );
 		}
 
 		if ( isset( $course['academic_department']['desc'] ) ) {
-			$academic_department_term = $this->get_or_create_term( $course['academic_department']['desc'], 'academic_department', $course_code['institution'] );
-			wp_set_object_terms( $post_id, $academic_department_term, 'academic_department' );
+			$academic_department_name = $course['academic_department']['desc'];
+		} elseif ( isset( $course['academic_department']['value'] ) ) {
+			$academic_department_name = $course['academic_department']['value'];
+		} else {
+			$academic_department_name = null;
+		}
+
+		if ( isset( $academic_department_name ) ) {
+			$academic_department_term = $this->get_or_create_term( $academic_department_name, 'academic_department', $course_code['institution'] );
+			wp_set_object_terms( $post_id, $academic_department_term_id, 'academic_department' );
 			$course['academic_department_code'] = $course['academic_department']['value'];
 			$course['academic_department']      = array( $academic_department_term );
 		}
@@ -784,9 +792,13 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 *
 	 * @param array $term_parts Academic term and year.
 	 *
-	 * @return int              Academic term ID.
+	 * @return int|null         Academic term ID.
 	 */
 	private function get_course_term( $term_parts ) {
+
+		if ( empty( array_filter( $term_parts ) ) ) {
+			return null;
+		}
 
 		$term_slug = '20' . $term_parts[0] . '-' . str_replace( array_flip( $this->academic_term_slugs ), $this->academic_term_slugs, $term_parts[1] );
 
