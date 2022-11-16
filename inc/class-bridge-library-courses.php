@@ -721,10 +721,10 @@ class Bridge_Library_Courses extends Bridge_Library {
 		}
 
 		if ( isset( $academic_department_name ) ) {
-			$academic_department_term = $this->get_or_create_term( $academic_department_name, 'academic_department', $course_code['institution'] );
+			$academic_department_term_id = $this->get_or_create_term( $academic_department_name, 'academic_department', $course_code['institution'] );
 			wp_set_object_terms( $post_id, $academic_department_term_id, 'academic_department' );
 			$course['academic_department_code'] = $course['academic_department']['value'];
-			$course['academic_department']      = array( $academic_department_term );
+			$course['academic_department']      = array( $academic_department_term_id );
 		}
 
 		$alma_api    = Bridge_Library_API_Alma::get_instance();
