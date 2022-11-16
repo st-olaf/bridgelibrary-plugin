@@ -774,7 +774,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$term = wp_create_term( $term . ' (' . $institution_name . ')', $taxonomy );
 		}
 
-		return (int) $term['term_id'];
+		return absint( $term['term_id'] );
 	}
 
 	/**
@@ -784,14 +784,14 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 *
 	 * @param array $term_parts Academic term and year.
 	 *
-	 * @return array            Academic term and year with term IDs.
+	 * @return int              Academic term ID.
 	 */
 	private function get_course_term( $term_parts ) {
 
 		$term_slug = '20' . $term_parts[0] . '-' . str_replace( array_flip( $this->academic_term_slugs ), $this->academic_term_slugs, $term_parts[1] );
 
 		$term = wp_create_term( $term_slug, 'course_term' );
-		return $term['term_id'];
+		return absint( $term['term_id'] );
 	}
 
 	/**
