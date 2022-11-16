@@ -724,7 +724,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 		if ( ! is_wp_error( $full_course ) && ! empty( $full_course['reading_lists'] ) ) {
 			$resources = Bridge_Library_Resources::get_instance();
-			if ( array_key_exists( 'reading_lists', $full_course ) && array_key_exists( 'reading_list', $full_course['reading_lists'] ) && count( $full_course['reading_lists']['reading_list'] ) > 0 ) {
+			if ( array_key_exists( 'reading_lists', $full_course ) && array_key_exists( 'reading_list', $full_course['reading_lists'] ) && is_iterable( $full_course['reading_lists']['reading_list'] ) && ! empty( $full_course['reading_lists']['reading_list'] ) ) {
 				foreach ( $full_course['reading_lists']['reading_list'] as $reading_list ) {
 					$citations = $reading_list['citations']['citation'];
 
