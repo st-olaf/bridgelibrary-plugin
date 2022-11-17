@@ -386,14 +386,26 @@ class Bridge_Library_Data_Structure {
 	 * @return array                    Array of found terms.
 	 */
 	public function get_term_cpt_count( $terms, $taxonomies, $args, $term_query ) {
-		if ( is_admin() && ! is_customize_preview() ) {
-			$current_screen = get_current_screen();
-			if ( ! is_null( $current_screen ) && in_array( $current_screen->post_type, $this->custom_post_types, true ) && in_array( $current_screen->taxonomy, $this->custom_taxonomies, true ) ) {
-				foreach ( $terms as $term ) {
-					$term->count = get_term_meta( $term->term_id, 'post_count_' . $current_screen->post_type, true );
+		if ( ! is_admin() || is_customize_preview() ) {
+			return $terms;
+		}
+
+		$current_screen = get_current_screen();
+
+		if ( is_null( $current_screen ) ) {
+			return $terms;
+		}
+
+		if ( in_array( $current_screen->post_type, $this->custom_post_types, true ) && in_array( $current_screen->taxonomy, $this->custom_taxonomies, true ) ) {
+			foreach ( $terms as $term ) {
+				if ( ! $term instanceof WP_Term ) {
+					continue;
 				}
+
+				$term->count = get_term_meta( $term->term_id, 'post_count_' . $current_screen->post_type, true );
 			}
 		}
+
 		return $terms;
 	}
 
