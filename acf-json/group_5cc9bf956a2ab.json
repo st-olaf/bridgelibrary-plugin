@@ -366,7 +366,7 @@
             "label": "Librarians",
             "name": "librarians",
             "type": "relationship",
-            "instructions": "Librarians suggested for this student uses based on academic departments.",
+            "instructions": "Librarians suggested for this student user based on academic departments.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -629,5 +629,5 @@
     "acfcdt_manage_table_definition": 1,
     "acfcdt_table_name": "bridge_library_user_meta",
     "acfcdt_table_definition_file_name": "table_1120x5cc9bf95ce0ac",
-    "modified": 1576860746
+    "modified": 1668624595
 }

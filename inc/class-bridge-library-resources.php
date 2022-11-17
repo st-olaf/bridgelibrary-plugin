@@ -150,7 +150,6 @@ class Bridge_Library_Resources extends Bridge_Library {
 		add_filter( 'acf/prepare_field/key=field_5d707ba9173d4', array( $this, 'load_course_links_field' ) );
 		add_filter( 'acf/prepare_field/key=field_5cd9abad8a9cb', array( $this, 'disable_primo_image_url_field' ) );
 		add_filter( 'acf/prepare_field/key=field_5cc86dd2d9f71', array( $this, 'disable_primo_image_url_field' ) );
-		add_filter( 'acf/prepare_field/key=field_5fcff25f7b23b', array( $this, 'add_libguides_import_button' ) );
 		add_filter( 'acf/prepare_field/key=field_60888661b7d91', array( $this, 'add_copy_resources_button' ) );
 
 		// Load backend JS.
@@ -887,11 +886,11 @@ class Bridge_Library_Resources extends Bridge_Library {
 						<?php wp_nonce_field( 'start_bg_libguides_assets_update', 'start_bg_libguides_assets_update_nonce' ); ?>
 
 						<p>Run:
-							<label><input type="radio" value="async" class="wait-for" name="async" checked="checked" />asynchronously</label>
-							<label><input type="radio" value="sync" class="wait-for" name="async" />synchronously</label>
+							<label><input type="radio" value="async" class="wait-for" name="async" checked="checked" disabled="disabled" />asynchronously</label>
+							<label><input type="radio" value="sync" class="wait-for" name="async" disabled="disabled" />synchronously</label>
 						</p>
 
-						<p><input type="submit" class="button button-primary" value="Update Assets" /></p>
+						<p><input type="submit" class="button button-primary" value="Update Assets" disabled="disabled" /> <em>Note: disabled to reduce the number of resources in the system.</em></p>
 					</td>
 				</tr>
 			</table>
@@ -909,8 +908,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 						<p class="messages"></p>
 
-						<p><label for="libguides_asset_id">LibGuides Asset ID: <input type="text" name="libguides_asset_id" placeholder="14174" /></label></p>
-						<p><input type="submit" class="button button-primary" value="Update an Asset" /></p>
+						<p><label for="libguides_asset_id">LibGuides Asset ID: <input type="text" name="libguides_asset_id" placeholder="14174" disabled="disabled" /></label></p>
+						<p><input type="submit" class="button button-primary" value="Update an Asset" disabled="disabled" /> <em>Note: disabled to reduce the number of resources in the system.</em></p>
 					</td>
 				</tr>
 			</table>
@@ -979,15 +978,13 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$libguides_api_12 = Bridge_Library_API_LibGuides_12::get_instance();
 
-		$libguides_api_12->set_institution( 'stolaf' );
-		$stolaf_results = $libguides_api_12->get_assets();
+		$stolaf_results = $libguides_api_12->set_institution( 'stolaf' )->get_assets();
 
 		if ( is_wp_error( $stolaf_results ) ) {
 			wp_send_json_error( $stolaf_results );
 		}
 
-		$libguides_api_12->set_institution( 'carleton' );
-		$carleton_results = $libguides_api_12->get_assets();
+		$carleton_results = $libguides_api_12->set_institution( 'carleton' )->get_assets();
 
 		if ( is_wp_error( $carleton_results ) ) {
 			wp_send_json_error( $carleton_results );
@@ -1056,11 +1053,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 		// Get the data.
 		$libguides_api_12 = Bridge_Library_API_LibGuides_12::get_instance();
 
-		$libguides_api_12->set_institution( 'stolaf' );
-		$stolaf_results = $libguides_api_12->get_assets();
-
-		$libguides_api_12->set_institution( 'carleton' );
-		$carleton_results = $libguides_api_12->get_assets();
+		$stolaf_results   = $libguides_api_12->set_institution( 'stolaf' )->get_assets();
+		$carleton_results = $libguides_api_12->set_institution( 'carleton' )->get_assets();
 
 		// LibGuides doesn’t have a limit parameter, so we have to get everything in one call.
 		// If async, we’ll break it up into chunks and schedule them to be processed.
@@ -1174,11 +1168,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 		// Get the data.
 		$libguides_api_11 = Bridge_Library_API_LibGuides_11::get_instance();
 
-		$libguides_api_11->set_institution( 'stolaf' );
-		$stolaf_results = $libguides_api_11->get_guides();
-
-		$libguides_api_11->set_institution( 'carleton' );
-		$carleton_results = $libguides_api_11->get_guides();
+		$stolaf_results   = $libguides_api_11->set_institution( 'stolaf' )->get_guides();
+		$carleton_results = $libguides_api_11->set_institution( 'carleton' )->get_guides();
 
 		// LibGuides doesn’t have a limit parameter, so we have to get everything in one call.
 		// If async, we’ll break it up into chunks and schedule them to be processed.
@@ -1239,11 +1230,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$libguides_api_11 = Bridge_Library_API_LibGuides_11::get_instance();
 
-		$libguides_api_11->set_institution( 'stolaf' );
-		$stolaf_results = $libguides_api_11->get_assets( $asset_args );
-
-		$libguides_api_11->set_institution( 'carleton' );
-		$carleton_results = $libguides_api_11->get_assets( $asset_args );
+		$stolaf_results   = $libguides_api_11->set_institution( 'stolaf' )->get_assets( $asset_args );
+		$carleton_results = $libguides_api_11->set_institution( 'carleton' )->get_assets( $asset_args );
 
 		$results = array();
 		foreach ( $stolaf_results as $asset ) {
@@ -1372,25 +1360,6 @@ class Bridge_Library_Resources extends Bridge_Library {
 		}
 
 		return $asset;
-	}
-
-	/**
-	 * Add nonce and button to message field for LibGuides import.
-	 *
-	 * @param array $field ACF field object.
-	 *
-	 * @return array
-	 */
-	public function add_libguides_import_button( $field ) {
-		$url_parts = array(
-			'page'      => 'bridge_library_import_libguides',
-			'nonce'     => wp_create_nonce( 'import_libguides' ),
-			'course_id' => get_the_ID(),
-		);
-
-		$field['message'] .= '<p><a href="' . esc_url( admin_url( 'admin.php?' . http_build_query( $url_parts ) ) ) . '" target="_blank" class="button button-primary">Begin</a></p>';
-
-		return $field;
 	}
 
 	/**
