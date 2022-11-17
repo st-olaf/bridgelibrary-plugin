@@ -102,6 +102,13 @@ class Bridge_Library {
 		// Scheduling.
 		register_activation_hook( BL_PLUGIN_FILE, array( $this, 'schedule_automatic_updates' ) );
 		register_deactivation_hook( BL_PLUGIN_FILE, array( $this, 'clear_automatic_updates' ) );
+
+		add_action(
+			'bridge_library_schedule_daily',
+			function () {
+				error_log( gmdate( 'Y-m-d H:i:s' ) . ': running daily Bridge Library tasks.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			}
+		);
 	}
 
 	/**
