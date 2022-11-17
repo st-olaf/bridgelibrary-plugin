@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2022-11-17
+- Feature: merge academic department-level resources into course-level core resources
+- Change: remove UI to import LibGuides assets to a course
+- Change: remove academic department institution nesting
+- Bugfix: fix librarian display
+- Bugfix: fix other miscellaneous small bugs
+
 ## [1.1.0] — 2022-05
 - Bugfix: fix some type errors
 
