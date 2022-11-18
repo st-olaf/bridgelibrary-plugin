@@ -1345,6 +1345,8 @@ class Bridge_Library_Users {
 			$old_users = $wpdb->get_col( $query, 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
 		}
 
+		require_once ABSPATH . 'wp-admin/includes/user.php';
+
 		foreach ( $old_users as $old_user ) {
 			$user = get_user_by( 'id', $old_user );
 
