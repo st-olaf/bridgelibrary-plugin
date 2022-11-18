@@ -487,18 +487,20 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		// Institution.
 		$institution = wp_get_post_terms( $post_id, 'institution', array( 'fields' => 'ids' ) );
-		wp_set_object_terms( $resource_id, $institution, 'institution' );
+		if ( ! is_wp_error( $institution ) ) {
+			wp_set_object_terms( $resource_id, $institution, 'institution' );
 
-		// Manually generate URL.
-		if ( 8 === absint( $institution[0] ) ) {
-			$institution_primo = 'stolaf.edu';
-		} else {
-			$institution_primo = 'carleton.edu';
+			// Manually generate URL.
+			if ( 8 === absint( $institution[0] ) ) {
+				$institution_primo = 'stolaf.edu';
+			} else {
+				$institution_primo = 'carleton.edu';
+			}
+			$mms_id_primo = $citation['metadata']['mms_id'];
+			$primo_api    = Bridge_Library_API_Primo::get_instance();
+			$url          = $primo_api->generate_full_view_url( $mms_id_primo, $institution_primo );
+			update_field( 'url', $url, $resource_id );
 		}
-		$mms_id_primo = $citation['metadata']['mms_id'];
-		$primo_api    = Bridge_Library_API_Primo::get_instance();
-		$url          = $primo_api->generate_full_view_url( $mms_id_primo, $institution_primo );
-		update_field( 'url', $url, $resource_id );
 
 		// Related courses for the resource.
 		$related_courses = get_field( 'related_courses_resources', $resource_id );

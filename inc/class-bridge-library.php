@@ -107,7 +107,8 @@ class Bridge_Library {
 			'bridge_library_schedule_daily',
 			function () {
 				error_log( gmdate( 'Y-m-d H:i:s' ) . ': running daily Bridge Library tasks.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			}
+			},
+			1
 		);
 	}
 

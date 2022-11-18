@@ -115,7 +115,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		add_action( 'wp_ajax_copy_resources_to_course', array( $this, 'ajax_copy_resources_to_course' ) );
 
 		// Schedule automatic updates.
-		add_action( 'bridge_library_schedule_daily', array( $this, 'background_update_courses' ) );
+		add_action( 'bridge_library_schedule_daily', array( $this, 'background_update_courses' ), 10 );
 
 		// Add category-level resources and librarians to course related resources and librarians.
 		add_filter( 'acf/load_value/key=field_5cc326f90696b', array( $this, 'include_academic_department_resources' ), 10, 3 );
@@ -720,7 +720,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$academic_department_name = null;
 		}
 
-		if ( isset( $academic_department_name ) ) {
+		if ( isset( $academic_department_name ) && is_array( $course_code ) && array_key_exists( 'institution', $course_code ) ) {
 			$academic_department_term_id = $this->get_or_create_term( $academic_department_name, 'academic_department', $course_code['institution'] );
 			wp_set_object_terms( $post_id, $academic_department_term_id, 'academic_department' );
 			$course['academic_department_code'] = $course['academic_department']['value'];

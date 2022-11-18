@@ -154,7 +154,7 @@ class Bridge_Library_Users {
 		add_filter( 'wp_privacy_personal_data_erasers', array( $this, 'register_eraser' ), 10 );
 
 		// Schedule automatic user expiry.
-		add_action( 'bridge_library_schedule_daily', array( $this, 'clean_up_users' ) );
+		add_action( 'bridge_library_schedule_daily', array( $this, 'clean_up_users' ), 50 );
 
 		// Add user cleanup to admin tools page.
 		add_action( 'bridge_library_admin_settings', array( $this, 'admin_clean_up_users' ), 11 );
@@ -1344,6 +1344,8 @@ class Bridge_Library_Users {
 			);
 			$old_users = $wpdb->get_col( $query, 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
 		}
+
+		require_once ABSPATH . 'wp-admin/includes/user.php';
 
 		foreach ( $old_users as $old_user ) {
 			$user = get_user_by( 'id', $old_user );
