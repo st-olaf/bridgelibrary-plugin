@@ -720,7 +720,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$academic_department_name = null;
 		}
 
-		if ( isset( $academic_department_name ) ) {
+		if ( isset( $academic_department_name ) && is_array( $course_code ) && array_key_exists( 'institution', $course_code ) ) {
 			$academic_department_term_id = $this->get_or_create_term( $academic_department_name, 'academic_department', $course_code['institution'] );
 			wp_set_object_terms( $post_id, $academic_department_term_id, 'academic_department' );
 			$course['academic_department_code'] = $course['academic_department']['value'];
