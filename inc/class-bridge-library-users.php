@@ -300,7 +300,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return void
 	 */
-	public function store_user_meta( $user, $userinfo, $userdidnotexist, $client, $oauthservice ) {
+	public function store_user_meta( $user, $userinfo, $userdidnotexist, $client, $oauthservice ) {  // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 		if ( $userdidnotexist ) {
 			update_field( 'google_id', $userinfo->id, 'user_' . $user->ID );
@@ -1200,7 +1200,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return array                Personal data.
 	 */
-	public function export_personal_data( $email_address, $page = 1 ) {
+	public function export_personal_data( $email_address, $page = 1 ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		$user = get_user_by( 'email', $email_address );
 
 		$courses     = get_field( 'courses', 'user_' . $user->ID );
@@ -1273,7 +1273,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return array                Personal data.
 	 */
-	public function erase_personal_data( $email_address, $page = 1 ) {
+	public function erase_personal_data( $email_address, $page = 1 ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		$user = get_user_by( 'email', $email_address );
 
 		// Set defaults.
@@ -1420,7 +1420,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return bool|mixed            The value to return.
 	 */
-	public function get_user_sticky_posts( $pre_option, $option, $default ) {
+	public function get_user_sticky_posts( $pre_option, $option, $default ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		return $this->get_favorite_posts();
 	}
 
@@ -1435,7 +1435,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return mixed         Field value.
 	 */
-	public function acf_load_user_sticky_posts_meta( $value, $post_id, $field ) {
+	public function acf_load_user_sticky_posts_meta( $value, $post_id, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		$favorites = (array) $this->get_favorite_posts();
 		return in_array( (int) $post_id, $favorites, true );
 	}
@@ -1451,7 +1451,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return mixed         Field value.
 	 */
-	public function acf_update_user_sticky_posts_meta( $value, $post_id, $field ) {
+	public function acf_update_user_sticky_posts_meta( $value, $post_id, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		$this->update_favorite_posts( $post_id, (bool) $value );
 
 		// Don’t save any postmeta.
@@ -1578,7 +1578,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return array          WP_Query args.
 	 */
-	public function acf_sort_user_sticky_posts( $args, $field, $post_id ) {
+	public function acf_sort_user_sticky_posts( $args, $field, $post_id ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		// If this is the first page, include sticky posts and sort them to the top.
 		if ( array_key_exists( 'paged', $args ) && 1 === (int) $args['paged'] ) {
 
@@ -1608,7 +1608,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return string          Post title.
 	 */
-	public function acf_sticky_post_title( $title, $post, $field, $post_id ) {
+	public function acf_sticky_post_title( $title, $post, $field, $post_id ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		if ( in_array( $post->ID, $this->get_favorite_posts(), true ) ) {
 			$title = '<strong>' . $title . '</strong>  — Favorite';
 		}
@@ -1631,7 +1631,7 @@ class Bridge_Library_Users {
 
 	 * @return mixed                 The result of the field resolution.
 	 */
-	public function graphql_user_favorites( $result, $source, array $args, AppContext $context, ResolveInfo $info, string $type_name, string $field_key, FieldDefinition $field, $field_resolver ) {
+	public function graphql_user_favorites( $result, $source, array $args, AppContext $context, ResolveInfo $info, string $type_name, string $field_key, FieldDefinition $field, $field_resolver ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		if ( 'userFavorites' === $field_key ) {
 			$result = array_filter(
 				(array) $result,
@@ -1653,7 +1653,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return void
 	 */
-	public function maybe_load_admin_js( $user ) {
+	public function maybe_load_admin_js( $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		require_once ABSPATH . '/wp-includes/pluggable.php';
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_enqueue_script( 'bridge-library-admin' );
@@ -1702,7 +1702,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return void
 	 */
-	public function graphql_register_types( TypeRegistry $type_registry ) {
+	public function graphql_register_types( TypeRegistry $type_registry ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		register_graphql_mutation(
 			'addUserFavorite',
 			array(
@@ -1731,7 +1731,7 @@ class Bridge_Library_Users {
 					),
 				),
 
-				'mutateAndGetPayload' => function( $input, $context, $info ) {
+				'mutateAndGetPayload' => function( $input, $context, $info ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 					$user     = Relay::fromGlobalId( $input['id'] );
 					$resource = Relay::fromGlobalId( $input['favoriteId'] );
 
@@ -1775,7 +1775,7 @@ class Bridge_Library_Users {
 					),
 				),
 
-				'mutateAndGetPayload' => function( $input, $context, $info ) {
+				'mutateAndGetPayload' => function( $input, $context, $info ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 					$user     = Relay::fromGlobalId( $input['id'] );
 					$resource = Relay::fromGlobalId( $input['favoriteId'] );
 
