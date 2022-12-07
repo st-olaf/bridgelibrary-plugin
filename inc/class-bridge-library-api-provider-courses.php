@@ -155,7 +155,7 @@ class Bridge_Library_API_Provider_Courses {
 	 *
 	 * @return array               Query parameters.
 	 */
-	public function collection_params( $query_params, $post_type ) {
+	public function collection_params( $query_params, $post_type ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 		$params['course_code'] = array(
 			'description'       => __( 'Course code to look up.', 'bridge-library' ),
@@ -214,7 +214,7 @@ class Bridge_Library_API_Provider_Courses {
 	 *
 	 * @return array
 	 */
-	public function merge_department_resources_with_course_resources( $value, $post_id, $field ) {
+	public function merge_department_resources_with_course_resources( $value, $post_id, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		// Bypass on backend.
 		if ( is_admin() ) {
 			return $value;
@@ -271,7 +271,7 @@ class Bridge_Library_API_Provider_Courses {
 	 *
 	 * @return array
 	 */
-	public function add_department_librarians( $value, $post_id, $field ) {
+	public function add_department_librarians( $value, $post_id, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		// Bypass on backend.
 		if ( is_admin() ) {
 			return $value;
