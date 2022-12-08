@@ -45,7 +45,6 @@ class Bridge_Library_Resources extends Bridge_Library {
 		'mms_id' => 'primo_id',
 		'author' => 'author',
 		'isbn'   => 'isbn',
-		'year'   => 'publication_year',
 	);
 
 	/**
@@ -475,10 +474,22 @@ class Bridge_Library_Resources extends Bridge_Library {
 			update_field( $acf_key, $citation['metadata'][ $alma_key ], $resource_id );
 		}
 
+		// Resource meta with custom handling.
+		update_field( 'publication_year', trim( $citation['metadata']['publication_date'], ' .[],\t\n\r\0\x0B' ), $resource_id );
+
+		if ( ! $citation['metadata']['author'] ) {
+			$author = $citation['metadata']['additional_person_name'];
+			if ( $author ) {
+				$author = array_shift( explode( ';', $author ) );
+				$author = trim( $author, ' ,\t\n\r\0\x0B' );
+				update_field( 'author', $author, $resource_id );
+			}
+		}
+
 		// Resource format.
-		$format = get_term_by( 'slug', $citation['type']['value'], 'resource_format', 'ARRAY_A' );
+		$format = get_term_by( 'slug', $citation['secondary_type']['value'], 'resource_format', 'ARRAY_A' );
 		if ( ! $format ) {
-			$format = wp_insert_term( $citation['type']['desc'], 'resource_format', array( 'slug' => $citation['type']['value'] ) );
+			$format = wp_insert_term( $citation['secondary_type']['desc'], 'resource_format', array( 'slug' => $citation['secondary_type']['value'] ) );
 		}
 		update_field( 'resource_format', $format['term_id'], $resource_id );
 
