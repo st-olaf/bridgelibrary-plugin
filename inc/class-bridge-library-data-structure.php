@@ -321,7 +321,6 @@ class Bridge_Library_Data_Structure {
 				'graphql_plural_name' => 'CourseTerms',
 			)
 		);
-
 	}
 
 	/**
@@ -363,7 +362,7 @@ class Bridge_Library_Data_Structure {
 	 *
 	 * @return void
 	 */
-	public function update_count_callback( $terms, $taxonomy ) {
+	public function update_count_callback( $terms, $taxonomy ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		global $wpdb;
 
 		foreach ( $terms as $term ) {
@@ -385,7 +384,7 @@ class Bridge_Library_Data_Structure {
 	 *
 	 * @return array                    Array of found terms.
 	 */
-	public function get_term_cpt_count( $terms, $taxonomies, $args, $term_query ) {
+	public function get_term_cpt_count( $terms, $taxonomies, $args, $term_query ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		if ( ! is_admin() || is_customize_preview() ) {
 			return $terms;
 		}
