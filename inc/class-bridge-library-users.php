@@ -146,8 +146,13 @@ class Bridge_Library_Users {
 		add_action( 'show_user_profile', array( $this, 'add_user_actions' ), 5 );
 		add_action( 'edit_user_profile', array( $this, 'add_user_actions' ), 5 );
 
+		// Enqueue assets.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+
 		// Add ajax hooks.
 		add_action( 'wp_ajax_cache_user_data', array( $this, 'ajax_cache_user_data' ) );
+		add_action( 'wp_ajax_bridge_library_add_user_favorite', array( $this, 'add_user_favorite' ) );
+		add_action( 'wp_ajax_bridge_library_remove_user_favorite', array( $this, 'remove_user_favorite' ) );
 
 		// Add personal data hooks.
 		add_filter( 'wp_privacy_personal_data_exporters', array( $this, 'register_exporter' ), 10 );
@@ -189,6 +194,18 @@ class Bridge_Library_Users {
 
 		// Add user’s institution to body class to control institution-specific link visibility.
 		add_filter( 'body_class', array( $this, 'body_class' ) );
+	}
+
+	/**
+	 * Enqueue frontend assets.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return void
+	 */
+	public function enqueue_assets() {
+		wp_enqueue_script( 'bridge-library-plugin', BL_PLUGIN_DIR_URL . '/assets/js/bridge-library-plugin.js', array( 'jquery' ), BL_PLUGIN_VERSION, true );
+		wp_add_inline_script( 'bridge-library-plugin', 'var bridgeLibrary = {adminAjax: "' . esc_url( admin_url( 'admin-ajax.php' ) ) . '"};', 'before' );
 	}
 
 	/**
@@ -1485,7 +1502,73 @@ class Bridge_Library_Users {
 			}
 		}
 
-		return update_field( 'user_favorites', $favorites, 'user_' . $user_id );
+		return update_field( 'user_favorites', array_values( $favorites ), 'user_' . $user_id );
+	}
+
+	/**
+	 * Mark a resource as favorite for the logged-in user.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function add_user_favorite() {
+		if ( ! $this->favorite_nonce_is_valid() ) {
+			wp_send_json_error( array( 'error' => __( 'Invalid request', 'bridge-library' ) ), 401 );
+		}
+
+		$id = intval( wp_unslash( $_POST['id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- already verified in $this->favorite_nonce_is_valid().
+
+		$updated = $this->update_favorite_posts( $id, true );
+
+		if ( $updated ) {
+			wp_send_json_success(
+				array(
+					'success' => __( 'Added user favorite', 'bridge-library' ),
+					'id'      => $id,
+				)
+			);
+		} else {
+			wp_send_json_error(
+				array(
+					'error' => __( 'Failed to add user favorite', 'bridge-library' ),
+					'id'    => $id,
+				)
+			);
+		}
+	}
+
+	/**
+	 * Remove a resource from the logged-in user’s favorites.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function remove_user_favorite() {
+		if ( ! $this->favorite_nonce_is_valid() ) {
+			wp_send_json_error( array( 'error' => __( 'Invalid request', 'bridge-library' ) ), 401 );
+		}
+
+		$id = intval( wp_unslash( $_POST['id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- already verified in $this->favorite_nonce_is_valid().
+
+		$updated = $this->update_favorite_posts( $id, false );
+
+		if ( $updated ) {
+			wp_send_json_success(
+				array(
+					'success' => __( 'Removed user favorite', 'bridge-library' ),
+					'id'      => $id,
+				)
+			);
+		} else {
+			wp_send_json_error(
+				array(
+					'error' => __( 'Failed to remove user favorite', 'bridge-library' ),
+					'id'    => $id,
+				)
+			);
+		}
 	}
 
 	/**
@@ -1508,6 +1591,29 @@ class Bridge_Library_Users {
 		}
 
 		return $user_favorites;
+	}
+
+	/**
+	 * Determine if the given post has been favorited by the given user.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $post_id Post ID.
+	 * @param int $user_id Optional user ID. Defaults to logged-in user.
+	 *
+	 * @return bool
+	 */
+	public function has_favorited_post( int $post_id, $user_id = 0 ) {
+		if ( 0 === $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		$user_favorites = get_field( 'user_favorites', 'user_' . $user_id );
+		if ( ! $user_favorites ) {
+			$user_favorites = array();
+		}
+
+		return array_key_exists( $post_id, array_flip( $user_favorites ) );
 	}
 
 	/**
@@ -1815,5 +1921,25 @@ class Bridge_Library_Users {
 		);
 
 		return array_filter( $ids );
+	}
+
+	/**
+	 * Verify the user favorite nonce.
+	 *
+	 * @return bool
+	 */
+	private function favorite_nonce_is_valid() {
+		if ( ! array_key_exists( 'nonce', $_POST ) || empty( $_POST['nonce'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return false;
+		}
+
+		if ( ! array_key_exists( 'id', $_POST ) || empty( $_POST['id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return false;
+		}
+
+		return wp_verify_nonce(
+			sanitize_key( wp_unslash( $_POST['nonce'] ) ),
+			'favorite-' . intval( wp_unslash( $_POST['id'] ) )
+		);
 	}
 }
