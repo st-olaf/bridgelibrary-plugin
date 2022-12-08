@@ -730,32 +730,37 @@ class Bridge_Library_Courses extends Bridge_Library {
 		$alma_api    = Bridge_Library_API_Alma::get_instance();
 		$full_course = $alma_api->request( 'courses/' . $course['id'], array( 'view' => 'full' ) );
 
-		if ( ! is_wp_error( $full_course ) && ! empty( $full_course['reading_lists'] ) ) {
-			$resources = Bridge_Library_Resources::get_instance();
-			if ( array_key_exists( 'reading_lists', $full_course ) && array_key_exists( 'reading_list', $full_course['reading_lists'] ) && is_iterable( $full_course['reading_lists']['reading_list'] ) && ! empty( $full_course['reading_lists']['reading_list'] ) ) {
-				foreach ( $full_course['reading_lists']['reading_list'] as $reading_list ) {
-					$citations = $reading_list['citations']['citation'];
+		if ( is_wp_error( $full_course ) ) {
+			return $course;
+		}
 
-					$active_resources   = array();
-					$existing_resources = get_field( 'related_courses_resources', $post_id );
-					if ( ! is_array( $existing_resources ) ) {
-						$existing_resources = array();
-					}
+		if ( empty( $full_course['reading_lists'] ) ) {
+			return $course;
+		}
 
-					if ( is_array( $citations ) ) {
-						foreach ( $citations as $citation ) {
-							$resource_id        = $resources->update_reading_list( $citation, $post_id );
-							$active_resources[] = (int) $resource_id;
-						}
-					}
+		$resources = Bridge_Library_Resources::get_instance();
+		if ( array_key_exists( 'reading_lists', $full_course ) && array_key_exists( 'reading_list', $full_course['reading_lists'] ) && is_iterable( $full_course['reading_lists']['reading_list'] ) && ! empty( $full_course['reading_lists']['reading_list'] ) ) {
+			foreach ( $full_course['reading_lists']['reading_list'] as $reading_list ) {
+				$citations = $reading_list['citations']['citation'];
 
-					$active_resources = array_merge( $active_resources, $existing_resources );
-					$active_resources = array_unique( $active_resources );
-
-					// Update the course post.
-					update_field( 'related_courses_resources', $active_resources, $post_id );
-
+				$active_resources   = array();
+				$existing_resources = get_field( 'related_courses_resources', $post_id );
+				if ( ! is_array( $existing_resources ) ) {
+					$existing_resources = array();
 				}
+
+				if ( is_array( $citations ) ) {
+					foreach ( $citations as $citation ) {
+						$resource_id        = $resources->update_reading_list( $citation, $post_id );
+						$active_resources[] = (int) $resource_id;
+					}
+				}
+
+				$active_resources = array_merge( $active_resources, $existing_resources );
+				$active_resources = array_unique( $active_resources );
+
+				// Update the course post.
+				update_field( 'related_courses_resources', $active_resources, $post_id );
 			}
 		}
 
