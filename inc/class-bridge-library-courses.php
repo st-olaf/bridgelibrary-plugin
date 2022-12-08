@@ -750,8 +750,8 @@ class Bridge_Library_Courses extends Bridge_Library {
 			return $course;
 		}
 
-		$resources = Bridge_Library_Resources::get_instance();
 		if ( array_key_exists( 'reading_lists', $full_course ) && array_key_exists( 'reading_list', $full_course['reading_lists'] ) && is_iterable( $full_course['reading_lists']['reading_list'] ) && ! empty( $full_course['reading_lists']['reading_list'] ) ) {
+			$resources = Bridge_Library_Resources::get_instance();
 			foreach ( $full_course['reading_lists']['reading_list'] as $reading_list ) {
 				$citations = $reading_list['citations']['citation'];
 
