@@ -71,6 +71,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		'academic_department_code' => 'academic_department_code',
 		'degree_level'             => 'degree_level',
 		'course_term'              => 'course_term',
+		'instructors'              => 'instructors',
 	);
 
 	/**
@@ -732,6 +733,17 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 		if ( is_wp_error( $full_course ) ) {
 			return $course;
+		}
+
+		if ( ! empty( $full_course['instructor'] ) ) {
+			$course['instructors'] = array_map(
+				function( $instructor ) {
+					return array(
+						'name' => implode( ' ', array_filter( array( $instructor['first_name'], $instructor['last_name'] ) ) ),
+					);
+				},
+				$full_course['instructor']
+			);
 		}
 
 		if ( empty( $full_course['reading_lists'] ) ) {

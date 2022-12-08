@@ -20,113 +20,143 @@
         {
             "name": "id",
             "format": "%d",
+            "type": "bigint(20)",
             "null": false,
             "auto_increment": true,
             "unsigned": true
         },
         {
             "name": "post_id",
-            "format": "%d"
+            "format": "%d",
+            "type": "bigint(20)"
         },
         {
             "name": "alma_id",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "alma_id"
+                "identifier": "alma_id",
+                "key": "field_5cc2161e7b584"
             }
         },
         {
             "name": "course_code",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "course_code"
+                "identifier": "course_code",
+                "key": "field_5cc05b642ba7f"
             }
         },
         {
             "name": "academic_department_code",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "academic_department_code"
+                "identifier": "academic_department_code",
+                "key": "field_5dea86ee08933"
             }
         },
         {
             "name": "course_number",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "course_number"
+                "identifier": "course_number",
+                "key": "field_5cc05bd1a9800"
             }
         },
         {
             "name": "course_section",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "course_section"
+                "identifier": "course_section",
+                "key": "field_5cc05bdda9801"
             }
         },
         {
             "name": "start_date",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "start_date"
+                "identifier": "start_date",
+                "key": "field_5cc05b722ba80"
             }
         },
         {
             "name": "end_date",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "end_date"
+                "identifier": "end_date",
+                "key": "field_5cc05b802ba81"
             }
         },
         {
             "name": "institution",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "institution"
+                "identifier": "institution",
+                "key": "field_5cc201c1a852c"
             }
         },
         {
             "name": "academic_department",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "academic_department"
+                "identifier": "academic_department",
+                "key": "field_5cc201daa852d"
             }
         },
         {
             "name": "degree_level",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "degree_level"
+                "identifier": "degree_level",
+                "key": "field_5cc201f1a852e"
             }
         },
         {
             "name": "course_term",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "course_term"
+                "identifier": "course_term",
+                "key": "field_5cc201f9a852f"
             }
         },
         {
             "name": "core_resources",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "core_resources"
+                "identifier": "core_resources",
+                "key": "field_5d5d649bd2029"
             }
         },
         {
             "name": "related_courses_resources",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "related_courses_resources"
+                "identifier": "related_courses_resources",
+                "key": "field_5cc326f90696b"
             }
         },
         {
             "name": "librarians",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "librarians"
+                "identifier": "librarians",
+                "key": "field_5e5819970fbfd"
             }
         }
     ],
-    "hash": "b4e6e7259544f3e6825cbc0d1712ba2e",
-    "modified": 1619560071
+    "hash": "626a9b61200d7628c9e5dc33d482fbae",
+    "modified": 1670511939
 }

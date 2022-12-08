@@ -31,6 +31,7 @@
         array (
           'name' => 'id',
           'format' => '%d',
+          'type' => 'bigint(20)',
           'null' => false,
           'auto_increment' => true,
           'unsigned' => true,
@@ -44,6 +45,7 @@
         array (
           'name' => 'post_id',
           'format' => '%d',
+          'type' => 'bigint(20)',
           'map' => 
           array (
             'type' => 'acf_field_name',
@@ -53,146 +55,174 @@
         2 => 
         array (
           'name' => 'alma_id',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'alma_id',
+            'key' => 'field_5cc2161e7b584',
           ),
           'format' => '%s',
         ),
         3 => 
         array (
           'name' => 'course_code',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'course_code',
+            'key' => 'field_5cc05b642ba7f',
           ),
           'format' => '%s',
         ),
         4 => 
         array (
           'name' => 'academic_department_code',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'academic_department_code',
+            'key' => 'field_5dea86ee08933',
           ),
           'format' => '%s',
         ),
         5 => 
         array (
           'name' => 'course_number',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'course_number',
+            'key' => 'field_5cc05bd1a9800',
           ),
           'format' => '%s',
         ),
         6 => 
         array (
           'name' => 'course_section',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'course_section',
+            'key' => 'field_5cc05bdda9801',
           ),
           'format' => '%s',
         ),
         7 => 
         array (
           'name' => 'start_date',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'start_date',
+            'key' => 'field_5cc05b722ba80',
           ),
           'format' => '%s',
         ),
         8 => 
         array (
           'name' => 'end_date',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'end_date',
+            'key' => 'field_5cc05b802ba81',
           ),
           'format' => '%s',
         ),
         9 => 
         array (
           'name' => 'institution',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'institution',
+            'key' => 'field_5cc201c1a852c',
           ),
           'format' => '%s',
         ),
         10 => 
         array (
           'name' => 'academic_department',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'academic_department',
+            'key' => 'field_5cc201daa852d',
           ),
           'format' => '%s',
         ),
         11 => 
         array (
           'name' => 'degree_level',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'degree_level',
+            'key' => 'field_5cc201f1a852e',
           ),
           'format' => '%s',
         ),
         12 => 
         array (
           'name' => 'course_term',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'course_term',
+            'key' => 'field_5cc201f9a852f',
           ),
           'format' => '%s',
         ),
         13 => 
         array (
           'name' => 'core_resources',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'core_resources',
+            'key' => 'field_5d5d649bd2029',
           ),
           'format' => '%s',
         ),
         14 => 
         array (
           'name' => 'related_courses_resources',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'related_courses_resources',
+            'key' => 'field_5cc326f90696b',
           ),
           'format' => '%s',
         ),
         15 => 
         array (
           'name' => 'librarians',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'librarians',
+            'key' => 'field_5e5819970fbfd',
           ),
           'format' => '%s',
         ),
       ),
-      'hash' => 'b4e6e7259544f3e6825cbc0d1712ba2e',
-      'modified' => 1619560071,
+      'hash' => '626a9b61200d7628c9e5dc33d482fbae',
+      'modified' => 1670511939,
       'type' => 'meta',
     ),
     'bridge_library_user_meta' => 
@@ -765,6 +795,9 @@
   'join_tables' => 
   array (
   ),
+  'sub_tables' => 
+  array (
+  ),
   'meta_tables' => 
   array (
   ),
@@ -1019,7 +1052,136 @@
       ),
     ),
   ),
+  'acf_field_keys' => 
+  array (
+    'post:course' => 
+    array (
+      'field_5cc2161e7b584' => 'alma_id',
+      'field_5cc05b642ba7f' => 'course_code',
+      'field_5dea86ee08933' => 'academic_department_code',
+      'field_5cc05bd1a9800' => 'course_number',
+      'field_5cc05bdda9801' => 'course_section',
+      'field_5cc05b722ba80' => 'start_date',
+      'field_5cc05b802ba81' => 'end_date',
+      'field_5cc201c1a852c' => 'institution',
+      'field_5cc201daa852d' => 'academic_department',
+      'field_5cc201f1a852e' => 'degree_level',
+      'field_5cc201f9a852f' => 'course_term',
+      'field_5d5d649bd2029' => 'core_resources',
+      'field_5cc326f90696b' => 'related_courses_resources',
+      'field_5e5819970fbfd' => 'librarians',
+    ),
+  ),
+  'acf_field_key_name_patterns' => 
+  array (
+  ),
+  'acf_sub_table_owners' => 
+  array (
+  ),
+  'acf_field_name_patterns' => 
+  array (
+  ),
+  'acf_field_column_types' => 
+  array (
+    'bridge_library_course_meta' => 
+    array (
+      'id' => 'bigint(20)',
+      'post_id' => 'bigint(20)',
+      'alma_id' => 'longtext',
+      'course_code' => 'longtext',
+      'academic_department_code' => 'longtext',
+      'course_number' => 'longtext',
+      'course_section' => 'longtext',
+      'start_date' => 'longtext',
+      'end_date' => 'longtext',
+      'institution' => 'longtext',
+      'academic_department' => 'longtext',
+      'degree_level' => 'longtext',
+      'course_term' => 'longtext',
+      'core_resources' => 'longtext',
+      'related_courses_resources' => 'longtext',
+      'librarians' => 'longtext',
+    ),
+    'bridge_library_user_meta' => 
+    array (
+      'id' => 'longtext',
+      'user_id' => 'longtext',
+      'alma_id' => 'longtext',
+      'alternate_id' => 'longtext',
+      'primo_id' => 'longtext',
+      'google_id' => 'longtext',
+      'picture_url' => 'longtext',
+      'expiration_date' => 'longtext',
+      'bridge_library_institution' => 'longtext',
+      'courses' => 'longtext',
+      'academic_departments' => 'longtext',
+      'librarians' => 'longtext',
+      'circulation_data' => 'longtext',
+      'resources' => 'longtext',
+      'user_favorites' => 'longtext',
+      'primo_favorites' => 'longtext',
+      'courses_cache_updated' => 'longtext',
+      'resources_cache_updated' => 'longtext',
+      'primo_favorites_cache_updated' => 'longtext',
+      'librarians_cache_updated' => 'longtext',
+      'circulation_data_cache_updated' => 'longtext',
+    ),
+    'bridge_library_librarian_meta' => 
+    array (
+      'id' => 'longtext',
+      'post_id' => 'longtext',
+      'librarian_user_id' => 'longtext',
+      'academic_department' => 'longtext',
+    ),
+    'bridge_library_resource_meta' => 
+    array (
+      'id' => 'longtext',
+      'post_id' => 'longtext',
+      'related_courses_resources' => 'longtext',
+      'related_departments' => 'longtext',
+      'institution' => 'longtext',
+      'url' => 'longtext',
+      'image_url' => 'longtext',
+      'primo_image_url' => 'longtext',
+      'primo_image_info' => 'longtext',
+      'alma_id' => 'longtext',
+      'primo_id' => 'longtext',
+      'libguides_id' => 'longtext',
+      'author' => 'longtext',
+      'isbn' => 'longtext',
+      'publication_year' => 'longtext',
+      'description' => 'longtext',
+      'resource_format' => 'longtext',
+      'resource_type' => 'longtext',
+    ),
+  ),
   'acf_field_column_names' => 
   array (
+  ),
+  'acf_field_column_name_patterns' => 
+  array (
+  ),
+  'nested_field_key_parents' => 
+  array (
+  ),
+  'column_owners' => 
+  array (
+    'post:course' => 
+    array (
+      'field_5cc2161e7b584' => '0.alma_id',
+      'field_5cc05b642ba7f' => '0.course_code',
+      'field_5dea86ee08933' => '0.academic_department_code',
+      'field_5cc05bd1a9800' => '0.course_number',
+      'field_5cc05bdda9801' => '0.course_section',
+      'field_5cc05b722ba80' => '0.start_date',
+      'field_5cc05b802ba81' => '0.end_date',
+      'field_5cc201c1a852c' => '0.institution',
+      'field_5cc201daa852d' => '0.academic_department',
+      'field_5cc201f1a852e' => '0.degree_level',
+      'field_5cc201f9a852f' => '0.course_term',
+      'field_5d5d649bd2029' => '0.core_resources',
+      'field_5cc326f90696b' => '0.related_courses_resources',
+      'field_5e5819970fbfd' => '0.librarians',
+    ),
   ),
 );
