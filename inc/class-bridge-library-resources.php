@@ -489,8 +489,11 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		// Resource format.
 		$format = get_term_by( 'slug', $citation['secondary_type']['value'], 'resource_format', 'ARRAY_A' );
-		if ( ! $format ) {
+		if ( ! $format && ! empty( $citation['secondary_type']['desc'] ) ) {
 			$format = wp_insert_term( $citation['secondary_type']['desc'], 'resource_format', array( 'slug' => $citation['secondary_type']['value'] ) );
+			if ( is_wp_error( $format ) ) {
+				$format['term_id'] = null;
+			}
 		}
 		update_field( 'resource_format', $format['term_id'], $resource_id );
 
