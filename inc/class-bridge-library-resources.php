@@ -475,14 +475,16 @@ class Bridge_Library_Resources extends Bridge_Library {
 		}
 
 		// Resource meta with custom handling.
-		update_field( 'publication_year', trim( $citation['metadata']['publication_date'], ' .[],\t\n\r\0\x0B' ), $resource_id );
+		update_field( 'publication_year', trim( $citation['metadata']['publication_date'], ' .[],' ), $resource_id );
 
-		if ( ! $citation['metadata']['author'] ) {
+		if ( $citation['metadata']['author'] ) {
+			$author = $citation['metadata']['author'];
+		} else {
 			$author = $citation['metadata']['additional_person_name'];
 			if ( $author ) {
 				$authors = explode( ';', $author );
 				$author  = array_shift( $authors );
-				$author  = trim( $author, ' ,\t\n\r\0\x0B' );
+				$author  = trim( $author, ' ,' );
 				update_field( 'author', $author, $resource_id );
 			}
 		}
