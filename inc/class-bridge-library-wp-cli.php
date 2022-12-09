@@ -151,7 +151,7 @@ class Bridge_Library_WP_CLI {
 				// Translators: %s is the course code or ID.
 				$this->error( sprintf( __( 'Couldn’t find course %s', 'bridge-library' ), $course_code_or_id ) );
 			} else {
-				$courses[] = $results['course'];
+				$courses = array_merge( $courses, $results['course'] );
 			}
 		}
 
