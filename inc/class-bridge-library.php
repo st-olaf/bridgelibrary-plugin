@@ -99,6 +99,15 @@ class Bridge_Library {
 		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-graphql-authentication.php';
 		Bridge_Library_GraphQL_Authentication::get_instance();
 
+		// WP CLI.
+		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-wp-cli.php';
+		add_action(
+			'cli_init',
+			function() {
+				WP_CLI::add_command( 'bridge-library', Bridge_Library_WP_CLI::class );
+			}
+		);
+
 		// Scheduling.
 		register_activation_hook( BL_PLUGIN_FILE, array( $this, 'schedule_automatic_updates' ) );
 		register_deactivation_hook( BL_PLUGIN_FILE, array( $this, 'clear_automatic_updates' ) );
