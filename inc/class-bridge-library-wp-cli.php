@@ -136,7 +136,7 @@ class Bridge_Library_WP_CLI {
 		$courses  = array();
 
 		foreach ( $args as $course_code_or_id ) {
-			$course_code_or_id = sanitize_key( $course_code_or_id );
+			$course_code_or_id = sanitize_text_field( $course_code_or_id );
 
 			if ( false !== strpos( $course_code_or_id, '|' ) ) {
 				// Course code.
