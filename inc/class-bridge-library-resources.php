@@ -480,8 +480,9 @@ class Bridge_Library_Resources extends Bridge_Library {
 		if ( ! $citation['metadata']['author'] ) {
 			$author = $citation['metadata']['additional_person_name'];
 			if ( $author ) {
-				$author = array_shift( explode( ';', $author ) );
-				$author = trim( $author, ' ,\t\n\r\0\x0B' );
+				$authors = explode( ';', $author );
+				$author  = array_shift( $authors );
+				$author  = trim( $author, ' ,\t\n\r\0\x0B' );
 				update_field( 'author', $author, $resource_id );
 			}
 		}
