@@ -24,7 +24,23 @@ class Bridge_Library_WP_CLI {
 	 * [--background]
 	 * : Run in the background using the wp cron system.
 	 *
+	 * [--offset=<1>]
+	 * : First page of results to retrieve
+	 *
 	 * ## EXAMPLES
+	 *
+	 *     $ wp bridge-library update-courses
+	 *     Success: Processing batch 1…
+	 *     Info: Processing 2 more batches
+	 *     Success: Processing batch 2…
+	 *     Success: Processing batch 3…
+	 *     Success: Complete!
+	 *
+	 *     $ wp bridge-library update-courses --offset=1
+	 *     Success: Processing batch 2…
+	 *     Info: Processing 1 more batch
+	 *     Success: Processing batch 3…
+	 *     Success: Complete!
 	 *
 	 *     $ wp bridge-library update-courses
 	 *     Success: Updated 1052 courses.
@@ -40,15 +56,29 @@ class Bridge_Library_WP_CLI {
 	 * @return void
 	 */
 	public function update_courses( $args, $assoc_args ) {
-		$courses = Bridge_Library_Courses::get_instance();
+		$courses  = Bridge_Library_Courses::get_instance();
+		$alma_api = Bridge_Library_API_Alma::get_instance();
+		$query    = array();
+
+		if ( array_key_exists( 'offset', $assoc_args ) ) {
+			$offset          = absint( $assoc_args['offset'] );
+			$query['offset'] = $offset * $alma_api->limit;
+		} else {
+			$offset = 1;
+		}
 
 		if ( array_key_exists( 'background', $assoc_args ) ) {
 			$courses->background_update_courses();
 			$this->success( __( 'Started updating courses in the background.', 'bridge-library' ) );
 		} else {
-			$alma_api = Bridge_Library_API_Alma::get_instance();
-			$results  = $alma_api->request( 'courses/' );
-			$this->success( __( 'Processing batch 1…', 'bridge-library' ) );
+			$results = $alma_api->request( 'courses/', $query );
+			$this->success(
+				sprintf(
+					// Translators: %d is the offset.
+					__( 'Processing batch %d…', 'bridge-library' ),
+					$offset
+				)
+			);
 			$courses->update_courses( $results['course'] );
 
 			// Iterate as many times as necessary to get all courses.
@@ -63,11 +93,11 @@ class Bridge_Library_WP_CLI {
 						sprintf(
 							// Translators: %d is the count of pages.
 							_n( 'Processing %d more batch', 'Processing %d more batches', $total_pages, 'bridge-library' ),
-							$total_pages,
+							( $total_pages + 1 - $offset ),
 						)
 					);
 
-					for ( $i = 1; $i < $total_pages; $i++ ) {
+					for ( $i = $offset; $i < $total_pages; $i++ ) {
 						$query['offset'] = $i * $alma_api->limit;
 						$results         = $alma_api->request( 'courses/', $query );
 						// Translators: %s is the page number.
@@ -76,6 +106,8 @@ class Bridge_Library_WP_CLI {
 					}
 				}
 			}
+
+			$this->success( __( 'Complete!', 'bridge-library' ) );
 		}
 	}
 
