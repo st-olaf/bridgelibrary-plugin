@@ -492,10 +492,13 @@ class Bridge_Library_Resources extends Bridge_Library {
 		if ( ! $format && ! empty( $citation['secondary_type']['desc'] ) ) {
 			$format = wp_insert_term( $citation['secondary_type']['desc'], 'resource_format', array( 'slug' => $citation['secondary_type']['value'] ) );
 			if ( is_wp_error( $format ) ) {
-				$format['term_id'] = null;
+				error_log( wp_json_encode( $format ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				$format = false;
 			}
 		}
-		update_field( 'resource_format', $format['term_id'], $resource_id );
+		if ( $format ) {
+			update_field( 'resource_format', $format['term_id'], $resource_id );
+		}
 
 		// Resource Type taxonomy.
 		wp_set_object_terms( $resource_id, 'reading-list', 'resource_type', true );
