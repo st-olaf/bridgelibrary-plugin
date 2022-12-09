@@ -247,7 +247,7 @@ class Bridge_Library_Users {
 			$user_id = $user->ID;
 		}
 
-		return get_field( 'courses', 'user_' . $user_id );
+		return array_filter( (array) get_field( 'courses', 'user_' . $user_id ) );
 	}
 
 	/**
@@ -265,7 +265,7 @@ class Bridge_Library_Users {
 			$user_id = $user->ID;
 		}
 
-		return get_field( 'resources', 'user_' . $user_id );
+		return array_filter( (array) get_field( 'resources', 'user_' . $user_id ) );
 	}
 
 	/**
@@ -283,7 +283,7 @@ class Bridge_Library_Users {
 			$user_id = $user->ID;
 		}
 
-		return get_field( 'librarians', 'user_' . $user_id );
+		return array_filter( (array) get_field( 'librarians', 'user_' . $user_id ) );
 	}
 
 	/**
@@ -301,7 +301,7 @@ class Bridge_Library_Users {
 			$user_id = $user->ID;
 		}
 
-		return get_field( 'primo_favorites', 'user_' . $user_id );
+		return array_filter( (array) get_field( 'primo_favorites', 'user_' . $user_id ) );
 	}
 
 	/**
@@ -1585,12 +1585,7 @@ class Bridge_Library_Users {
 			$user_id = get_current_user_id();
 		}
 
-		$user_favorites = get_field( 'user_favorites', 'user_' . $user_id );
-		if ( ! $user_favorites ) {
-			$user_favorites = array();
-		}
-
-		return $user_favorites;
+		return array_filter( (array) get_field( 'user_favorites', 'user_' . $user_id ) );
 	}
 
 	/**
@@ -1608,12 +1603,7 @@ class Bridge_Library_Users {
 			$user_id = get_current_user_id();
 		}
 
-		$user_favorites = get_field( 'user_favorites', 'user_' . $user_id );
-		if ( ! $user_favorites ) {
-			$user_favorites = array();
-		}
-
-		return array_key_exists( $post_id, array_flip( $user_favorites ) );
+		return array_key_exists( $post_id, array_flip( $this->get_favorite_posts( $user_id ) ) );
 	}
 
 	/**
