@@ -384,12 +384,8 @@ class Bridge_Library_Users {
 	 */
 	public function update_user_data( $user_login, $user ) {
 
-		$this->async->push_to_queue(
-			array(
-				'action'  => 'cache_user_courses',
-				'user_id' => $user->ID,
-			)
-		);
+		// Sync courses synchronously.
+		$this->cache_user_courses( $user->ID );
 
 		$this->async->push_to_queue(
 			array(
