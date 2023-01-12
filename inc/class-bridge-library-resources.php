@@ -138,6 +138,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		add_action( 'wp_ajax_update_libguides_resource_by_id', array( $this, 'ajax_update_libguides_resource_by_id' ) );
 		add_action( 'wp_ajax_start_bg_libguides_assets_update', array( $this, 'ajax_start_bg_libguides_assets_update' ) );
 		add_action( 'wp_ajax_start_bg_libguides_guides_update', array( $this, 'ajax_start_bg_libguides_guides_update' ) );
+		add_action( 'wp_ajax_update_libguides_guide_by_id', array( $this, 'ajax_update_libguides_guide_by_id' ) );
 		add_action( 'wp_ajax_import_libguides_to_course', array( $this, 'ajax_import_libguides_to_course' ) );
 
 		// Force Publication Year to a string for GraphQL.
@@ -803,6 +804,35 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		wp_set_object_terms( $guide_id, $institution, 'institution', true );
 
+		if ( in_array( $guide['type_label'], array( 'Subject Guide', 'Subject Guides' ), true ) && count( $guide['subjects'] ) > 0 ) {
+			switch ( $institution ) {
+				case 'st-olaf':
+					$institution_name = Bridge_Library_Courses::INSTITUTIONS_COURSE_CODE_MAPPING['S'];
+					break;
+
+				case 'carleton':
+					$institution_name = Bridge_Library_Courses::INSTITUTIONS_COURSE_CODE_MAPPING['C'];
+					break;
+			}
+
+			$search_terms = array();
+
+			foreach ( $guide['subjects'] as $subject ) {
+				$search_terms[] = $subject['name'] . sprintf( ' (%s)', $institution_name );
+			}
+
+			$academic_departments = get_terms(
+				array(
+					'taxonomy'   => 'academic_department',
+					'hide_empty' => false,
+					'name'       => $search_terms,
+					'fields'     => 'ids',
+				)
+			);
+
+			wp_set_object_terms( $guide_id, $academic_departments, 'academic_department' );
+		}
+
 		return $guide_id;
 	}
 
@@ -967,8 +997,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 					<td>
 						<p>Use this utility to manually update just one resource by using the LibGuides ID.</p>
 
-						<input type="hidden" name="action" value="update_libguides_resource_by_id" />
-						<?php wp_nonce_field( 'update_libguides_resource_by_id', 'update_libguides_resource_by_id_nonce' ); ?>
+						<input type="hidden" name="action" value="update_libguides_guide_by_id" />
+						<?php wp_nonce_field( 'update_libguides_guide_by_id', 'update_libguides_guide_by_id_nonce' ); ?>
 
 						<p class="messages"></p>
 
@@ -1138,6 +1168,44 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$this->background_create_resource_from_libguides_guides( $async );
 
 		wp_send_json_success( 'Started background update.', 201 );
+	}
+
+	/**
+	 * Update just one LibGuides asset by ID.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void Sends WP JSON response.
+	 */
+	public function ajax_update_libguides_guide_by_id() {
+
+		if ( ! isset( $_REQUEST['update_libguides_guide_by_id_nonce'] ) || ! isset( $_REQUEST['update_libguides_guide_by_id_nonce'] ) || ! isset( $_REQUEST['action'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['update_libguides_guide_by_id_nonce'] ), sanitize_key( $_REQUEST['action'] ) ) ) {
+			wp_send_json_error( 'Access denied.', 401 );
+			wp_die();
+		}
+
+
+		if ( array_key_exists( 'libguides_guide_id', $_REQUEST ) && ! empty( $_REQUEST['libguides_guide_id'] ) ) {
+			$guide_id = absint( sanitize_key( $_REQUEST['libguides_guide_id'] ) );
+		} else {
+			wp_send_json_error( array( 'error' => __( 'You must specify a guide ID', 'bridge-library' ) ), 400 );
+		}
+
+		$libguides_api_11 = Bridge_Library_API_LibGuides_11::get_instance();
+
+		$stolaf_guide = $libguides_api_11->set_institution( 'stolaf' )->get_guide( $guide_id );
+
+		$carleton_guide = $libguides_api_11->set_institution( 'carleton' )->get_guide( $guide_id );
+
+		if ( $stolaf_guide ) {
+			$updated = $this->create_resource_from_libguides_guide( $stolaf_guide, 'st-olaf' );
+		}
+
+		if ( $carleton_guide ) {
+			$updated = $this->create_resource_from_libguides_guide( $carleton_guide, 'carleton' );
+		}
+
+		wp_send_json_success( 'Updated resource with ID ' . $updated . '.' );
 	}
 
 	/**

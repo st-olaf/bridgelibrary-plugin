@@ -259,4 +259,34 @@ class Bridge_Library_API_LibGuides_11 extends Bridge_Library {
 		return $guides;
 	}
 
+	/**
+	 * Retrieve a single LibGuides guide.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int   $id    Guide ID.
+	 * @param array $query Query parameters.
+	 *
+	 * @return array       LibGuides assets.
+	 */
+	public function get_guide( int $id, $query = array() ) {
+		$query = wp_parse_args(
+			$query,
+			array(
+				'expand' => 'subjects,metadata,pages',
+				'status' => '1', // Limit to published.
+			)
+		);
+
+		$guides = $this->request( 'guides/' . $id, $query );
+
+		foreach ( $guides as $guide ) {
+			if ( $id === $guide['id'] ) {
+				return $guide;
+			}
+		}
+
+		return array();
+	}
+
 }
