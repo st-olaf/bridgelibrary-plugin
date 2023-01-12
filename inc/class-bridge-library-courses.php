@@ -79,9 +79,9 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var array $institutions_course_code_mapping
+	 * @var array<string, string>
 	 */
-	private $institutions_course_code_mapping = array(
+	const INSTITUTIONS_COURSE_CODE_MAPPING = array(
 		'C' => 'Carleton',
 		'S' => 'St. Olaf',
 	);
@@ -678,7 +678,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$parts = explode( '|', $course_code );
 
 			$course_code = array(
-				'institution'    => str_replace( array_flip( $this->institutions_course_code_mapping ), $this->institutions_course_code_mapping, $parts[0] ),
+				'institution'    => str_replace( array_flip( self::INSTITUTIONS_COURSE_CODE_MAPPING ), self::INSTITUTIONS_COURSE_CODE_MAPPING, $parts[0] ),
 				'course_number'  => $parts[2],
 				'course_section' => $parts[3],
 				'course_term'    => $parts[4],
