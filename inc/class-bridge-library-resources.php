@@ -832,7 +832,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 			// Use ACF field so a custom hook sets the department resources correctly.
 			update_field( 'related_departments', $academic_departments, $guide_id );
-			$this->save_department_resources( $academic_departments, $guide );
+			$this->save_department_resources( $academic_departments, $guide_id );
 		}
 
 		return $guide_id;
