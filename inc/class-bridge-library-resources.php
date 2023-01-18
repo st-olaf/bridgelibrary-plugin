@@ -311,7 +311,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 	 *
 	 * @return mixed         Field value.
 	 */
-	public function save_department_resources( $value, $post_id, $field ) {
+	public function save_department_resources( $value, $post_id, $field = array() ) {
 
 		// Get values and force types.
 		$old_departments = get_field( 'related_departments', $post_id );
@@ -832,6 +832,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 			// Use ACF field so a custom hook sets the department resources correctly.
 			update_field( 'related_departments', $academic_departments, $guide_id );
+			$this->save_department_resources( $academic_departments, $guide );
 		}
 
 		return $guide_id;
