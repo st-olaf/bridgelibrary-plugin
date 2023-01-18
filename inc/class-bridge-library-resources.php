@@ -315,7 +315,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		// Get values and force types.
 		$old_departments = get_field( 'related_departments', $post_id );
-		if ( false === $old_departments ) {
+		if ( empty( $old_departments ) ) {
 			$old_departments = array();
 		}
 
