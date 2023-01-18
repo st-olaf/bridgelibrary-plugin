@@ -797,7 +797,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		}
 		$terms = array_filter(
 			array(
-				isset( $libguides_term ) ? $libguides_term->term_id : false,
+				is_a( $libguides_term, WP_Term::class ) ? $libguides_term->term_id : false,
 				(int) $guide_type['term_id'],
 			)
 		);
