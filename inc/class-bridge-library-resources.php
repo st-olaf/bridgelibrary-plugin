@@ -788,16 +788,18 @@ class Bridge_Library_Resources extends Bridge_Library {
 		}
 
 		// Taxonomies.
-		$libguides_term = get_term_by( 'name', 'LibGuides', 'resource_type' );
+		$libguides_term = get_term_by( 'slug', 'guide', 'resource_type' );
 
 		$type_name  = $this->map_libguides_type_to_term_name( $guide['type_label'] );
 		$guide_type = term_exists( $type_name, 'resource_type' );
 		if ( ! $guide_type ) {
 			$guide_type = wp_insert_term( $type_name, 'resource_type', array( 'parent' => $libguides_term->term_id ) );
 		}
-		$terms = array(
-			$libguides_term->term_id,
-			(int) $guide_type['term_id'],
+		$terms = array_filter(
+			array(
+				isset( $libguides_term ) ? $libguides_term->term_id : false,
+				(int) $guide_type['term_id'],
+			)
 		);
 
 		wp_set_object_terms( $guide_id, $terms, 'resource_type', true );
@@ -831,8 +833,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 			);
 
 			// Use ACF field so a custom hook sets the department resources correctly.
-			update_field( 'related_departments', $academic_departments, $guide_id );
 			$this->save_department_resources( $academic_departments, $guide_id );
+			update_field( 'related_departments', $academic_departments, $guide_id );
 		}
 
 		return $guide_id;
