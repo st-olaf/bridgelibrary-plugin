@@ -1185,7 +1185,6 @@ class Bridge_Library_Resources extends Bridge_Library {
 			wp_die();
 		}
 
-
 		if ( array_key_exists( 'libguides_guide_id', $_REQUEST ) && ! empty( $_REQUEST['libguides_guide_id'] ) ) {
 			$guide_id = absint( sanitize_key( $_REQUEST['libguides_guide_id'] ) );
 		} else {
