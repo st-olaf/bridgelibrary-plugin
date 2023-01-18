@@ -830,7 +830,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 				)
 			);
 
-			wp_set_object_terms( $guide_id, $academic_departments, 'academic_department' );
+			// Use ACF field so a custom hook sets the department resources correctly.
+			update_field( 'related_departments', $academic_departments, $guide_id );
 		}
 
 		return $guide_id;
