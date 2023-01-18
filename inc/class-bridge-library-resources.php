@@ -319,7 +319,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 			$old_departments = array();
 		}
 
-		if ( '' === $value ) {
+		if ( empty( $value ) ) {
 			$new_departments = array();
 		} else {
 			$new_departments = $value;
@@ -329,14 +329,14 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$removed = array_diff( $old_departments, $new_departments );
 		if ( ! empty( $removed ) ) {
 			foreach ( $removed as $term_id ) {
-				$existing = get_field( 'related_resources', 'category_' . $term_id );
-				if ( is_null( $existing ) ) {
+				$existing = get_field( 'related_resources', 'term_' . $term_id );
+				if ( empty( $existing ) ) {
 					$existing = array();
 				}
 				$flipped = array_flip( $existing );
 				unset( $flipped[ $post_id ] );
 				$existing = array_flip( $flipped );
-				update_field( 'related_resources', $existing, 'category_' . $term_id );
+				update_field( 'related_resources', $existing, 'term_' . $term_id );
 			}
 		}
 
@@ -344,12 +344,12 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$added = array_diff( $new_departments, $old_departments );
 		if ( ! empty( $added ) ) {
 			foreach ( $added as $term_id ) {
-				$existing = get_field( 'related_resources', 'category_' . $term_id );
-				if ( is_null( $existing ) ) {
+				$existing = get_field( 'related_resources', 'term_' . $term_id );
+				if ( empty( $existing ) ) {
 					$existing = array();
 				}
 				$existing = array_merge( $existing, array( $post_id ) );
-				update_field( 'related_resources', array_unique( $existing ), 'category_' . $term_id );
+				update_field( 'related_resources', array_unique( $existing ), 'term_' . $term_id );
 			}
 		}
 
