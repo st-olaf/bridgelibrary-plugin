@@ -105,6 +105,15 @@ class Bridge_Library_Admin {
 			2
 		);
 
+		// Add default resources.
+		acf_add_options_page(
+			array(
+				'page_title'  => 'Default Resources',
+				'capability'  => 'manage_options_bridge_library',
+				'parent_slug' => 'bridge_library_settings',
+			)
+		);
+
 		// Add ACF site options page.
 		acf_add_options_page(
 			array(
