@@ -194,6 +194,10 @@ class Bridge_Library_Users {
 
 		// Add user’s institution to body class to control institution-specific link visibility.
 		add_filter( 'body_class', array( $this, 'body_class' ) );
+
+		// Add shortcode to control content visibility.
+		add_shortcode( 'carleton', array( $this, 'institution_shortcode' ), 10, 3 );
+		add_shortcode( 'stolaf', array( $this, 'institution_shortcode' ), 10, 3 );
 	}
 
 	/**
@@ -1907,6 +1911,27 @@ class Bridge_Library_Users {
 		);
 
 		return array_filter( $ids );
+	}
+
+	/**
+	 * Hide content based on the user’s institution.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param array  $attributes    Shortcode attributes.
+	 * @param string $content       Shortcode content.
+	 * @param string $shortcode_tag Shortcode tag.
+	 *
+	 * @return string
+	 */
+	public function institution_shortcode( $attributes, string $content, string $shortcode_tag ) {
+		$institution = substr( $this->get_domain(), 0, -4 );
+
+		if ( $shortcode_tag !== $institution ) {
+			return '';
+		}
+
+		return $content;
 	}
 
 	/**
