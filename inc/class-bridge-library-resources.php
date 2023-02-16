@@ -765,12 +765,26 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$data = array(
 			'post_type'     => 'resource',
-			'post_status'   => 'publish',
 			'post_title'    => $guide['name'],
 			'post_content'  => $guide['description'],
 			'post_date'     => $guide['created'],
 			'post_modified' => $guide['updated'],
 		);
+
+		switch ( strtolower( $guide['status_label'] ) ) {
+			case 'private':
+				$data['post_status'] = 'private';
+				break;
+
+			case 'unpublished':
+				$data['post_status'] = 'pending';
+				break;
+
+			case 'published':
+			default:
+				$data['post_status'] = 'publish';
+				break;
+		}
 
 		$post_id = $this->get_post_id_by_libguides_id( $guide['id'] );
 		if ( ! empty( $post_id ) ) {
