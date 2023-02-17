@@ -250,7 +250,6 @@ class Bridge_Library_API_LibGuides_11 extends Bridge_Library {
 			$query,
 			array(
 				'expand' => 'subjects,metadata,pages',
-				'status' => '1', // Limit to published.
 			)
 		);
 
