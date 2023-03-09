@@ -222,6 +222,27 @@ class Bridge_Library_Data_Structure {
 		);
 
 		/**
+		 * Hidden course taxonomy.
+		 */
+		register_extended_taxonomy(
+			'hidden',
+			array(
+				'course',
+			),
+			array(
+				'capabilities'        => array(
+					'assign_terms' => 'assign_terms_bridge_library',
+					'delete_terms' => 'delete_terms_bridge_library',
+					'edit_terms'   => 'edit_terms_bridge_library',
+					'manage_terms' => 'manage_terms_bridge_library',
+				),
+				'show_in_graphql'     => true,
+				'graphql_single_name' => 'HiddenCourse',
+				'graphql_plural_name' => 'HiddenCourses',
+			)
+		);
+
+		/**
 		 * Resource type taxonomy.
 		 */
 		register_extended_taxonomy(
