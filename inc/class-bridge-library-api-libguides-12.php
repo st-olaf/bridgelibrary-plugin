@@ -19,7 +19,7 @@ class Bridge_Library_API_LibGuides_12 extends Bridge_Library {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 

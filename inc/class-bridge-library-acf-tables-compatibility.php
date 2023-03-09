@@ -46,7 +46,7 @@ class Bridge_Library_ACF_Tables_Compatibility extends Bridge_Library {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 

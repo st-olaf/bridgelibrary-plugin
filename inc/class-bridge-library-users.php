@@ -25,7 +25,7 @@ class Bridge_Library_Users {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 

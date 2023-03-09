@@ -19,7 +19,7 @@ class Bridge_Library_Admin {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
