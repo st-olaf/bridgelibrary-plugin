@@ -283,6 +283,8 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$course_id = sanitize_key( $_REQUEST['course_id'] );
 			$alma_api  = Bridge_Library_API_Alma::get_instance();
 			$results   = array( $alma_api->request( 'courses/' . $course_id, $query ) );
+		} else {
+			$results = new WP_Error( '',' Missing course id and code' );
 		}
 
 		if ( is_wp_error( $results ) ) {
@@ -1024,8 +1026,8 @@ class Bridge_Library_Courses extends Bridge_Library {
 				$course_code[1],
 				$course_number ? ' ' . $course_number : '',
 				$title,
-				empty( $institution ) ? '' : '(' . implode( ', ', wp_list_pluck( $institution, 'name' ) ) . ')',
-				empty( $course_term ) ? '' : '(' . implode( ', ', wp_list_pluck( $course_term, 'name' ) ) . ')'
+				is_array( $institution ) ? '(' . implode( ', ', wp_list_pluck( $institution, 'name' ) ) . ')' : '',
+				is_array( $course_term ) ? '(' . implode( ', ', wp_list_pluck( $course_term, 'name' ) ) . ')' : ''
 			);
 		}
 
