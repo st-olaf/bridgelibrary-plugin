@@ -1,6 +1,6 @@
 {
     "key": "group_5d5c52dce7505",
-    "title": "Academic Department Resources",
+    "title": "Academic Department Settings",
     "fields": [
         {
             "key": "field_640a50e8d5ef2",
@@ -98,5 +98,5 @@
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
     "acfcdt_table_definition_file_name": "table_104924x5d5c52dd028be",
-    "modified": 1678397802
+    "modified": 1678400274
 }
