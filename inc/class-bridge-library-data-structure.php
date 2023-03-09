@@ -47,7 +47,7 @@ class Bridge_Library_Data_Structure {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
@@ -356,11 +356,11 @@ class Bridge_Library_Data_Structure {
 	 * @return void
 	 */
 	public function post_2_post( $post_id, $field_name, $value ) {
-		if ( 0 === $post_id ) {
+		if ( 0 === absint( $post_id ) ) {
 			return;
 		}
 
-		$post_type = get_post_type( $post_id );
+		$post_type = get_post_type( absint( $post_id ) );
 
 		if ( in_array( $post_type, array( 'course', 'resource' ), true ) ) {
 			if ( 'course' === $post_type ) {
