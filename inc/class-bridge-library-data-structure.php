@@ -145,6 +145,10 @@ class Bridge_Library_Data_Structure {
 						'title'    => 'Academic Department',
 						'taxonomy' => 'academic_department',
 					),
+					'hidden_tax'          => array(
+						'title'    => 'Hidden',
+						'taxonomy' => 'hidden',
+					),
 					'course_term'         => array(
 						'title'    => 'Course Term',
 						'taxonomy' => 'course_term',
