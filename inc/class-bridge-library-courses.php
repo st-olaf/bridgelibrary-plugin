@@ -130,6 +130,9 @@ class Bridge_Library_Courses extends Bridge_Library {
 		add_action( 'posts_where', array( $this, 'search_acf_fields_where' ), 10, 2 );
 		add_filter( 'acf/fields/relationship/query/name=related_courses_resources', array( $this, 'search_acf_fields_from_acf' ), 10, 3 );
 
+		// Set/reset hidden flag when academic department settings are changed.
+		add_action( 'saved_term', array( $this, 'saved_term' ), 10, 4 );
+
 		// Tweak course titles in admin list and resource related_courses ACF field.
 		add_filter( 'acf/fields/relationship/result/key=field_5cc3260215ce7', array( $this, 'modify_course_acf_titles' ), 10, 2 );
 	}
@@ -1034,4 +1037,125 @@ class Bridge_Library_Courses extends Bridge_Library {
 		return $title;
 	}
 
+	/**
+	 * Hide/reset hidden flags for related courses.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param int    $tt_id    Term taxonomy ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 * @param bool   $update   Whether this is an existing term being updated.
+	 *
+	 * @return void
+	 */
+	public function saved_term( int $term_id, int $tt_id, string $taxonomy, bool $update ) {
+		if ( 'academic_department' !== $taxonomy ) {
+			return;
+		}
+
+		if ( get_field( 'hide_all_courses', 'term_' . $term_id ) ) {
+			$this->set_all_course_visibility_for_department( $term_id, false );
+		} else {
+			if ( get_field( 'hide_courses_by_title', 'term_' . $term_id ) ) {
+				$this->set_specific_course_visibility_for_term( $term_id, get_field( 'hide_courses_by_title', 'term_' . $term_id ) );
+			} else {
+				$this->set_all_course_visibility_for_department( $term_id, true );
+			}
+		}
+
+	}
+
+	/**
+	 * Set visibility for all courses in this department.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param int  $term_id Term ID.
+	 * @param bool $visible Visible.
+	 *
+	 * @return void
+	 */
+	protected function set_all_course_visibility_for_department( int $term_id, bool $visible ) {
+		$courses = $this->get_courses_for_department( $term_id );
+
+		$this->set_visible( $courses, $visible );
+	}
+
+	/**
+	 * Set visibility for courses matching the search strings.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param int    $term_id        Term ID.
+	 * @param string $search_strings Search strings.
+	 *
+	 * @return void
+	 */
+	protected function set_specific_course_visibility_for_term( int $term_id, string $search_strings ) {
+		$all_courses    = $this->get_courses_for_department( $term_id );
+		$hidden_courses = array();
+
+		$search_strings = explode( PHP_EOL, $search_strings );
+		$search_strings = array_map( 'trim', $search_strings );
+
+		foreach ( $all_courses as $index => $course ) {
+			foreach ( $search_strings as $search_string ) {
+				if ( false !== strpos( $course->post_title, $search_string ) ) {
+					$hidden_courses[ $index  ] = $course;
+					continue;
+				}
+			}
+		}
+
+		$this->set_visible( $hidden_courses, false );
+		$this->set_visible( array_diff_key( $all_courses, $hidden_courses ), true );
+	}
+
+	/**
+	 * Set visibility on the given posts.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param array<int, \WP_Post> $posts   Array of posts.
+	 * @param bool                 $visible Visible.
+	 *
+	 * @return void
+	 */
+	protected function set_visible( array $posts, bool $visible ) {
+		if ( $visible ) {
+			foreach ( $posts as $post ) {
+				wp_remove_object_terms( $post->ID, 'hidden', 'hidden' );
+			}
+		} else {
+			foreach ( $posts as $post ) {
+				wp_set_object_terms( $post->ID, 'hidden', 'hidden', true );
+			}
+		}
+	}
+
+	/**
+	 * Get all courses for the given department.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param int $term_id Term ID.
+	 *
+	 * @return array<int, \WP_Post>
+	 */
+	private function get_courses_for_department( int $term_id ): array {
+		return (new WP_Query(
+			array(
+				'post_type'      => 'course',
+				'posts_per_page' => -1,
+				'post_status'    => 'any',
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'academic_department',
+						'terms'    => $term_id,
+					),
+				),
+			)
+		))->posts;
+	}
 }
