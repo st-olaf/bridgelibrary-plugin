@@ -133,6 +133,9 @@ class Bridge_Library_Courses extends Bridge_Library {
 		// Set/reset hidden flag when academic department settings are changed.
 		add_action( 'saved_term', array( $this, 'saved_term' ), 10, 4 );
 
+		// Exclude hidden courses from frontend.
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
+
 		// Tweak course titles in admin list and resource related_courses ACF field.
 		add_filter( 'acf/fields/relationship/result/key=field_5cc3260215ce7', array( $this, 'modify_course_acf_titles' ), 10, 2 );
 	}
@@ -1035,6 +1038,36 @@ class Bridge_Library_Courses extends Bridge_Library {
 		}
 
 		return $title;
+	}
+
+	/**
+	 * Exclude hidden posts from the frontend.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param WP_Query $query Query.
+	 *
+	 * @return void
+	 */
+	public function pre_get_posts( WP_Query $query ) {
+		if ( is_admin() || ! $query->is_main_query() ) {
+			return;
+		}
+
+		$tax_query = $query->get( 'tax_query' );
+
+		if ( ! $tax_query ) {
+			$tax_query = array();
+		}
+
+		$tax_query[] = array(
+			'taxonomy' => 'hidden',
+			'field'    => 'slug',
+			'terms'    => 'hidden',
+			'operator' => 'NOT IN',
+		);
+
+		$query->set( 'tax_query', $tax_query );
 	}
 
 	/**
