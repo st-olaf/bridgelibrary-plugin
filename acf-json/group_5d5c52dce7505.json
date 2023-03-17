@@ -29,7 +29,7 @@
             "name": "hide_courses_by_title",
             "aria-label": "",
             "type": "textarea",
-            "instructions": "Prevent courses containing these words in the title from displaying on the frontend.\r\nAdd one string on each line.",
+            "instructions": "Prevent courses containing these words in the title from displaying on the frontend.\r\nAdd one string on each line. Note: these strings are case-sensitive.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -98,5 +98,5 @@
     "map_graphql_types_from_location_rules": 0,
     "graphql_types": "",
     "acfcdt_table_definition_file_name": "table_104924x5d5c52dd028be",
-    "modified": 1678400274
+    "modified": 1679016954
 }
