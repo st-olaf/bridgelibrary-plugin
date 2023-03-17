@@ -20,7 +20,7 @@ class Bridge_Library_Logging extends Bridge_Library {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 

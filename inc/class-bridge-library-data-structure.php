@@ -47,7 +47,7 @@ class Bridge_Library_Data_Structure {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
@@ -145,6 +145,10 @@ class Bridge_Library_Data_Structure {
 						'title'    => 'Academic Department',
 						'taxonomy' => 'academic_department',
 					),
+					'hidden_tax'          => array(
+						'title'    => 'Hidden',
+						'taxonomy' => 'hidden',
+					),
 					'course_term'         => array(
 						'title'    => 'Course Term',
 						'taxonomy' => 'course_term',
@@ -218,6 +222,26 @@ class Bridge_Library_Data_Structure {
 						'taxonomy' => 'academic_department',
 					),
 				),
+			)
+		);
+
+		/**
+		 * Hidden course taxonomy.
+		 */
+		register_extended_taxonomy(
+			'hidden',
+			array(
+				'course',
+			),
+			array(
+				'show_in_graphql'     => true,
+				'graphql_single_name' => 'HiddenFlag',
+				'graphql_plural_name' => 'HiddenFlags',
+			),
+			array(
+				'singular' => 'Hidden Flag',
+				'plural'   => 'Hidden Flags',
+				'slug'     => 'hidden'
 			)
 		);
 
@@ -335,11 +359,11 @@ class Bridge_Library_Data_Structure {
 	 * @return void
 	 */
 	public function post_2_post( $post_id, $field_name, $value ) {
-		if ( 0 === $post_id ) {
+		if ( 0 === absint( $post_id ) ) {
 			return;
 		}
 
-		$post_type = get_post_type( $post_id );
+		$post_type = get_post_type( absint( $post_id ) );
 
 		if ( in_array( $post_type, array( 'course', 'resource' ), true ) ) {
 			if ( 'course' === $post_type ) {

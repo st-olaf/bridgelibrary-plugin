@@ -23,7 +23,7 @@ class Bridge_Library_GraphQL_Authentication extends Auth {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
