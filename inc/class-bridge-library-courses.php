@@ -1135,7 +1135,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		foreach ( $all_courses as $index => $course ) {
 			foreach ( $search_strings as $search_string ) {
 				if ( false !== strpos( $course->post_title, $search_string ) ) {
-					$hidden_courses[ $index  ] = $course;
+					$hidden_courses[ $index ] = $course;
 					continue;
 				}
 			}
