@@ -333,7 +333,7 @@ class Bridge_Library_Users {
 			$this->set_alternate_user_id( $user->ID, $alma );
 			$this->set_expiration_date( $user->ID, $alma['expiry_date'] );
 
-			update_field( 'bridge_library_uuid', $this->generate_uuid() );
+			update_field( 'bridge_library_uuid', $this->generate_uuid(), 'user_' . $user->ID );
 
 			$logging = Bridge_Library_Logging::get_instance();
 			$logging->log(
