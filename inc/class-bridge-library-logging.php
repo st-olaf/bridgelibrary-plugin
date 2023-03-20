@@ -29,9 +29,18 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var bool $debug
+	 * @var ?bool $debug
 	 */
-	public $debug;
+	public $debug = null;
+
+	/**
+	 * Tracking ID.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var ?string $tracking_id
+	 */
+	public $tracking_id = null;
 
 	/**
 	 * Default request parameters.
@@ -50,9 +59,9 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var int $user_cid
+	 * @var ?int $user_cid
 	 */
-	private $user_cid;
+	private $user_cid = null;
 
 	/**
 	 * Tracking URL.
