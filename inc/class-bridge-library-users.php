@@ -1155,7 +1155,7 @@ class Bridge_Library_Users {
 		}
 
 		if ( ! is_wp_error( $fees ) ) {
-			$data['fees']       = $fees['fee'];
+			$data['fees']       = array_key_exists( 'fee', $fees ) ? $fees['fee'] : array();
 			$data['fees_count'] = $fees['total_record_count'];
 		}
 
