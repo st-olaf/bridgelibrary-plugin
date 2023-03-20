@@ -161,6 +161,12 @@ class Bridge_Library_Logging extends Bridge_Library {
 			}
 
 			$this->user_cid = get_user_meta( $user_id, 'bridge_library_uuid', true );
+
+			if ( ! $this->user_cid ) {
+				update_field( 'bridge_library_uuid', Bridge_Library_Users::get_instance()->generate_uuid(), 'user_' . $user_id );
+
+				$this->user_cid = get_user_meta( $user_id, 'bridge_library_uuid', true );
+			}
 		}
 
 		return $this->user_cid;
