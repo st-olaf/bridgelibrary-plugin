@@ -174,6 +174,19 @@ class Bridge_Library {
 
 		// Allowing for a 6-hour timezone offset, run starting at 1AM.
 		wp_schedule_event( strtotime( 'tomorrow 7am' ), 'daily', 'bridge_library_schedule_daily' );
+
+		// Add logging table.
+		require_once ABSPATH . '/wp-admin/includes/upgrade.php';
+		global $wpdb;
+		dbDelta(
+			"CREATE TABLE `{$wpdb->prefix}bridge_library_logging` (
+				`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+				`timestamp` datetime DEFAULT NULL,
+				`request` longtext CHARACTER SET utf8,
+				`data` longtext CHARACTER SET utf8,
+				PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+		);
 	}
 
 	/**

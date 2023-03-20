@@ -244,17 +244,6 @@ class Bridge_Library_Logging extends Bridge_Library {
 		if ( $this->is_debugging() ) {
 			global $wpdb;
 
-			require_once ABSPATH . '/wp-admin/includes/upgrade.php';
-			dbDelta(
-				'CREATE TABLE `wp_bridge_library_logging` (
-					`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-					`timestamp` datetime DEFAULT NULL,
-					`request` longtext CHARACTER SET utf8,
-					`data` longtext CHARACTER SET utf8,
-					PRIMARY KEY (`id`)
-				  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;'
-			);
-
 			$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 				$wpdb->prefix . 'bridge_library_logging',
 				array(
