@@ -275,13 +275,13 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $record      Primo record ID.
+	 * @param array  $record      Primo record data.
 	 * @param array  $tax_input   tax_input parameters.
 	 * @param string $domain_name Institution domain name.
 	 *
 	 * @return int                WP post ID.
 	 */
-	public function cache_primo_resource( $record, $tax_input = array(), $domain_name ) {
+	public function cache_primo_resource( $record, $tax_input = array(), $domain_name = '' ) {
 		$resources = Bridge_Library_Resources::get_instance();
 		$post_id   = $resources->create_resource_from_primo( $record, $tax_input, $domain_name );
 
@@ -309,7 +309,7 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 	 *
 	 * @param int $user_id     WP user ID.
 	 *
-	 * @return string|WP_Error JSON with user favorites.
+	 * @return array<int, int>|WP_Error Array of user favorite post IDs.
 	 */
 	public function get_user_favorites( $user_id ) {
 

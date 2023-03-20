@@ -116,7 +116,7 @@ class Bridge_Library_API_Alma extends Bridge_Library {
 	 * @param array  $query        Query paramaters.
 	 * @param array  $request_args Request parameters.
 	 *
-	 * @return array               Decoded JSON response from Alma API.
+	 * @return array|WP_Error Decoded JSON response from Alma API or WP error.
 	 */
 	public function request( $path, $query = array(), $request_args = array() ) {
 		$request_args = wp_parse_args(
@@ -166,7 +166,7 @@ class Bridge_Library_API_Alma extends Bridge_Library {
 	 *
 	 * @param string $email User email address.
 	 *
-	 * @return stdClass     Alma user object.
+	 * @return array|WP_Error Alma user object or WP error.
 	 */
 	public function get_user_by_email( $email ) {
 		$user = $this->request( 'users/' . $email );
@@ -194,7 +194,7 @@ class Bridge_Library_API_Alma extends Bridge_Library {
 	 * @param int   $user_id Alma user ID.
 	 * @param array $params  Optional query parameters.
 	 *
-	 * @return array         Array of loan data.
+	 * @return array|WP_Error Array of loan data or WP error.
 	 */
 	public function get_loans( $user_id, $params = array() ) {
 		$loans = $this->request( 'users/' . $user_id . '/loans', $params );
@@ -222,7 +222,7 @@ class Bridge_Library_API_Alma extends Bridge_Library {
 	 * @param int   $user_id Alma user ID.
 	 * @param array $params  Optional query parameters.
 	 *
-	 * @return array         Array of request data.
+	 * @return array|WP_Error Array of request data or WP_Error.
 	 */
 	public function get_requests( $user_id, $params = array() ) {
 		$requests = $this->request( 'users/' . $user_id . '/requests', $params );
@@ -250,7 +250,7 @@ class Bridge_Library_API_Alma extends Bridge_Library {
 	 * @param int   $user_id Alma user ID.
 	 * @param array $params  Optional query parameters.
 	 *
-	 * @return array         Array of request data.
+	 * @return array|WP_Error Array of request data or WP_Error.
 	 */
 	public function get_fees( $user_id, $params = array() ) {
 		$fees = $this->request( 'users/' . $user_id . '/fees', $params );

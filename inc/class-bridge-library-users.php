@@ -196,8 +196,8 @@ class Bridge_Library_Users {
 		add_filter( 'body_class', array( $this, 'body_class' ) );
 
 		// Add shortcode to control content visibility.
-		add_shortcode( 'carleton', array( $this, 'institution_shortcode' ), 10, 3 );
-		add_shortcode( 'stolaf', array( $this, 'institution_shortcode' ), 10, 3 );
+		add_shortcode( 'carleton', array( $this, 'institution_shortcode' ) );
+		add_shortcode( 'stolaf', array( $this, 'institution_shortcode' ) );
 	}
 
 	/**
@@ -333,9 +333,7 @@ class Bridge_Library_Users {
 			$this->set_alternate_user_id( $user->ID, $alma );
 			$this->set_expiration_date( $user->ID, $alma['expiry_date'] );
 
-			if ( $userdidnotexist ) {
-				update_field( 'bridge_library_uuid', $this->generate_uuid() );
-			}
+			update_field( 'bridge_library_uuid', $this->generate_uuid() );
 
 			$logging = Bridge_Library_Logging::get_instance();
 			$logging->log(
@@ -829,7 +827,7 @@ class Bridge_Library_Users {
 			wp_die();
 		}
 
-		$user_id   = sanitize_key( $_REQUEST['data']['user_id'] );
+		$user_id   = absint( $_REQUEST['data']['user_id'] );
 		$data_type = sanitize_key( $_REQUEST['data']['data'] );
 
 		if ( array_key_exists( 'async', $_REQUEST ) && isset( $_REQUEST['async'] ) ) {
@@ -939,7 +937,7 @@ class Bridge_Library_Users {
 	 *
 	 * @param int $user_id WP user ID.
 	 *
-	 * @return array       Cached course and academic department IDs.
+	 * @return array|WP_Error Cached course and academic department IDs or WP error.
 	 */
 	public function cache_user_courses( $user_id ) {
 
@@ -1116,7 +1114,7 @@ class Bridge_Library_Users {
 	 *
 	 * @param int $user_id WP user ID.
 	 *
-	 * @return array       Cached Primo Favorite IDs.
+	 * @return array<int, int> Cached Primo Favorite IDs.
 	 */
 	public function cache_user_primo_favorites( $user_id ) {
 		$primo     = Bridge_Library_API_Primo::get_instance();
@@ -1136,7 +1134,7 @@ class Bridge_Library_Users {
 	 *
 	 * @param int $user_id WP user ID.
 	 *
-	 * @return array       Circulation data.
+	 * @return string Data about the request.
 	 */
 	public function cache_circulation_data( $user_id ) {
 		$alma_id  = get_field( 'alma_id', 'user_' . $user_id );
@@ -1146,22 +1144,22 @@ class Bridge_Library_Users {
 		$fees     = $alma->get_fees( $alma_id );
 		$data     = array();
 
-		if ( ! is_a( $loans, 'WP_Error' ) ) {
+		if ( ! is_wp_error( $loans ) ) {
 			$data['loans']       = $loans['item_loan'];
 			$data['loans_count'] = $loans['total_record_count'];
 		}
 
-		if ( ! is_a( $requests, 'WP_Error' ) ) {
+		if ( ! is_wp_error( $requests ) ) {
 			$data['requests']       = $requests['user_request'];
 			$data['requests_count'] = $loans['total_record_count'];
 		}
 
-		if ( ! is_a( $fees, 'WP_Error' ) ) {
+		if ( ! is_wp_error( $fees ) ) {
 			$data['fees']       = $fees['fee'];
 			$data['fees_count'] = $fees['total_record_count'];
 		}
 
-		$clean_data = str_replace( '\\', '\\\\', wp_json_encode( $data, true ) );
+		$clean_data = str_replace( '\\', '\\\\', wp_json_encode( $data ) );
 
 		update_field( 'circulation_data', $clean_data, 'user_' . $user_id );
 
@@ -1420,7 +1418,7 @@ class Bridge_Library_Users {
 			wp_die();
 		}
 
-		$clean_up = $this->clean_up_users();
+		$this->clean_up_users();
 
 		wp_send_json_success( 'Started user cleanup.' );
 	}
@@ -1905,7 +1903,7 @@ class Bridge_Library_Users {
 					return false;
 				}
 
-				return Relay::toGlobalId( 'post', $post_id );
+				return Relay::toGlobalId( 'post', (string) $post_id );
 			},
 			$post_ids
 		);
