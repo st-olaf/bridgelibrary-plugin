@@ -345,7 +345,7 @@ class Bridge_Library_Users {
 			);
 		}
 
-		$this->update_user_data( $user->username, $user->ID );
+		$this->update_user_data( $user->user_login, $user );
 	}
 
 	/**
