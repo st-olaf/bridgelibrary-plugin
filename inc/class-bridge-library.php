@@ -16,6 +16,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Bridge_Library {
 
+	public Bridge_Library_Admin $admin;
+	public Bridge_Library_API_Alma $alma_api;
+	public Bridge_Library_API_Primo $primo_api;
+	public Bridge_Library_API_LibGuides_11 $libguides_api_11;
+	public Bridge_Library_API_LibGuides_12 $libguides_api_12;
+	public Bridge_Library_Users $users;
+	public Bridge_Library_Data_Structure $data_structure;
+	public Bridge_Library_Courses $courses;
+	public Bridge_Library_Resources $resources;
+	public Bridge_Library_Librarians $librarians;
+	public Bridge_Library_Logging $logging;
+	public Bridge_Library_User_Interest_Feeds $user_interest_feeds;
+	public Bridge_Library_ACF_Tables_Compatibility $acf_tables_compat;
+
 	/**
 	 * Class instance.
 	 *
