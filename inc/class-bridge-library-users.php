@@ -1151,7 +1151,7 @@ class Bridge_Library_Users {
 
 		if ( ! is_wp_error( $requests ) ) {
 			$data['requests']       = $requests['user_request'];
-			$data['requests_count'] = $loans['total_record_count'];
+			$data['requests_count'] = $requests['total_record_count'];
 		}
 
 		if ( ! is_wp_error( $fees ) ) {
