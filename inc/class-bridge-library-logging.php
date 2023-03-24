@@ -271,6 +271,10 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 * @return bool Event log response.
 	 */
 	public function pageview() {
+		if ( is_404() ) {
+			return false;
+		}
+
 		return $this->log(
 			array(
 				't' => 'pageview',
