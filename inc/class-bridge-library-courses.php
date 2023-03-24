@@ -1063,7 +1063,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 * @return void
 	 */
 	public function pre_get_posts( WP_Query $query ) {
-		if ( is_admin() || 'course' !== $query->get( 'get_post_type' ) ) {
+		if ( is_admin() || 'course' !== $query->get( 'post_type' ) ) {
 			return;
 		}
 
