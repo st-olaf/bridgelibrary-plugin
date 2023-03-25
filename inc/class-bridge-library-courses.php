@@ -1089,6 +1089,9 @@ class Bridge_Library_Courses extends Bridge_Library {
 			return;
 		}
 
+		// Note: courses are also cached using Bridge_Library_Courses::get_post_ids_by_course_codes() method.
+		// Any changes here must be manually made there as well.
+
 		$tax_query = $query->get( 'tax_query' );
 
 		if ( ! $tax_query ) {
