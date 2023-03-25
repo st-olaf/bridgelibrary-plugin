@@ -479,7 +479,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 *
 	 * @param array $course_codes Course code.
 	 *
-	 * @return array              WP course IDs or empty array.
+	 * @return array<int, int> WP course IDs.
 	 */
 	public function get_post_ids_by_course_codes( $course_codes ) {
 		global $wpdb;

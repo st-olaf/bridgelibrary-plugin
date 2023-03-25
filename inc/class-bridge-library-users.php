@@ -937,7 +937,7 @@ class Bridge_Library_Users {
 	 *
 	 * @param int $user_id WP user ID.
 	 *
-	 * @return array|WP_Error Cached course and academic department IDs or WP error.
+	 * @return array<string, array<int, int>>|WP_Error Cached course and academic department IDs or WP error.
 	 */
 	public function cache_user_courses( $user_id ) {
 
