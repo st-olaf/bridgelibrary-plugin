@@ -491,13 +491,35 @@ class Bridge_Library_Courses extends Bridge_Library {
 			},
 			$course_codes
 		);
+		$imploded_course_codes = implode( ',', $course_codes );
 
-		$sql   = "SELECT post_id FROM {$wpdb->prefix}{$this->acf_meta_table} WHERE course_code IN (" . implode( ',', $course_codes ) . ')'; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
-		$posts = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
+		$hidden_term = get_term_by( 'slug', 'hidden', 'hidden' );
+
+		$hidden_post_query = <<<SQL
+			SELECT object_id
+			FROM {$wpdb->term_relationships}
+			WHERE term_taxonomy_id = $hidden_term->term_id
+		SQL;
+
+		$query = sprintf(
+			<<<SQL
+				SELECT post_id
+				FROM {$wpdb->prefix}{$this->acf_meta_table}
+				WHERE course_code IN ($imploded_course_codes)
+				AND post_id NOT IN ($hidden_post_query)
+			SQL, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
+		);
+		$posts = $wpdb->get_col( $query ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
 
 		// If ACF fails, try wp_postmeta.
 		if ( is_null( $posts ) ) {
-			$posts = $wpdb->get_col( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'course_code' AND meta_value IN (" . implode( ',', $course_codes ) . ');' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
+			$posts = $wpdb->get_col( <<<SQL
+				SELECT post_id
+				FROM {$wpdb->postmeta}
+				WHERE meta_key = 'course_code'
+				AND meta_value IN ($imploded_course_codes);
+			SQL
+			); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
 		}
 
 		if ( is_null( $posts ) ) {
