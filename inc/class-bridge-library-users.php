@@ -25,7 +25,7 @@ class Bridge_Library_Users {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
@@ -146,8 +146,13 @@ class Bridge_Library_Users {
 		add_action( 'show_user_profile', array( $this, 'add_user_actions' ), 5 );
 		add_action( 'edit_user_profile', array( $this, 'add_user_actions' ), 5 );
 
+		// Enqueue assets.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+
 		// Add ajax hooks.
 		add_action( 'wp_ajax_cache_user_data', array( $this, 'ajax_cache_user_data' ) );
+		add_action( 'wp_ajax_bridge_library_add_user_favorite', array( $this, 'add_user_favorite' ) );
+		add_action( 'wp_ajax_bridge_library_remove_user_favorite', array( $this, 'remove_user_favorite' ) );
 
 		// Add personal data hooks.
 		add_filter( 'wp_privacy_personal_data_exporters', array( $this, 'register_exporter' ), 10 );
@@ -189,6 +194,22 @@ class Bridge_Library_Users {
 
 		// Add user’s institution to body class to control institution-specific link visibility.
 		add_filter( 'body_class', array( $this, 'body_class' ) );
+
+		// Add shortcode to control content visibility.
+		add_shortcode( 'carleton', array( $this, 'institution_shortcode' ) );
+		add_shortcode( 'stolaf', array( $this, 'institution_shortcode' ) );
+	}
+
+	/**
+	 * Enqueue frontend assets.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return void
+	 */
+	public function enqueue_assets() {
+		wp_enqueue_script( 'bridge-library-plugin', BL_PLUGIN_DIR_URL . '/assets/js/bridge-library-plugin.js', array( 'jquery' ), BL_PLUGIN_VERSION, true );
+		wp_add_inline_script( 'bridge-library-plugin', 'var bridgeLibrary = {adminAjax: "' . esc_url( admin_url( 'admin-ajax.php' ) ) . '"};', 'before' );
 	}
 
 	/**
@@ -230,7 +251,7 @@ class Bridge_Library_Users {
 			$user_id = $user->ID;
 		}
 
-		return get_field( 'courses', 'user_' . $user_id );
+		return array_filter( (array) get_field( 'courses', 'user_' . $user_id ) );
 	}
 
 	/**
@@ -248,7 +269,7 @@ class Bridge_Library_Users {
 			$user_id = $user->ID;
 		}
 
-		return get_field( 'resources', 'user_' . $user_id );
+		return array_filter( (array) get_field( 'resources', 'user_' . $user_id ) );
 	}
 
 	/**
@@ -266,7 +287,7 @@ class Bridge_Library_Users {
 			$user_id = $user->ID;
 		}
 
-		return get_field( 'librarians', 'user_' . $user_id );
+		return array_filter( (array) get_field( 'librarians', 'user_' . $user_id ) );
 	}
 
 	/**
@@ -284,7 +305,7 @@ class Bridge_Library_Users {
 			$user_id = $user->ID;
 		}
 
-		return get_field( 'primo_favorites', 'user_' . $user_id );
+		return array_filter( (array) get_field( 'primo_favorites', 'user_' . $user_id ) );
 	}
 
 	/**
@@ -300,7 +321,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return void
 	 */
-	public function store_user_meta( $user, $userinfo, $userdidnotexist, $client, $oauthservice ) {
+	public function store_user_meta( $user, $userinfo, $userdidnotexist, $client, $oauthservice ) {  // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 		if ( $userdidnotexist ) {
 			update_field( 'google_id', $userinfo->id, 'user_' . $user->ID );
@@ -312,9 +333,7 @@ class Bridge_Library_Users {
 			$this->set_alternate_user_id( $user->ID, $alma );
 			$this->set_expiration_date( $user->ID, $alma['expiry_date'] );
 
-			if ( $userdidnotexist ) {
-				update_field( 'bridge_library_uuid', $this->generate_uuid() );
-			}
+			update_field( 'bridge_library_uuid', $this->generate_uuid(), 'user_' . $user->ID );
 
 			$logging = Bridge_Library_Logging::get_instance();
 			$logging->log(
@@ -326,7 +345,7 @@ class Bridge_Library_Users {
 			);
 		}
 
-		$this->update_user_data( $user->username, $user->ID );
+		$this->update_user_data( $user->user_login, $user );
 	}
 
 	/**
@@ -367,12 +386,8 @@ class Bridge_Library_Users {
 	 */
 	public function update_user_data( $user_login, $user ) {
 
-		$this->async->push_to_queue(
-			array(
-				'action'  => 'cache_user_courses',
-				'user_id' => $user->ID,
-			)
-		);
+		// Sync courses synchronously.
+		$this->cache_user_courses( $user->ID );
 
 		$this->async->push_to_queue(
 			array(
@@ -812,7 +827,7 @@ class Bridge_Library_Users {
 			wp_die();
 		}
 
-		$user_id   = sanitize_key( $_REQUEST['data']['user_id'] );
+		$user_id   = absint( $_REQUEST['data']['user_id'] );
 		$data_type = sanitize_key( $_REQUEST['data']['data'] );
 
 		if ( array_key_exists( 'async', $_REQUEST ) && isset( $_REQUEST['async'] ) ) {
@@ -922,7 +937,7 @@ class Bridge_Library_Users {
 	 *
 	 * @param int $user_id WP user ID.
 	 *
-	 * @return array       Cached course and academic department IDs.
+	 * @return array<string, array<int, int>>|WP_Error Cached course and academic department IDs or WP error.
 	 */
 	public function cache_user_courses( $user_id ) {
 
@@ -1099,7 +1114,7 @@ class Bridge_Library_Users {
 	 *
 	 * @param int $user_id WP user ID.
 	 *
-	 * @return array       Cached Primo Favorite IDs.
+	 * @return array<int, int> Cached Primo Favorite IDs.
 	 */
 	public function cache_user_primo_favorites( $user_id ) {
 		$primo     = Bridge_Library_API_Primo::get_instance();
@@ -1119,7 +1134,7 @@ class Bridge_Library_Users {
 	 *
 	 * @param int $user_id WP user ID.
 	 *
-	 * @return array       Circulation data.
+	 * @return string Data about the request.
 	 */
 	public function cache_circulation_data( $user_id ) {
 		$alma_id  = get_field( 'alma_id', 'user_' . $user_id );
@@ -1129,22 +1144,22 @@ class Bridge_Library_Users {
 		$fees     = $alma->get_fees( $alma_id );
 		$data     = array();
 
-		if ( ! is_a( $loans, 'WP_Error' ) ) {
+		if ( ! is_wp_error( $loans ) ) {
 			$data['loans']       = $loans['item_loan'];
 			$data['loans_count'] = $loans['total_record_count'];
 		}
 
-		if ( ! is_a( $requests, 'WP_Error' ) ) {
+		if ( ! is_wp_error( $requests ) ) {
 			$data['requests']       = $requests['user_request'];
-			$data['requests_count'] = $loans['total_record_count'];
+			$data['requests_count'] = $requests['total_record_count'];
 		}
 
-		if ( ! is_a( $fees, 'WP_Error' ) ) {
-			$data['fees']       = $fees['fee'];
+		if ( ! is_wp_error( $fees ) ) {
+			$data['fees']       = array_key_exists( 'fee', $fees ) ? $fees['fee'] : array();
 			$data['fees_count'] = $fees['total_record_count'];
 		}
 
-		$clean_data = str_replace( '\\', '\\\\', wp_json_encode( $data, true ) );
+		$clean_data = str_replace( '\\', '\\\\', wp_json_encode( $data ) );
 
 		update_field( 'circulation_data', $clean_data, 'user_' . $user_id );
 
@@ -1200,7 +1215,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return array                Personal data.
 	 */
-	public function export_personal_data( $email_address, $page = 1 ) {
+	public function export_personal_data( $email_address, $page = 1 ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		$user = get_user_by( 'email', $email_address );
 
 		$courses     = get_field( 'courses', 'user_' . $user->ID );
@@ -1273,7 +1288,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return array                Personal data.
 	 */
-	public function erase_personal_data( $email_address, $page = 1 ) {
+	public function erase_personal_data( $email_address, $page = 1 ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		$user = get_user_by( 'email', $email_address );
 
 		// Set defaults.
@@ -1403,7 +1418,7 @@ class Bridge_Library_Users {
 			wp_die();
 		}
 
-		$clean_up = $this->clean_up_users();
+		$this->clean_up_users();
 
 		wp_send_json_success( 'Started user cleanup.' );
 	}
@@ -1420,7 +1435,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return bool|mixed            The value to return.
 	 */
-	public function get_user_sticky_posts( $pre_option, $option, $default ) {
+	public function get_user_sticky_posts( $pre_option, $option, $default ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		return $this->get_favorite_posts();
 	}
 
@@ -1435,7 +1450,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return mixed         Field value.
 	 */
-	public function acf_load_user_sticky_posts_meta( $value, $post_id, $field ) {
+	public function acf_load_user_sticky_posts_meta( $value, $post_id, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		$favorites = (array) $this->get_favorite_posts();
 		return in_array( (int) $post_id, $favorites, true );
 	}
@@ -1451,7 +1466,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return mixed         Field value.
 	 */
-	public function acf_update_user_sticky_posts_meta( $value, $post_id, $field ) {
+	public function acf_update_user_sticky_posts_meta( $value, $post_id, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		$this->update_favorite_posts( $post_id, (bool) $value );
 
 		// Don’t save any postmeta.
@@ -1485,7 +1500,73 @@ class Bridge_Library_Users {
 			}
 		}
 
-		return update_field( 'user_favorites', $favorites, 'user_' . $user_id );
+		return update_field( 'user_favorites', array_values( $favorites ), 'user_' . $user_id );
+	}
+
+	/**
+	 * Mark a resource as favorite for the logged-in user.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function add_user_favorite() {
+		if ( ! $this->favorite_nonce_is_valid() ) {
+			wp_send_json_error( array( 'error' => __( 'Invalid request', 'bridge-library' ) ), 401 );
+		}
+
+		$id = intval( wp_unslash( $_POST['id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- already verified in $this->favorite_nonce_is_valid().
+
+		$updated = $this->update_favorite_posts( $id, true );
+
+		if ( $updated ) {
+			wp_send_json_success(
+				array(
+					'success' => __( 'Added user favorite', 'bridge-library' ),
+					'id'      => $id,
+				)
+			);
+		} else {
+			wp_send_json_error(
+				array(
+					'error' => __( 'Failed to add user favorite', 'bridge-library' ),
+					'id'    => $id,
+				)
+			);
+		}
+	}
+
+	/**
+	 * Remove a resource from the logged-in user’s favorites.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function remove_user_favorite() {
+		if ( ! $this->favorite_nonce_is_valid() ) {
+			wp_send_json_error( array( 'error' => __( 'Invalid request', 'bridge-library' ) ), 401 );
+		}
+
+		$id = intval( wp_unslash( $_POST['id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- already verified in $this->favorite_nonce_is_valid().
+
+		$updated = $this->update_favorite_posts( $id, false );
+
+		if ( $updated ) {
+			wp_send_json_success(
+				array(
+					'success' => __( 'Removed user favorite', 'bridge-library' ),
+					'id'      => $id,
+				)
+			);
+		} else {
+			wp_send_json_error(
+				array(
+					'error' => __( 'Failed to remove user favorite', 'bridge-library' ),
+					'id'    => $id,
+				)
+			);
+		}
 	}
 
 	/**
@@ -1502,12 +1583,25 @@ class Bridge_Library_Users {
 			$user_id = get_current_user_id();
 		}
 
-		$user_favorites = get_field( 'user_favorites', 'user_' . $user_id );
-		if ( ! $user_favorites ) {
-			$user_favorites = array();
+		return array_filter( (array) get_field( 'user_favorites', 'user_' . $user_id ) );
+	}
+
+	/**
+	 * Determine if the given post has been favorited by the given user.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $post_id Post ID.
+	 * @param int $user_id Optional user ID. Defaults to logged-in user.
+	 *
+	 * @return bool
+	 */
+	public function has_favorited_post( int $post_id, $user_id = 0 ) {
+		if ( 0 === $user_id ) {
+			$user_id = get_current_user_id();
 		}
 
-		return $user_favorites;
+		return array_key_exists( $post_id, array_flip( $this->get_favorite_posts( $user_id ) ) );
 	}
 
 	/**
@@ -1578,7 +1672,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return array          WP_Query args.
 	 */
-	public function acf_sort_user_sticky_posts( $args, $field, $post_id ) {
+	public function acf_sort_user_sticky_posts( $args, $field, $post_id ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		// If this is the first page, include sticky posts and sort them to the top.
 		if ( array_key_exists( 'paged', $args ) && 1 === (int) $args['paged'] ) {
 
@@ -1608,7 +1702,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return string          Post title.
 	 */
-	public function acf_sticky_post_title( $title, $post, $field, $post_id ) {
+	public function acf_sticky_post_title( $title, $post, $field, $post_id ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		if ( in_array( $post->ID, $this->get_favorite_posts(), true ) ) {
 			$title = '<strong>' . $title . '</strong>  — Favorite';
 		}
@@ -1631,7 +1725,7 @@ class Bridge_Library_Users {
 
 	 * @return mixed                 The result of the field resolution.
 	 */
-	public function graphql_user_favorites( $result, $source, array $args, AppContext $context, ResolveInfo $info, string $type_name, string $field_key, FieldDefinition $field, $field_resolver ) {
+	public function graphql_user_favorites( $result, $source, array $args, AppContext $context, ResolveInfo $info, string $type_name, string $field_key, FieldDefinition $field, $field_resolver ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		if ( 'userFavorites' === $field_key ) {
 			$result = array_filter(
 				(array) $result,
@@ -1653,7 +1747,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return void
 	 */
-	public function maybe_load_admin_js( $user ) {
+	public function maybe_load_admin_js( $user ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		require_once ABSPATH . '/wp-includes/pluggable.php';
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_enqueue_script( 'bridge-library-admin' );
@@ -1702,7 +1796,7 @@ class Bridge_Library_Users {
 	 *
 	 * @return void
 	 */
-	public function graphql_register_types( TypeRegistry $type_registry ) {
+	public function graphql_register_types( TypeRegistry $type_registry ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		register_graphql_mutation(
 			'addUserFavorite',
 			array(
@@ -1731,7 +1825,7 @@ class Bridge_Library_Users {
 					),
 				),
 
-				'mutateAndGetPayload' => function( $input, $context, $info ) {
+				'mutateAndGetPayload' => function( $input, $context, $info ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 					$user     = Relay::fromGlobalId( $input['id'] );
 					$resource = Relay::fromGlobalId( $input['favoriteId'] );
 
@@ -1775,7 +1869,7 @@ class Bridge_Library_Users {
 					),
 				),
 
-				'mutateAndGetPayload' => function( $input, $context, $info ) {
+				'mutateAndGetPayload' => function( $input, $context, $info ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 					$user     = Relay::fromGlobalId( $input['id'] );
 					$resource = Relay::fromGlobalId( $input['favoriteId'] );
 
@@ -1809,11 +1903,52 @@ class Bridge_Library_Users {
 					return false;
 				}
 
-				return Relay::toGlobalId( 'post', $post_id );
+				return Relay::toGlobalId( 'post', (string) $post_id );
 			},
 			$post_ids
 		);
 
 		return array_filter( $ids );
+	}
+
+	/**
+	 * Hide content based on the user’s institution.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param array  $attributes    Shortcode attributes.
+	 * @param string $content       Shortcode content.
+	 * @param string $shortcode_tag Shortcode tag.
+	 *
+	 * @return string
+	 */
+	public function institution_shortcode( $attributes, string $content, string $shortcode_tag ) {
+		$institution = substr( $this->get_domain(), 0, -4 );
+
+		if ( $shortcode_tag !== $institution ) {
+			return '';
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Verify the user favorite nonce.
+	 *
+	 * @return bool
+	 */
+	private function favorite_nonce_is_valid() {
+		if ( ! array_key_exists( 'nonce', $_POST ) || empty( $_POST['nonce'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return false;
+		}
+
+		if ( ! array_key_exists( 'id', $_POST ) || empty( $_POST['id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return false;
+		}
+
+		return wp_verify_nonce(
+			sanitize_key( wp_unslash( $_POST['nonce'] ) ),
+			'favorite-' . intval( wp_unslash( $_POST['id'] ) )
+		);
 	}
 }

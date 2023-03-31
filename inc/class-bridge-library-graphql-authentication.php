@@ -1,6 +1,6 @@
 <?php
 /**
- * Bridge Library librarians class.
+ * Bridge Library GraphQL authentication.
  *
  * @package bridge-library
  */
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once plugin_dir_path( BL_PLUGIN_FILE ) . '/../wp-graphql-jwt-authentication/src/Auth.php';
 
 /**
- * Bridge Library librarians class.
+ * Bridge Library GraphQL authentication.
  *
  * @since 1.0.0
  */
@@ -23,7 +23,7 @@ class Bridge_Library_GraphQL_Authentication extends Auth {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 

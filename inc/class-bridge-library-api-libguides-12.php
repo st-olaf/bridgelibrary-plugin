@@ -9,9 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use \League\OAuth2\Client\Provider\GenericProvider;
-use \League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-
 /**
  * Bridge Library LibGuides API class.
  *
@@ -22,7 +19,7 @@ class Bridge_Library_API_LibGuides_12 extends Bridge_Library {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 

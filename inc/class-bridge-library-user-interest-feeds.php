@@ -30,7 +30,7 @@ class Bridge_Library_User_Interest_Feeds {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 

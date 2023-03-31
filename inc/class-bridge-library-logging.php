@@ -20,7 +20,7 @@ class Bridge_Library_Logging extends Bridge_Library {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
@@ -29,9 +29,18 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var bool $debug
+	 * @var ?bool $debug
 	 */
-	public $debug;
+	public $debug = null;
+
+	/**
+	 * Tracking ID.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var ?string $tracking_id
+	 */
+	public $tracking_id = null;
 
 	/**
 	 * Default request parameters.
@@ -50,9 +59,9 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var int $user_cid
+	 * @var ?int $user_cid
 	 */
-	private $user_cid;
+	private $user_cid = null;
 
 	/**
 	 * Tracking URL.
@@ -112,7 +121,7 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 */
 	private function is_debugging() {
 		if ( ! isset( $this->debug ) ) {
-			$mode_setting = get_option( 'option_tracking_debug_mode', false ); // Use get_option() instead of get_field() so we can get this before ACF has fully initialized.
+			$mode_setting = get_option( 'options_tracking_debug_mode', false ); // Use get_option() instead of get_field() so we can get this before ACF has fully initialized.
 			$this->debug  = ( '1' === $mode_setting );
 		}
 
@@ -128,7 +137,7 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 */
 	private function get_tracking_id() {
 		if ( ! isset( $this->tracking_id ) ) {
-			$this->tracking_id = get_option( 'option_tracking_id', '' ); // Use get_option() instead of get_field() so we can get this before ACF has fully initialized.
+			$this->tracking_id = get_option( 'options_tracking_id', '' ); // Use get_option() instead of get_field() so we can get this before ACF has fully initialized.
 		}
 
 		return $this->tracking_id;
@@ -152,6 +161,12 @@ class Bridge_Library_Logging extends Bridge_Library {
 			}
 
 			$this->user_cid = get_user_meta( $user_id, 'bridge_library_uuid', true );
+
+			if ( ! $this->user_cid ) {
+				update_field( 'bridge_library_uuid', Bridge_Library_Users::get_instance()->generate_uuid(), 'user_' . $user_id );
+
+				$this->user_cid = get_user_meta( $user_id, 'bridge_library_uuid', true );
+			}
 		}
 
 		return $this->user_cid;
@@ -235,17 +250,6 @@ class Bridge_Library_Logging extends Bridge_Library {
 		if ( $this->is_debugging() ) {
 			global $wpdb;
 
-			require_once ABSPATH . '/wp-admin/includes/upgrade.php';
-			dbDelta(
-				'CREATE TABLE `wp_bridge_library_logging` (
-					`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-					`timestamp` datetime DEFAULT NULL,
-					`request` longtext CHARACTER SET utf8,
-					`data` longtext CHARACTER SET utf8,
-					PRIMARY KEY (`id`)
-				  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;'
-			);
-
 			$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 				$wpdb->prefix . 'bridge_library_logging',
 				array(
@@ -267,6 +271,10 @@ class Bridge_Library_Logging extends Bridge_Library {
 	 * @return bool Event log response.
 	 */
 	public function pageview() {
+		if ( is_404() ) {
+			return false;
+		}
+
 		return $this->log(
 			array(
 				't' => 'pageview',

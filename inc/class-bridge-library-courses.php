@@ -19,7 +19,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
@@ -71,6 +71,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		'academic_department_code' => 'academic_department_code',
 		'degree_level'             => 'degree_level',
 		'course_term'              => 'course_term',
+		'instructors'              => 'instructors',
 	);
 
 	/**
@@ -78,9 +79,9 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var array $institutions_course_code_mapping
+	 * @var array<string, string>
 	 */
-	private $institutions_course_code_mapping = array(
+	const INSTITUTIONS_COURSE_CODE_MAPPING = array(
 		'C' => 'Carleton',
 		'S' => 'St. Olaf',
 	);
@@ -128,6 +129,12 @@ class Bridge_Library_Courses extends Bridge_Library {
 		add_action( 'posts_join', array( $this, 'search_acf_fields_join' ), 10, 2 );
 		add_action( 'posts_where', array( $this, 'search_acf_fields_where' ), 10, 2 );
 		add_filter( 'acf/fields/relationship/query/name=related_courses_resources', array( $this, 'search_acf_fields_from_acf' ), 10, 3 );
+
+		// Set/reset hidden flag when academic department settings are changed.
+		add_action( 'saved_term', array( $this, 'saved_term' ), 10, 4 );
+
+		// Exclude hidden courses from frontend.
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
 
 		// Tweak course titles in admin list and resource related_courses ACF field.
 		add_filter( 'acf/fields/relationship/result/key=field_5cc3260215ce7', array( $this, 'modify_course_acf_titles' ), 10, 2 );
@@ -282,6 +289,8 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$course_id = sanitize_key( $_REQUEST['course_id'] );
 			$alma_api  = Bridge_Library_API_Alma::get_instance();
 			$results   = array( $alma_api->request( 'courses/' . $course_id, $query ) );
+		} else {
+			$results = new WP_Error( '',' Missing course id and code' );
 		}
 
 		if ( is_wp_error( $results ) ) {
@@ -470,7 +479,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 	 *
 	 * @param array $course_codes Course code.
 	 *
-	 * @return array              WP course IDs or empty array.
+	 * @return array<int, int> WP course IDs.
 	 */
 	public function get_post_ids_by_course_codes( $course_codes ) {
 		global $wpdb;
@@ -482,13 +491,35 @@ class Bridge_Library_Courses extends Bridge_Library {
 			},
 			$course_codes
 		);
+		$imploded_course_codes = implode( ',', $course_codes );
 
-		$sql   = "SELECT post_id FROM {$wpdb->prefix}{$this->acf_meta_table} WHERE course_code IN (" . implode( ',', $course_codes ) . ')'; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
-		$posts = $wpdb->get_col( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
+		$hidden_term = get_term_by( 'slug', 'hidden', 'hidden' );
+
+		$hidden_post_query = <<<SQL
+			SELECT object_id
+			FROM {$wpdb->term_relationships}
+			WHERE term_taxonomy_id = $hidden_term->term_id
+		SQL;
+
+		$query = sprintf(
+			<<<SQL
+				SELECT post_id
+				FROM {$wpdb->prefix}{$this->acf_meta_table}
+				WHERE course_code IN ($imploded_course_codes)
+				AND post_id NOT IN ($hidden_post_query)
+			SQL, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
+		);
+		$posts = $wpdb->get_col( $query ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
 
 		// If ACF fails, try wp_postmeta.
 		if ( is_null( $posts ) ) {
-			$posts = $wpdb->get_col( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'course_code' AND meta_value IN (" . implode( ',', $course_codes ) . ');' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
+			$posts = $wpdb->get_col( <<<SQL
+				SELECT post_id
+				FROM {$wpdb->postmeta}
+				WHERE meta_key = 'course_code'
+				AND meta_value IN ($imploded_course_codes);
+			SQL
+			); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- this is more performant than a get_posts with meta_query would be, and we’ve escaped all the input above.
 		}
 
 		if ( is_null( $posts ) ) {
@@ -677,7 +708,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$parts = explode( '|', $course_code );
 
 			$course_code = array(
-				'institution'    => str_replace( array_flip( $this->institutions_course_code_mapping ), $this->institutions_course_code_mapping, $parts[0] ),
+				'institution'    => str_replace( array_flip( self::INSTITUTIONS_COURSE_CODE_MAPPING ), self::INSTITUTIONS_COURSE_CODE_MAPPING, $parts[0] ),
 				'course_number'  => $parts[2],
 				'course_section' => $parts[3],
 				'course_term'    => $parts[4],
@@ -725,37 +756,66 @@ class Bridge_Library_Courses extends Bridge_Library {
 			wp_set_object_terms( $post_id, $academic_department_term_id, 'academic_department' );
 			$course['academic_department_code'] = $course['academic_department']['value'];
 			$course['academic_department']      = array( $academic_department_term_id );
+
+			$term = get_term( $academic_department_term_id, 'academic_department' );
+			$title_search_strings = get_field( 'hide_courses_by_title', 'term_' . $term->term_id );
+
+			$post = get_post( $post_id );
+
+			if ( get_field( 'hide_all_courses', 'term_' . $term->term_id ) ) {
+				$this->set_visible( array( $post ), false );
+			} elseif ( false !== strpos( $post->post_title, $title_search_strings ) ) {
+				$this->set_visible( array( get_post( $post_id ) ), false );
+			} else {
+				$this->set_visible( array( get_post( $post_id ) ), true );
+			}
 		}
 
 		$alma_api    = Bridge_Library_API_Alma::get_instance();
 		$full_course = $alma_api->request( 'courses/' . $course['id'], array( 'view' => 'full' ) );
 
-		if ( ! is_wp_error( $full_course ) && ! empty( $full_course['reading_lists'] ) ) {
+		if ( is_wp_error( $full_course ) ) {
+			return $course;
+		}
+
+		if ( ! empty( $full_course['instructor'] ) ) {
+			$course['instructors'] = array_map(
+				function( $instructor ) {
+					return array(
+						'name' => implode( ' ', array_filter( array( $instructor['first_name'], $instructor['last_name'] ) ) ),
+					);
+				},
+				$full_course['instructor']
+			);
+		}
+
+		if ( empty( $full_course['reading_lists'] ) ) {
+			return $course;
+		}
+
+		if ( array_key_exists( 'reading_lists', $full_course ) && array_key_exists( 'reading_list', $full_course['reading_lists'] ) && is_iterable( $full_course['reading_lists']['reading_list'] ) && ! empty( $full_course['reading_lists']['reading_list'] ) ) {
 			$resources = Bridge_Library_Resources::get_instance();
-			if ( array_key_exists( 'reading_lists', $full_course ) && array_key_exists( 'reading_list', $full_course['reading_lists'] ) && is_iterable( $full_course['reading_lists']['reading_list'] ) && ! empty( $full_course['reading_lists']['reading_list'] ) ) {
-				foreach ( $full_course['reading_lists']['reading_list'] as $reading_list ) {
-					$citations = $reading_list['citations']['citation'];
+			foreach ( $full_course['reading_lists']['reading_list'] as $reading_list ) {
+				$citations = $reading_list['citations']['citation'];
 
-					$active_resources   = array();
-					$existing_resources = get_field( 'related_courses_resources', $post_id );
-					if ( ! is_array( $existing_resources ) ) {
-						$existing_resources = array();
-					}
-
-					if ( is_array( $citations ) ) {
-						foreach ( $citations as $citation ) {
-							$resource_id        = $resources->update_reading_list( $citation, $post_id );
-							$active_resources[] = (int) $resource_id;
-						}
-					}
-
-					$active_resources = array_merge( $active_resources, $existing_resources );
-					$active_resources = array_unique( $active_resources );
-
-					// Update the course post.
-					update_field( 'related_courses_resources', $active_resources, $post_id );
-
+				$active_resources   = array();
+				$existing_resources = get_field( 'related_courses_resources', $post_id );
+				if ( ! is_array( $existing_resources ) ) {
+					$existing_resources = array();
 				}
+
+				if ( is_array( $citations ) ) {
+					foreach ( $citations as $citation ) {
+						$resource_id        = $resources->update_reading_list( $citation, $post_id );
+						$active_resources[] = (int) $resource_id;
+					}
+				}
+
+				$active_resources = array_merge( $active_resources, $existing_resources );
+				$active_resources = array_unique( $active_resources );
+
+				// Update the course post.
+				update_field( 'related_courses_resources', $active_resources, $post_id );
 			}
 		}
 
@@ -1007,12 +1067,166 @@ class Bridge_Library_Courses extends Bridge_Library {
 				$course_code[1],
 				$course_number ? ' ' . $course_number : '',
 				$title,
-				empty( $institution ) ? '' : '(' . implode( ', ', wp_list_pluck( $institution, 'name' ) ) . ')',
-				empty( $course_term ) ? '' : '(' . implode( ', ', wp_list_pluck( $course_term, 'name' ) ) . ')'
+				is_array( $institution ) ? '(' . implode( ', ', wp_list_pluck( $institution, 'name' ) ) . ')' : '',
+				is_array( $course_term ) ? '(' . implode( ', ', wp_list_pluck( $course_term, 'name' ) ) . ')' : ''
 			);
 		}
 
 		return $title;
 	}
 
+	/**
+	 * Exclude hidden posts from the frontend.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param WP_Query $query Query.
+	 *
+	 * @return void
+	 */
+	public function pre_get_posts( WP_Query $query ) {
+		if ( is_admin() || 'course' !== $query->get( 'post_type' ) ) {
+			return;
+		}
+
+		// Note: courses are also cached using Bridge_Library_Courses::get_post_ids_by_course_codes() method.
+		// Any changes here must be manually made there as well.
+
+		$tax_query = $query->get( 'tax_query' );
+
+		if ( ! $tax_query ) {
+			$tax_query = array();
+		}
+
+		$tax_query[] = array(
+			'taxonomy' => 'hidden',
+			'field'    => 'slug',
+			'terms'    => 'hidden',
+			'operator' => 'NOT IN',
+		);
+
+		$query->set( 'tax_query', $tax_query );
+	}
+
+	/**
+	 * Hide/reset hidden flags for related courses.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param int    $tt_id    Term taxonomy ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 * @param bool   $update   Whether this is an existing term being updated.
+	 *
+	 * @return void
+	 */
+	public function saved_term( int $term_id, int $tt_id, string $taxonomy, bool $update ) {
+		if ( 'academic_department' !== $taxonomy ) {
+			return;
+		}
+
+		if ( get_field( 'hide_all_courses', 'term_' . $term_id ) ) {
+			$this->set_all_course_visibility_for_department( $term_id, false );
+		} else {
+			if ( get_field( 'hide_courses_by_title', 'term_' . $term_id ) ) {
+				$this->set_specific_course_visibility_for_term( $term_id, get_field( 'hide_courses_by_title', 'term_' . $term_id ) );
+			} else {
+				$this->set_all_course_visibility_for_department( $term_id, true );
+			}
+		}
+
+	}
+
+	/**
+	 * Set visibility for all courses in this department.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param int  $term_id Term ID.
+	 * @param bool $visible Visible.
+	 *
+	 * @return void
+	 */
+	protected function set_all_course_visibility_for_department( int $term_id, bool $visible ) {
+		$courses = $this->get_courses_for_department( $term_id );
+
+		$this->set_visible( $courses, $visible );
+	}
+
+	/**
+	 * Set visibility for courses matching the search strings.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param int    $term_id        Term ID.
+	 * @param string $search_strings Search strings.
+	 *
+	 * @return void
+	 */
+	protected function set_specific_course_visibility_for_term( int $term_id, string $search_strings ) {
+		$all_courses    = $this->get_courses_for_department( $term_id );
+		$hidden_courses = array();
+
+		$search_strings = explode( PHP_EOL, $search_strings );
+		$search_strings = array_map( 'trim', $search_strings );
+
+		foreach ( $all_courses as $index => $course ) {
+			foreach ( $search_strings as $search_string ) {
+				if ( false !== strpos( $course->post_title, $search_string ) ) {
+					$hidden_courses[ $index ] = $course;
+					continue;
+				}
+			}
+		}
+
+		$this->set_visible( $hidden_courses, false );
+		$this->set_visible( array_diff_key( $all_courses, $hidden_courses ), true );
+	}
+
+	/**
+	 * Set visibility on the given posts.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param array<int, \WP_Post> $posts   Array of posts.
+	 * @param bool                 $visible Visible.
+	 *
+	 * @return void
+	 */
+	protected function set_visible( array $posts, bool $visible ) {
+		if ( $visible ) {
+			foreach ( $posts as $post ) {
+				wp_remove_object_terms( $post->ID, 'hidden', 'hidden' );
+			}
+		} else {
+			foreach ( $posts as $post ) {
+				wp_set_object_terms( $post->ID, 'hidden', 'hidden', true );
+			}
+		}
+	}
+
+	/**
+	 * Get all courses for the given department.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param int $term_id Term ID.
+	 *
+	 * @return array<int, \WP_Post>
+	 */
+	private function get_courses_for_department( int $term_id ): array {
+		return (new WP_Query(
+			array(
+				'post_type'      => 'course',
+				'posts_per_page' => -1,
+				'post_status'    => 'any',
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'academic_department',
+						'terms'    => $term_id,
+					),
+				),
+			)
+		))->posts;
+	}
 }

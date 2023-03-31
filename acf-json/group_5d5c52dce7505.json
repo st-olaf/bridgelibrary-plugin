@@ -1,11 +1,54 @@
 {
     "key": "group_5d5c52dce7505",
-    "title": "Academic Department Resources",
+    "title": "Academic Department Settings",
     "fields": [
+        {
+            "key": "field_640a50e8d5ef2",
+            "label": "Hide All Courses",
+            "name": "hide_all_courses",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "message": "Prevent courses in this Academic Department from being displayed on the frontend",
+            "default_value": 0,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "ui": 1
+        },
+        {
+            "key": "field_640a511cd5ef3",
+            "label": "Hide Courses by Title",
+            "name": "hide_courses_by_title",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Prevent courses containing these words in the title from displaying on the frontend.\r\nAdd one string on each line. Note: these strings are case-sensitive.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "show_in_graphql": 1,
+            "default_value": "",
+            "maxlength": "",
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
+        },
         {
             "key": "field_5d5c52e7f882d",
             "label": "Related Resources",
             "name": "related_resources",
+            "aria-label": "",
             "type": "relationship",
             "instructions": "",
             "required": 0,
@@ -46,11 +89,14 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
+    "show_in_rest": 0,
+    "acfcdt_manage_table_definition": 0,
     "show_in_graphql": 1,
     "graphql_field_name": "academicDepartmentResources",
-    "acfcdt_manage_table_definition": 0,
+    "map_graphql_types_from_location_rules": 0,
+    "graphql_types": "",
     "acfcdt_table_definition_file_name": "table_104924x5d5c52dd028be",
-    "modified": 1576860747
+    "modified": 1679016954
 }

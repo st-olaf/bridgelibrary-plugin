@@ -9,9 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use \League\OAuth2\Client\Provider\GenericProvider;
-use \League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-
 /**
  * Bridge Library LibGuides API class.
  *
@@ -22,7 +19,7 @@ class Bridge_Library_API_LibGuides_11 extends Bridge_Library {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
@@ -253,13 +250,41 @@ class Bridge_Library_API_LibGuides_11 extends Bridge_Library {
 			$query,
 			array(
 				'expand' => 'subjects,metadata,pages',
-				'status' => '1', // Limit to published.
 			)
 		);
 
 		$guides = $this->request( 'guides', $query );
 
 		return $guides;
+	}
+
+	/**
+	 * Retrieve a single LibGuides guide.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int   $id    Guide ID.
+	 * @param array $query Query parameters.
+	 *
+	 * @return array       LibGuides assets.
+	 */
+	public function get_guide( int $id, $query = array() ) {
+		$query = wp_parse_args(
+			$query,
+			array(
+				'expand' => 'subjects,metadata,pages',
+			)
+		);
+
+		$guides = $this->request( 'guides/' . $id, $query );
+
+		foreach ( $guides as $guide ) {
+			if ( $id === $guide['id'] ) {
+				return $guide;
+			}
+		}
+
+		return array();
 	}
 
 }

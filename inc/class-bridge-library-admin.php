@@ -19,7 +19,7 @@ class Bridge_Library_Admin {
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
@@ -103,6 +103,15 @@ class Bridge_Library_Admin {
 			'bridge_library_copy_resources',
 			array( $this, 'copy_resources_page' ),
 			2
+		);
+
+		// Add default resources.
+		acf_add_options_page(
+			array(
+				'page_title'  => 'Default Resources',
+				'capability'  => 'manage_options_bridge_library',
+				'parent_slug' => 'bridge_library_settings',
+			)
 		);
 
 		// Add ACF site options page.

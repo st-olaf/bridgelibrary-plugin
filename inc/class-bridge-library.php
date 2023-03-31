@@ -16,10 +16,24 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Bridge_Library {
 
+	public Bridge_Library_Admin $admin;
+	public Bridge_Library_API_Alma $alma_api;
+	public Bridge_Library_API_Primo $primo_api;
+	public Bridge_Library_API_LibGuides_11 $libguides_api_11;
+	public Bridge_Library_API_LibGuides_12 $libguides_api_12;
+	public Bridge_Library_Users $users;
+	public Bridge_Library_Data_Structure $data_structure;
+	public Bridge_Library_Courses $courses;
+	public Bridge_Library_Resources $resources;
+	public Bridge_Library_Librarians $librarians;
+	public Bridge_Library_Logging $logging;
+	public Bridge_Library_User_Interest_Feeds $user_interest_feeds;
+	public Bridge_Library_ACF_Tables_Compatibility $acf_tables_compat;
+
 	/**
 	 * Class instance.
 	 *
-	 * @var null
+	 * @var self
 	 */
 	private static $instance = null;
 
@@ -99,6 +113,15 @@ class Bridge_Library {
 		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-graphql-authentication.php';
 		Bridge_Library_GraphQL_Authentication::get_instance();
 
+		// WP CLI.
+		require_once BL_PLUGIN_DIR . '/inc/class-bridge-library-wp-cli.php';
+		add_action(
+			'cli_init',
+			function() {
+				WP_CLI::add_command( 'bridge-library', Bridge_Library_WP_CLI::class );
+			}
+		);
+
 		// Scheduling.
 		register_activation_hook( BL_PLUGIN_FILE, array( $this, 'schedule_automatic_updates' ) );
 		register_deactivation_hook( BL_PLUGIN_FILE, array( $this, 'clear_automatic_updates' ) );
@@ -151,6 +174,19 @@ class Bridge_Library {
 
 		// Allowing for a 6-hour timezone offset, run starting at 1AM.
 		wp_schedule_event( strtotime( 'tomorrow 7am' ), 'daily', 'bridge_library_schedule_daily' );
+
+		// Add logging table.
+		require_once ABSPATH . '/wp-admin/includes/upgrade.php';
+		global $wpdb;
+		dbDelta(
+			"CREATE TABLE `{$wpdb->prefix}bridge_library_logging` (
+				`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+				`timestamp` datetime DEFAULT NULL,
+				`request` longtext CHARACTER SET utf8,
+				`data` longtext CHARACTER SET utf8,
+				PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+		);
 	}
 
 	/**
