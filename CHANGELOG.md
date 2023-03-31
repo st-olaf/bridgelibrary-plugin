@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] — 2023-03-01
+
+- Feature: add ajax endpoints for managing user favorites
+- Feature: sync instructor names to courses
+- Feature: add wp-cli commands to sync Alma courses
+- Feature: associate LibGuides subject guides with the relevant academic department(s)
+- Feature: add fallback resources for librarians and guides
+- Feature: hide unpublished/private LibGuides guides
+- Feature: add ability to hide all or specific courses for academic departments
+- Bugfix: fix Alma requests
+- Bugfix: fix Google Analytics event tracking
+- Bugfix: fix various code quality issues
+
 ## [1.2.3] — 2022-11-18
 - Bugfix: fix issue when retrieving Primo URL for resources
 - Bugfix: fix issue when adding academic department for courses
