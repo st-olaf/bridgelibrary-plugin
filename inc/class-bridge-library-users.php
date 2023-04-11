@@ -242,16 +242,23 @@ class Bridge_Library_Users {
 	 * @since 1.0.0
 	 *
 	 * @param int|null $user_id WP user ID.
+	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
 	 *
-	 * @return array            User course IDs.
+	 * @return array<int, int|string|\WP_Post> User course IDs.
 	 */
-	public function get_courses( $user_id = null ) {
+	public function get_courses( $user_id = null, bool $as_objects = false ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
 		}
 
-		return array_filter( (array) get_field( 'courses', 'user_' . $user_id ) );
+		$post_ids = array_filter( (array) get_field( 'courses', 'user_' . $user_id ) );
+
+		if ( $as_objects ) {
+			$post_ids = array_map( 'get_post', $post_ids );
+		}
+
+		return array_filter( $post_ids );
 	}
 
 	/**
@@ -260,16 +267,23 @@ class Bridge_Library_Users {
 	 * @since 1.0.0
 	 *
 	 * @param int|null $user_id WP user ID.
+	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
 	 *
-	 * @return array            User resource IDs.
+	 * @return array<int, int|string|\WP_Post> User resource IDs.
 	 */
-	public function get_resources( $user_id = null ) {
+	public function get_resources( $user_id = null, bool $as_objects = false ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
 		}
 
-		return array_filter( (array) get_field( 'resources', 'user_' . $user_id ) );
+		$post_ids = array_filter( (array) get_field( 'resources', 'user_' . $user_id ) );
+
+		if ( $as_objects ) {
+			$post_ids = array_map( 'get_post', $post_ids );
+		}
+
+		return array_filter( $post_ids );
 	}
 
 	/**
@@ -278,16 +292,23 @@ class Bridge_Library_Users {
 	 * @since 1.0.0
 	 *
 	 * @param int|null $user_id WP user ID.
+	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
 	 *
-	 * @return array            User resource IDs.
+	 * @return array<int, int|string|\WP_Post> User suggested librarian IDs.
 	 */
-	public function get_librarians( $user_id = null ) {
+	public function get_librarians( $user_id = null, bool $as_objects = false ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
 		}
 
-		return array_filter( (array) get_field( 'librarians', 'user_' . $user_id ) );
+		$post_ids = array_filter( (array) get_field( 'librarians', 'user_' . $user_id ) );
+
+		if ( $as_objects ) {
+			$post_ids = array_map( 'get_post', $post_ids );
+		}
+
+		return array_filter( $post_ids );
 	}
 
 	/**
@@ -296,16 +317,23 @@ class Bridge_Library_Users {
 	 * @since 1.0.0
 	 *
 	 * @param int|null $user_id WP user ID.
+	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
 	 *
-	 * @return array            User course IDs.
+	 * @return array<int, int|string|\WP_Post> User Primo favorites IDs.
 	 */
-	public function get_primo_favorites( $user_id = null ) {
+	public function get_primo_favorites( $user_id = null, bool $as_objects = false ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
 		}
 
-		return array_filter( (array) get_field( 'primo_favorites', 'user_' . $user_id ) );
+		$post_ids = array_filter( (array) get_field( 'primo_favorites', 'user_' . $user_id ) );
+
+		if ( $as_objects ) {
+			$post_ids = array_map( 'get_post', $post_ids );
+		}
+
+		return array_filter( $post_ids );
 	}
 
 	/**
@@ -1574,16 +1602,23 @@ class Bridge_Library_Users {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param mixed $user_id Optional user ID. Defaults to logged-in user.
+	 * @param int|string $user_id    Optional user ID. Defaults to logged-in user.
+	 * @param bool       $as_objects Whether to return posts as objects or IDs. Defaults to IDs.
 	 *
-	 * @return array|null    User favorite posts.
+	 * @return array<int, int|string|\WP_Post> User favorite posts.
 	 */
-	public function get_favorite_posts( $user_id = 0 ) {
+	public function get_favorite_posts( $user_id = 0, bool $as_objects = false ) {
 		if ( 0 === $user_id ) {
 			$user_id = get_current_user_id();
 		}
 
-		return array_filter( (array) get_field( 'user_favorites', 'user_' . $user_id ) );
+		$post_ids = array_filter( (array) get_field( 'user_favorites', 'user_' . $user_id ) );
+
+		if ( $as_objects ) {
+			$post_ids = array_map( 'get_post', $post_ids );
+		}
+
+		return array_filter( $post_ids );
 	}
 
 	/**
