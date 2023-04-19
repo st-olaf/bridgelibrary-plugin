@@ -299,7 +299,7 @@ class Bridge_Library_API_Primo extends Bridge_Library {
 	 * @return string         Full URL.
 	 */
 	public function generate_full_view_url( $doc_id, $domain ) {
-		return 'https://bridge.primo.exlibrisgroup.com/discovery/fulldisplay?docid=alma' . $doc_id . '&vid=' . $this->get_vid_by_domain( $domain );
+		return 'https://bridge.primo.exlibrisgroup.com/discovery/fulldisplay?docid=' . $doc_id . '&vid=' . $this->get_vid_by_domain( $domain );
 	}
 
 	/**
