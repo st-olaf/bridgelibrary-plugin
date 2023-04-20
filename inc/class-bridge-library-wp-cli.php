@@ -144,7 +144,7 @@ class Bridge_Library_WP_CLI {
 				$results = $alma_api->request( 'courses', $query );
 			} else {
 				// Alma ID.
-				$results = array( 'course' => $alma_api->request( 'courses/' . $course_code_or_id ) );
+				$results = array( 'course' => array( $alma_api->request( 'courses/' . $course_code_or_id ) ) );
 			}
 
 			if ( empty( $results['course'] ) ) {
