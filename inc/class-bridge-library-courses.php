@@ -668,10 +668,10 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 			$post_id = wp_insert_post( $course_cpt_data );
 
-			// Determine taxonomy terms.
+			// Attach taxonomy terms.
 			$course = $this->extract_course_data( $course, $post_id );
 
-			// All meta data.
+			// Add other metadata.
 			foreach ( $this->course_field_mapping as $alma_key => $acf_key ) {
 
 				// Ensure the array key exists.
