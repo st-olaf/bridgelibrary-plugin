@@ -764,7 +764,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 			if ( get_field( 'hide_all_courses', 'term_' . $term->term_id ) ) {
 				$this->set_visible( array( $post ), false );
-			} elseif ( false !== strpos( $post->post_title, $title_search_strings ) ) {
+			} elseif ( strlen( $title_search_strings) > 0 && false !== strpos( $post->post_title, $title_search_strings ) ) {
 				$this->set_visible( array( get_post( $post_id ) ), false );
 			} else {
 				$this->set_visible( array( get_post( $post_id ) ), true );
