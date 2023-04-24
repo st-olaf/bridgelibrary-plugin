@@ -4,7 +4,7 @@
  * Plugin URI: https://luminfire.com
  * Description: Custom site functionality
  * Author: LuminFire
- * Version: 1.3.1
+ * Version: 1.3.2
  * Requires PHP: 7.4
  * Author URI: https://luminfire.com/
  *
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define plugin version.
 if ( ! defined( 'BL_PLUGIN_VERSION' ) ) {
-	define( 'BL_PLUGIN_VERSION', '1.3.1' );
+	define( 'BL_PLUGIN_VERSION', '1.3.2' );
 }
 
 // Define plugin file.
