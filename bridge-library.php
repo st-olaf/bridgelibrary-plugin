@@ -5,7 +5,7 @@
  * Description: Custom site functionality
  * Author: LuminFire
  * Version: 1.3.1
- * Requires PHP: 7.1
+ * Requires PHP: 7.4
  * Author URI: https://luminfire.com/
  *
  * @package  bridge-library
