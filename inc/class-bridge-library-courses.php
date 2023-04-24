@@ -339,8 +339,12 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$total_count = $results['total_record_count'];
 			$per_page    = count( $results['course'] );
 
+			error_log( 'Alma background update: retrieved ' . $total_count . ' courses' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
 			if ( $total_count > $per_page ) {
 				$total_pages = ceil( $total_count / $per_page );
+
+				error_log( 'Alma background update: ' . $total_pages . ' pages' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 				for ( $i = 1; $i < $total_pages; $i++ ) {
 					$query['offset'] = $i * $alma_api->limit;
@@ -668,10 +672,10 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 			$post_id = wp_insert_post( $course_cpt_data );
 
-			// Determine taxonomy terms.
+			// Attach taxonomy terms.
 			$course = $this->extract_course_data( $course, $post_id );
 
-			// All meta data.
+			// Add other metadata.
 			foreach ( $this->course_field_mapping as $alma_key => $acf_key ) {
 
 				// Ensure the array key exists.
@@ -764,7 +768,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 
 			if ( get_field( 'hide_all_courses', 'term_' . $term->term_id ) ) {
 				$this->set_visible( array( $post ), false );
-			} elseif ( false !== strpos( $post->post_title, $title_search_strings ) ) {
+			} elseif ( strlen( $title_search_strings) > 0 && false !== strpos( $post->post_title, $title_search_strings ) ) {
 				$this->set_visible( array( get_post( $post_id ) ), false );
 			} else {
 				$this->set_visible( array( get_post( $post_id ) ), true );

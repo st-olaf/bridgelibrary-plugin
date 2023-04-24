@@ -36,8 +36,12 @@ class Alma_Async_Process extends WP_Background_Process {
 	 * @return mixed
 	 */
 	protected function task( $item ) {
+		error_log( 'Alma async process courses: ' . wp_json_encode( $item ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
 		$alma = Bridge_Library_API_Alma::get_instance();
 		$data = $alma->request( $item['path'], $item['query'] );
+
+		error_log( 'Alma async process: updating ' . count( $data['course'] ) . ' Alma courses in async handler' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 		$courses = Bridge_Library_Courses::get_instance();
 		$courses->update_courses( $data['course'] );

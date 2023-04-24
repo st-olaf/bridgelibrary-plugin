@@ -823,6 +823,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		if ( in_array( $guide['type_label'], array( 'Subject Guide', 'Subject Guides' ), true ) && count( $guide['subjects'] ) > 0 ) {
 			switch ( $institution ) {
 				case 'st-olaf':
+				default:
 					$institution_name = Bridge_Library_Courses::INSTITUTIONS_COURSE_CODE_MAPPING['S'];
 					break;
 
