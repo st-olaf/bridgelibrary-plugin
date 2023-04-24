@@ -1373,6 +1373,8 @@ class Bridge_Library_Users {
 	public function clean_up_users() {
 		global $wpdb;
 
+		error_log( 'Cleaning up users.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
 		$query     = $wpdb->prepare(
 			"SELECT user_id FROM {$wpdb->prefix}{$this->acf_meta_table} WHERE expiration_date IS NOT NULL AND expiration_date < %d;", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- there’s currently no way to escape a table name.
 			gmdate( 'Ymd', strtotime( '3 months ago' ) )

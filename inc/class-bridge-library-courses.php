@@ -339,8 +339,12 @@ class Bridge_Library_Courses extends Bridge_Library {
 			$total_count = $results['total_record_count'];
 			$per_page    = count( $results['course'] );
 
+			error_log( 'Alma background update: retrieved ' . $total_count . ' courses' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
 			if ( $total_count > $per_page ) {
 				$total_pages = ceil( $total_count / $per_page );
+
+				error_log( 'Alma background update: ' . $total_pages . ' pages' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 				for ( $i = 1; $i < $total_pages; $i++ ) {
 					$query['offset'] = $i * $alma_api->limit;
