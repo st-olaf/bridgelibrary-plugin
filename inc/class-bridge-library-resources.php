@@ -472,15 +472,21 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		// Resource metadata.
 		foreach ( $this->citation_mapping as $alma_key => $acf_key ) {
+			if ( ! array_key_exists( $alma_key, $citation['metadata'] ) ) {
+				continue;
+			}
+
 			update_field( $acf_key, $citation['metadata'][ $alma_key ], $resource_id );
 		}
 
 		// Resource meta with custom handling.
-		update_field( 'publication_year', trim( $citation['metadata']['publication_date'], ' .[],' ), $resource_id );
+		if ( array_key_exists( 'publication_date', $citation['metadata'] ) ) {
+			update_field( 'publication_year', trim( $citation['metadata']['publication_date'], ' .[],' ), $resource_id );
+		}
 
-		if ( $citation['metadata']['author'] ) {
+		if ( array_key_exists( 'author', $citation['metadata'] ) ) {
 			$author = $citation['metadata']['author'];
-		} else {
+		} elseif ( array_key_exists( 'additional_person_name', $citation['metadata'] ) ) {
 			$author = $citation['metadata']['additional_person_name'];
 			if ( $author ) {
 				$authors = explode( ';', $author );
