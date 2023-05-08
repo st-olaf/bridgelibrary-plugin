@@ -145,6 +145,13 @@ class Bridge_Library_Data_Structure {
 						'title'    => 'Academic Department',
 						'taxonomy' => 'academic_department',
 					),
+					'course_code'         => array(
+						'title'    => 'Course Code',
+						'function' => function () {
+							global $post;
+							the_field( 'course_code', $post->ID );
+						},
+					),
 					'hidden_tax'          => array(
 						'title'    => 'Hidden',
 						'taxonomy' => 'hidden',
