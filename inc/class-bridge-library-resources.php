@@ -523,7 +523,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 			} else {
 				$institution_primo = 'carleton.edu';
 			}
-			$mms_id_primo = $citation['metadata']['mms_id'];
+			$mms_id_primo = "alma".$citation['metadata']['mms_id'];
 			$primo_api    = Bridge_Library_API_Primo::get_instance();
 			$url          = $primo_api->generate_full_view_url( $mms_id_primo, $institution_primo );
 			update_field( 'url', $url, $resource_id );
@@ -892,7 +892,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 			case 'Subject Guide':
 			case 'Topic Guide':
 			default:
-				$type = 'Guide';
+				$type = 'Guides';
 				break;
 
 			case 'Digital Archive':
