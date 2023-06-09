@@ -892,7 +892,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 			case 'Subject Guide':
 			case 'Topic Guide':
 			default:
-				$type = 'Guide';
+				$type = 'Guides';
 				break;
 
 			case 'Digital Archive':
