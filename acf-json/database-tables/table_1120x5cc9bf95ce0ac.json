@@ -19,148 +19,188 @@
         {
             "name": "id",
             "format": "%d",
+            "type": "bigint(20)",
             "null": false,
             "auto_increment": true,
             "unsigned": true
         },
         {
             "name": "user_id",
-            "format": "%d"
+            "format": "%d",
+            "type": "bigint(20)"
         },
         {
             "name": "alma_id",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "alma_id"
+                "identifier": "alma_id",
+                "key": "field_5cc9bff4b440d"
             }
         },
         {
             "name": "alternate_id",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "alternate_id"
+                "identifier": "alternate_id",
+                "key": "field_5d1f5dfee5704"
             }
         },
         {
             "name": "primo_id",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "primo_id"
+                "identifier": "primo_id",
+                "key": "field_5cc9c036b440f"
             }
         },
         {
             "name": "google_id",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "google_id"
+                "identifier": "google_id",
+                "key": "field_5cc9c025b440e"
             }
         },
         {
             "name": "picture_url",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "picture_url"
+                "identifier": "picture_url",
+                "key": "field_5cc9c079b4410"
             }
         },
         {
             "name": "expiration_date",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "expiration_date"
+                "identifier": "expiration_date",
+                "key": "field_5cf696493f092"
             }
         },
         {
             "name": "bridge_library_institution",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "bridge_library_institution"
+                "identifier": "bridge_library_institution",
+                "key": "field_5ccc5a589c115"
             }
         },
         {
             "name": "courses",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "courses"
+                "identifier": "courses",
+                "key": "field_5cc9c0c5b4412"
             }
         },
         {
             "name": "academic_departments",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "academic_departments"
+                "identifier": "academic_departments",
+                "key": "field_5cc9c1abb4413"
             }
         },
         {
             "name": "librarians",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "librarians"
+                "identifier": "librarians",
+                "key": "field_5cfeb4860abf8"
             }
         },
         {
             "name": "circulation_data",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "circulation_data"
+                "identifier": "circulation_data",
+                "key": "field_5d52eb9a29516"
             }
         },
         {
             "name": "resources",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "resources"
+                "identifier": "resources",
+                "key": "field_5cca170b17493"
             }
         },
         {
             "name": "user_favorites",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "user_favorites"
+                "identifier": "user_favorites",
+                "key": "field_5d32106324c02"
             }
         },
         {
             "name": "primo_favorites",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "primo_favorites"
+                "identifier": "primo_favorites",
+                "key": "field_5ccc9d5d6d7c7"
             }
         },
         {
             "name": "courses_cache_updated",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "courses_cache_updated"
+                "identifier": "courses_cache_updated",
+                "key": "field_5cdaf2d7d64af"
             }
         },
         {
             "name": "resources_cache_updated",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "resources_cache_updated"
+                "identifier": "resources_cache_updated",
+                "key": "field_5cdaf313d64b0"
             }
         },
         {
             "name": "primo_favorites_cache_updated",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "primo_favorites_cache_updated"
+                "identifier": "primo_favorites_cache_updated",
+                "key": "field_5cdaf323d64b1"
             }
         },
         {
             "name": "librarians_cache_updated",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "librarians_cache_updated"
+                "identifier": "librarians_cache_updated",
+                "key": "field_5cfeb4a50abf9"
             }
         },
         {
             "name": "circulation_data_cache_updated",
+            "type": "longtext",
             "map": {
                 "type": "acf_field_name",
-                "identifier": "circulation_data_cache_updated"
+                "identifier": "circulation_data_cache_updated",
+                "key": "field_5d52eca029517"
             }
         }
     ],
-    "hash": "a4750780407da5b99b11f6e2c8e2cb66",
-    "modified": 1576860746
+    "hash": "da294d65eae0b0d48980a025580155a2",
+    "modified": 1690319799
 }
