@@ -254,6 +254,7 @@
         array (
           'name' => 'id',
           'format' => '%d',
+          'type' => 'bigint(20)',
           'null' => false,
           'auto_increment' => true,
           'unsigned' => true,
@@ -267,6 +268,7 @@
         array (
           'name' => 'user_id',
           'format' => '%d',
+          'type' => 'bigint(20)',
           'map' => 
           array (
             'type' => 'acf_field_name',
@@ -276,196 +278,234 @@
         2 => 
         array (
           'name' => 'alma_id',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'alma_id',
+            'key' => 'field_5cc9bff4b440d',
           ),
           'format' => '%s',
         ),
         3 => 
         array (
           'name' => 'alternate_id',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'alternate_id',
+            'key' => 'field_5d1f5dfee5704',
           ),
           'format' => '%s',
         ),
         4 => 
         array (
           'name' => 'primo_id',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'primo_id',
+            'key' => 'field_5cc9c036b440f',
           ),
           'format' => '%s',
         ),
         5 => 
         array (
           'name' => 'google_id',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'google_id',
+            'key' => 'field_5cc9c025b440e',
           ),
           'format' => '%s',
         ),
         6 => 
         array (
           'name' => 'picture_url',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'picture_url',
+            'key' => 'field_5cc9c079b4410',
           ),
           'format' => '%s',
         ),
         7 => 
         array (
           'name' => 'expiration_date',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'expiration_date',
+            'key' => 'field_5cf696493f092',
           ),
           'format' => '%s',
         ),
         8 => 
         array (
           'name' => 'bridge_library_institution',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'bridge_library_institution',
+            'key' => 'field_5ccc5a589c115',
           ),
           'format' => '%s',
         ),
         9 => 
         array (
           'name' => 'courses',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'courses',
+            'key' => 'field_5cc9c0c5b4412',
           ),
           'format' => '%s',
         ),
         10 => 
         array (
           'name' => 'academic_departments',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'academic_departments',
+            'key' => 'field_5cc9c1abb4413',
           ),
           'format' => '%s',
         ),
         11 => 
         array (
           'name' => 'librarians',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'librarians',
+            'key' => 'field_5cfeb4860abf8',
           ),
           'format' => '%s',
         ),
         12 => 
         array (
           'name' => 'circulation_data',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'circulation_data',
+            'key' => 'field_5d52eb9a29516',
           ),
           'format' => '%s',
         ),
         13 => 
         array (
           'name' => 'resources',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'resources',
+            'key' => 'field_5cca170b17493',
           ),
           'format' => '%s',
         ),
         14 => 
         array (
           'name' => 'user_favorites',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'user_favorites',
+            'key' => 'field_5d32106324c02',
           ),
           'format' => '%s',
         ),
         15 => 
         array (
           'name' => 'primo_favorites',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'primo_favorites',
+            'key' => 'field_5ccc9d5d6d7c7',
           ),
           'format' => '%s',
         ),
         16 => 
         array (
           'name' => 'courses_cache_updated',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'courses_cache_updated',
+            'key' => 'field_5cdaf2d7d64af',
           ),
           'format' => '%s',
         ),
         17 => 
         array (
           'name' => 'resources_cache_updated',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'resources_cache_updated',
+            'key' => 'field_5cdaf313d64b0',
           ),
           'format' => '%s',
         ),
         18 => 
         array (
           'name' => 'primo_favorites_cache_updated',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'primo_favorites_cache_updated',
+            'key' => 'field_5cdaf323d64b1',
           ),
           'format' => '%s',
         ),
         19 => 
         array (
           'name' => 'librarians_cache_updated',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'librarians_cache_updated',
+            'key' => 'field_5cfeb4a50abf9',
           ),
           'format' => '%s',
         ),
         20 => 
         array (
           'name' => 'circulation_data_cache_updated',
+          'type' => 'longtext',
           'map' => 
           array (
             'type' => 'acf_field_name',
             'identifier' => 'circulation_data_cache_updated',
+            'key' => 'field_5d52eca029517',
           ),
           'format' => '%s',
         ),
       ),
-      'hash' => 'a4750780407da5b99b11f6e2c8e2cb66',
-      'modified' => 1576860746,
+      'hash' => 'da294d65eae0b0d48980a025580155a2',
+      'modified' => 1690319799,
       'type' => 'meta',
     ),
     'bridge_library_librarian_meta' => 
@@ -1071,6 +1111,28 @@
       'field_5cc326f90696b' => 'related_courses_resources',
       'field_5e5819970fbfd' => 'librarians',
     ),
+    'user' => 
+    array (
+      'field_5cc9bff4b440d' => 'alma_id',
+      'field_5d1f5dfee5704' => 'alternate_id',
+      'field_5cc9c036b440f' => 'primo_id',
+      'field_5cc9c025b440e' => 'google_id',
+      'field_5cc9c079b4410' => 'picture_url',
+      'field_5cf696493f092' => 'expiration_date',
+      'field_5ccc5a589c115' => 'bridge_library_institution',
+      'field_5cc9c0c5b4412' => 'courses',
+      'field_5cc9c1abb4413' => 'academic_departments',
+      'field_5cfeb4860abf8' => 'librarians',
+      'field_5d52eb9a29516' => 'circulation_data',
+      'field_5cca170b17493' => 'resources',
+      'field_5d32106324c02' => 'user_favorites',
+      'field_5ccc9d5d6d7c7' => 'primo_favorites',
+      'field_5cdaf2d7d64af' => 'courses_cache_updated',
+      'field_5cdaf313d64b0' => 'resources_cache_updated',
+      'field_5cdaf323d64b1' => 'primo_favorites_cache_updated',
+      'field_5cfeb4a50abf9' => 'librarians_cache_updated',
+      'field_5d52eca029517' => 'circulation_data_cache_updated',
+    ),
   ),
   'acf_field_key_name_patterns' => 
   array (
@@ -1104,8 +1166,8 @@
     ),
     'bridge_library_user_meta' => 
     array (
-      'id' => 'longtext',
-      'user_id' => 'longtext',
+      'id' => 'bigint(20)',
+      'user_id' => 'bigint(20)',
       'alma_id' => 'longtext',
       'alternate_id' => 'longtext',
       'primo_id' => 'longtext',
@@ -1182,6 +1244,28 @@
       'field_5d5d649bd2029' => '0.core_resources',
       'field_5cc326f90696b' => '0.related_courses_resources',
       'field_5e5819970fbfd' => '0.librarians',
+    ),
+    'user' => 
+    array (
+      'field_5cc9bff4b440d' => '1.alma_id',
+      'field_5d1f5dfee5704' => '1.alternate_id',
+      'field_5cc9c036b440f' => '1.primo_id',
+      'field_5cc9c025b440e' => '1.google_id',
+      'field_5cc9c079b4410' => '1.picture_url',
+      'field_5cf696493f092' => '1.expiration_date',
+      'field_5ccc5a589c115' => '1.bridge_library_institution',
+      'field_5cc9c0c5b4412' => '1.courses',
+      'field_5cc9c1abb4413' => '1.academic_departments',
+      'field_5cfeb4860abf8' => '1.librarians',
+      'field_5d52eb9a29516' => '1.circulation_data',
+      'field_5cca170b17493' => '1.resources',
+      'field_5d32106324c02' => '1.user_favorites',
+      'field_5ccc9d5d6d7c7' => '1.primo_favorites',
+      'field_5cdaf2d7d64af' => '1.courses_cache_updated',
+      'field_5cdaf313d64b0' => '1.resources_cache_updated',
+      'field_5cdaf323d64b1' => '1.primo_favorites_cache_updated',
+      'field_5cfeb4a50abf9' => '1.librarians_cache_updated',
+      'field_5d52eca029517' => '1.circulation_data_cache_updated',
     ),
   ),
 );
