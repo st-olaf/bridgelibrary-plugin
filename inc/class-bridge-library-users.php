@@ -255,6 +255,10 @@ class Bridge_Library_Users {
 
 		$post_ids = array_filter( (array) get_field( 'courses', 'user_' . $user_id ) );
 
+		if ( ! $post_ids ) {
+			return array();
+		}
+
 		if ( $as_objects ) {
 			$args = array(
 				'post_type'      => 'course',
