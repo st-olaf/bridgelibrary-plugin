@@ -1694,10 +1694,19 @@ class Bridge_Library_Users {
 		$post_ids = array_filter( (array) get_field( 'user_favorites', 'user_' . $user_id ) );
 
 		if ( $as_objects ) {
-			$post_ids = array_map( 'get_post', $post_ids );
+			$args = array(
+				'post_type'      => array(
+					'course',
+					'resource',
+				),
+				'post__in'       => $post_ids,
+				'posts_per_page' => -1,
+			);
+
+			return ( new WP_Query( $args ) )->posts;
 		}
 
-		return array_filter( $post_ids );
+		return $post_ids;
 	}
 
 	/**
