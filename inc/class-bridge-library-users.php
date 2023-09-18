@@ -241,12 +241,13 @@ class Bridge_Library_Users {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|null $user_id WP user ID.
-	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param int|null            $user_id    WP user ID.
+	 * @param bool                $as_objects Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param array<int|\WP_Term> $terms      Optional term ID(s) or object(s) to limit the courses.
 	 *
 	 * @return array<int, int|string|\WP_Post> User course IDs or objects.
 	 */
-	public function get_courses( $user_id = null, bool $as_objects = false ) {
+	public function get_courses( $user_id = null, bool $as_objects = false, $terms = array() ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
@@ -260,6 +261,24 @@ class Bridge_Library_Users {
 				'posts_per_page' => -1,
 				'post__in'       => $post_ids,
 			);
+
+			if ( $terms ) {
+				$args['tax_query'] = array(
+					array(
+						'taxonomy' => 'course_term',
+						'terms'    => array_map(
+							function( $term ) {
+								if ( $term instanceof WP_Term ) {
+									return $term->term_id;
+								}
+
+								return $term;
+							},
+							$terms
+						),
+					),
+				);
+			}
 
 			$post_ids = ( new WP_Query( $args ) )->posts;
 		}
