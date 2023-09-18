@@ -244,7 +244,7 @@ class Bridge_Library_Users {
 	 * @param int|null $user_id WP user ID.
 	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
 	 *
-	 * @return array<int, int|string|\WP_Post> User course IDs.
+	 * @return array<int, int|string|\WP_Post> User course IDs or objects.
 	 */
 	public function get_courses( $user_id = null, bool $as_objects = false ) {
 		if ( is_null( $user_id ) ) {
@@ -255,7 +255,13 @@ class Bridge_Library_Users {
 		$post_ids = array_filter( (array) get_field( 'courses', 'user_' . $user_id ) );
 
 		if ( $as_objects ) {
-			$post_ids = array_map( 'get_post', $post_ids );
+			$args = array(
+				'post_type'      => 'course',
+				'posts_per_page' => -1,
+				'post__in'       => $post_ids,
+			);
+
+			$post_ids = ( new WP_Query( $args ) )->posts;
 		}
 
 		return array_filter( $post_ids );
@@ -269,7 +275,7 @@ class Bridge_Library_Users {
 	 * @param int|null $user_id WP user ID.
 	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
 	 *
-	 * @return array<int, int|string|\WP_Post> User resource IDs.
+	 * @return array<int, int|string|\WP_Post> User resource IDs or objects.
 	 */
 	public function get_resources( $user_id = null, bool $as_objects = false ) {
 		if ( is_null( $user_id ) ) {
@@ -280,7 +286,13 @@ class Bridge_Library_Users {
 		$post_ids = array_filter( (array) get_field( 'resources', 'user_' . $user_id ) );
 
 		if ( $as_objects ) {
-			$post_ids = array_map( 'get_post', $post_ids );
+			$args = array(
+				'post_type'      => 'resource',
+				'posts_per_page' => -1,
+				'post__in'       => $post_ids,
+			);
+
+			$post_ids = ( new WP_Query( $args ) )->posts;
 		}
 
 		return array_filter( $post_ids );
