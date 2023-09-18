@@ -268,6 +268,33 @@ class Bridge_Library_Users {
 	}
 
 	/**
+	 * Get a user’s courses grouped by course terms.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int|null $user_id WP user ID.
+	 *
+	 * @return array<string, array<\WP_Post>> User course objects grouped by term name.
+	 */
+	public function get_courses_grouped_by_term( $user_id = null ) {
+		$courses = $this->get_courses( $user_id, true );
+
+		$course_terms = array();
+
+		foreach ( $courses as $course ) {
+			/** @var \WP_Post $course */
+			$term_names = get_the_terms( $course, 'course_term' );
+			if ( ! $term_names ) {
+				continue;
+			}
+
+			$course_terms[ $term_names[0]->name ][] = $course;
+		}
+
+		return $course_terms;
+	}
+
+	/**
 	 * Get a user’s resources.
 	 *
 	 * @since 1.0.0
