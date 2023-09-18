@@ -287,6 +287,21 @@ class Bridge_Library_Users {
 	}
 
 	/**
+	 * Get a user’s courses for the current term.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int|null $user_id WP user ID.
+	 *
+	 * @return array<array-key, \WP_Post> User course objects.
+	 */
+	public function get_current_term_courses( $user_id = null ) {
+		$current_term = Bridge_Library_Courses::get_instance()->current_course_term();
+
+		return $this->get_courses( $user_id, true, array( $current_term ) );
+	}
+
+	/**
 	 * Get a user’s courses grouped by course terms.
 	 *
 	 * @since 1.0.0
