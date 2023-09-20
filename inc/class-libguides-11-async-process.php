@@ -36,6 +36,7 @@ class LibGuides_11_Async_Process extends WP_Background_Process {
 	 * @return mixed
 	 */
 	protected function task( $item ) {
+		error_log( 'LibGuides 1.1 async process: ' . wp_json_encode( $item ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 		$resources = Bridge_Library_Resources::get_instance();
 
