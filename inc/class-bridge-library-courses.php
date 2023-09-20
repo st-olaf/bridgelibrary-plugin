@@ -141,6 +141,90 @@ class Bridge_Library_Courses extends Bridge_Library {
 	}
 
 	/**
+	 * Retrieve the course term taxonomy term matching the date.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $date Optional date; defaults to today.
+	 *
+	 * @return array<array-key, int>
+	 */
+	public static function current_course_term_ids( $date = null ) {
+		$user_institution = Bridge_Library_Users::get_instance()->get_domain();
+		$date             = new DateTimeImmutable( $date );
+		$this_year        = date( 'Y' );
+		$term_names       = array();
+
+		if ( 'stolaf.edu' === $user_institution ) {
+			switch ( $date->format( 'F' ) ) {
+				case 'January':
+					$term_names[] = $this_year . '-January';
+					break;
+
+				case 'February':
+				case 'March':
+				case 'April':
+				case 'May':
+					$term_names[] = $this_year . '-Spring';
+					break;
+
+				case 'June':
+				case 'July':
+				case 'August':
+					$term_names[] = $this_year . '-Summer';
+					$term_names[] = $this_year . '-Summer 1';
+					$term_names[] = $this_year . '-Summer 2';
+					break;
+
+				case 'September':
+				case 'October':
+				case 'November':
+				case 'December':
+					$term_names[] = $this_year . '-Fall';
+					break;
+			}
+		} elseif ( 'carleton.edu' === $user_institution ) {
+			switch ( $date->format( 'F' ) ) {
+				case 'December':
+				case 'January':
+				case 'February':
+					$term_names[] = $this_year . '-Winter';
+					break;
+
+				case 'March':
+					$term_names[] = date( 'd' ) > 20
+						? $this_year . '-Winter'
+						: $this_year . '-Spring';
+					break;
+
+				case 'April':
+				case 'May':
+				case 'June':
+					$term_names[] = $this_year . '-Spring';
+					break;
+
+				case 'September':
+				case 'October':
+				case 'November':
+					$term_names[] = $this_year . '-Fall';
+					break;
+			}
+		}
+
+		if ( empty( $term_names ) ) {
+			return array();
+		}
+
+		$args = array(
+			'taxonomy' => 'course_term',
+			'name'     => $term_names,
+			'fields'   => 'ids',
+		);
+
+		return ( new WP_Term_Query( $args ) )->terms;
+	}
+
+	/**
 	 * Add text and links to top-level settings page.
 	 *
 	 * @since 1.0.0

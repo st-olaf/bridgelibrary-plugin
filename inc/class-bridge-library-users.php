@@ -241,12 +241,13 @@ class Bridge_Library_Users {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|null $user_id WP user ID.
-	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param int|null            $user_id    WP user ID.
+	 * @param bool                $as_objects Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param array<int|\WP_Term> $terms      Optional term ID(s) or object(s) to limit the courses.
 	 *
-	 * @return array<int, int|string|\WP_Post> User course IDs.
+	 * @return array<int, int|string|\WP_Post> User course IDs or objects.
 	 */
-	public function get_courses( $user_id = null, bool $as_objects = false ) {
+	public function get_courses( $user_id = null, bool $as_objects = false, $terms = array() ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
@@ -254,11 +255,81 @@ class Bridge_Library_Users {
 
 		$post_ids = array_filter( (array) get_field( 'courses', 'user_' . $user_id ) );
 
+		if ( ! $post_ids ) {
+			return array();
+		}
+
 		if ( $as_objects ) {
-			$post_ids = array_map( 'get_post', $post_ids );
+			$args = array(
+				'post_type'      => 'course',
+				'posts_per_page' => -1,
+				'post__in'       => $post_ids,
+			);
+
+			if ( $terms ) {
+				$args['tax_query'] = array(
+					array(
+						'taxonomy' => 'course_term',
+						'terms'    => array_map(
+							function( $term ) {
+								if ( $term instanceof WP_Term ) {
+									return $term->term_id;
+								}
+
+								return $term;
+							},
+							$terms
+						),
+					),
+				);
+			}
+
+			$post_ids = ( new WP_Query( $args ) )->posts;
 		}
 
 		return array_filter( $post_ids );
+	}
+
+	/**
+	 * Get a user’s courses for the current term.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int|null $user_id WP user ID.
+	 *
+	 * @return array<array-key, \WP_Post> User course objects.
+	 */
+	public function get_current_term_courses( $user_id = null ) {
+		$current_term_ids = Bridge_Library_Courses::get_instance()->current_course_term_ids();
+
+		return $this->get_courses( $user_id, true, $current_term_ids );
+	}
+
+	/**
+	 * Get a user’s courses grouped by course terms.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int|null $user_id WP user ID.
+	 *
+	 * @return array<string, array<\WP_Post>> User course objects grouped by term name.
+	 */
+	public function get_courses_grouped_by_term( $user_id = null ) {
+		$courses = $this->get_courses( $user_id, true );
+
+		$course_terms = array();
+
+		foreach ( $courses as $course ) {
+			/** @var \WP_Post $course */
+			$term_names = get_the_terms( $course, 'course_term' );
+			if ( ! $term_names ) {
+				continue;
+			}
+
+			$course_terms[ $term_names[0]->name ][] = $course;
+		}
+
+		return $course_terms;
 	}
 
 	/**
@@ -269,7 +340,7 @@ class Bridge_Library_Users {
 	 * @param int|null $user_id WP user ID.
 	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
 	 *
-	 * @return array<int, int|string|\WP_Post> User resource IDs.
+	 * @return array<int, int|string|\WP_Post> User resource IDs or objects.
 	 */
 	public function get_resources( $user_id = null, bool $as_objects = false ) {
 		if ( is_null( $user_id ) ) {
@@ -280,7 +351,13 @@ class Bridge_Library_Users {
 		$post_ids = array_filter( (array) get_field( 'resources', 'user_' . $user_id ) );
 
 		if ( $as_objects ) {
-			$post_ids = array_map( 'get_post', $post_ids );
+			$args = array(
+				'post_type'      => 'resource',
+				'posts_per_page' => -1,
+				'post__in'       => $post_ids,
+			);
+
+			$post_ids = ( new WP_Query( $args ) )->posts;
 		}
 
 		return array_filter( $post_ids );
@@ -1617,10 +1694,19 @@ class Bridge_Library_Users {
 		$post_ids = array_filter( (array) get_field( 'user_favorites', 'user_' . $user_id ) );
 
 		if ( $as_objects ) {
-			$post_ids = array_map( 'get_post', $post_ids );
+			$args = array(
+				'post_type'      => array(
+					'course',
+					'resource',
+				),
+				'post__in'       => $post_ids,
+				'posts_per_page' => -1,
+			);
+
+			return ( new WP_Query( $args ) )->posts;
 		}
 
-		return array_filter( $post_ids );
+		return $post_ids;
 	}
 
 	/**
