@@ -125,6 +125,9 @@ class Bridge_Library_Resources extends Bridge_Library {
 		// Cache data from Primo PNX API.
 		add_action( 'acf/save_post', array( $this, 'cache_metadata' ), 10 );
 
+		// Schedule automatic updates.
+		add_action( 'bridge_library_schedule_daily', array( $this, 'background_update_resources()' ), 10 );
+
 		// Add to department related resources.
 		add_action( 'acf/update_value/key=field_5cc327908d3f4', array( $this, 'save_department_resources' ), 8, 3 );
 
@@ -298,6 +301,18 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$update = $wpdb->update( $wpdb->prefix . $this->acf_meta_table, array( 'related_courses_resources' => $value ), array( 'post_id' => $post_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 		return false !== $update;
+	}
+
+	/**
+	 * Run daily imports.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return void
+	 */
+	public function background_update_resources() {
+		$this->background_create_resource_from_libguides_assets( true );
+		$this->background_create_resource_from_libguides_guides( true );
 	}
 
 	/**
