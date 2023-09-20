@@ -1153,6 +1153,9 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$stolaf_results   = $libguides_api_12->set_institution( 'stolaf' )->get_assets();
 		$carleton_results = $libguides_api_12->set_institution( 'carleton' )->get_assets();
 
+		error_log( 'Libguides background update: retrieved ' . count( $stolaf_results ) . ' St. Olaf assets' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( 'Libguides background update: retrieved ' . count( $carleton_results ) . ' Carleton assets' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
 		// LibGuides doesn’t have a limit parameter, so we have to get everything in one call.
 		// If async, we’ll break it up into chunks and schedule them to be processed.
 		if ( $async ) {
@@ -1308,6 +1311,9 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$stolaf_results   = $libguides_api_11->set_institution( 'stolaf' )->get_guides();
 		$carleton_results = $libguides_api_11->set_institution( 'carleton' )->get_guides();
+
+		error_log( 'Libguides background update: retrieved ' . count( $stolaf_results ) . ' St. Olaf guides' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( 'Libguides background update: retrieved ' . count( $carleton_results ) . ' Carleton guides' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 		// LibGuides doesn’t have a limit parameter, so we have to get everything in one call.
 		// If async, we’ll break it up into chunks and schedule them to be processed.
