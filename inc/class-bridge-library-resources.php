@@ -583,7 +583,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 			wp_die();
 		}
 
-		$term_id = sanitize_key( $_REQUEST['data']['term_id'] );
+		$term_id = absint( $_REQUEST['data']['term_id'] );
 		$term    = get_term_by( 'id', $term_id, 'academic_department' );
 
 		$primo_api          = Bridge_Library_API_Primo::get_instance();
@@ -687,6 +687,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 			$institution_term = get_term_by( 'slug', 'st-olaf', 'institution' );
 		} elseif ( 'carleton.edu' === $domain_name ) {
 			$institution_term = get_term_by( 'slug', 'carleton', 'institution' );
+		} else {
+			throw new RuntimeException( 'Invalid institution' );
 		}
 
 		$tax_input = array(
@@ -1074,6 +1076,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 			$asset_id = null;
 		}
 
+		$updated = 0;
+
 		foreach ( $stolaf_results as $result ) {
 			if ( $asset_id === $result['id'] ) {
 				$updated = $this->create_resource_from_libguides_asset( $result, 'st-olaf' );
@@ -1158,7 +1162,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 			}
 
 			// Now start the queue.
-			return $libguides_api_12->async->save()->dispatch();
+			$libguides_api_12->async->save()->dispatch();
+			return;
 		} else {
 			$assets = array();
 			foreach ( $stolaf_results as $asset ) {
@@ -1214,6 +1219,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 			$guide_id = absint( sanitize_key( $_REQUEST['libguides_guide_id'] ) );
 		} else {
 			wp_send_json_error( array( 'error' => __( 'You must specify a guide ID', 'bridge-library' ) ), 400 );
+			return;
 		}
 
 		$libguides_api_11 = Bridge_Library_API_LibGuides_11::get_instance();
@@ -1221,6 +1227,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 		$stolaf_guide = $libguides_api_11->set_institution( 'stolaf' )->get_guide( $guide_id );
 
 		$carleton_guide = $libguides_api_11->set_institution( 'carleton' )->get_guide( $guide_id );
+
+		$updated = 0;
 
 		if ( $stolaf_guide ) {
 			$updated = $this->create_resource_from_libguides_guide( $stolaf_guide, 'st-olaf' );
@@ -1258,7 +1266,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 
 		$post_id = absint( $_REQUEST['post_id'] );
 
-		$assets = $this->create_resources_for_libguides_guide( absint( $_REQUEST['libguides_guide_id'] ), false );
+		$assets = $this->create_resources_for_libguides_guide( absint( $_REQUEST['libguides_guide_id'] ) );
 
 		$core_resources = get_field( 'core_resources', $post_id );
 		if ( empty( $core_resources ) ) {
@@ -1310,7 +1318,8 @@ class Bridge_Library_Resources extends Bridge_Library {
 			}
 
 			// Now start the queue.
-			return $libguides_api_11->async->save()->dispatch();
+			$libguides_api_11->async->save()->dispatch();
+			return;
 		} else {
 			$results = array();
 			foreach ( $stolaf_results as $guide ) {
