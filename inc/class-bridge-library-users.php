@@ -352,6 +352,10 @@ class Bridge_Library_Users {
 
 		$post_ids = array_filter( (array) get_field( 'resources', 'user_' . $user_id ) );
 
+		if ( ! $post_ids ) {
+			return array();
+		}
+
 		if ( $as_objects ) {
 			$args = array(
 				'post_type'      => 'resource',
@@ -384,6 +388,10 @@ class Bridge_Library_Users {
 
 		$post_ids = array_filter( (array) get_field( 'librarians', 'user_' . $user_id ) );
 
+		if ( ! $post_ids ) {
+			return array();
+		}
+
 		if ( $as_objects ) {
 			$args = array(
 				'post_type'      => 'librarian',
@@ -415,6 +423,10 @@ class Bridge_Library_Users {
 		}
 
 		$post_ids = array_filter( (array) get_field( 'primo_favorites', 'user_' . $user_id ) );
+
+		if ( ! $post_ids ) {
+			return array();
+		}
 
 		if ( $as_objects ) {
 			$args = array(
@@ -1711,6 +1723,10 @@ class Bridge_Library_Users {
 		}
 
 		$post_ids = array_filter( (array) get_field( 'user_favorites', 'user_' . $user_id ) );
+
+		if ( ! $post_ids ) {
+			return array();
+		}
 
 		if ( $as_objects ) {
 			$args = array(
