@@ -370,12 +370,13 @@ class Bridge_Library_Users {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|null $user_id WP user ID.
-	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param int|null $user_id        WP user ID.
+	 * @param bool     $as_objects     Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param int      $posts_per_page Number of results to return. Defaults to all.
 	 *
 	 * @return array<int, int|string|\WP_Post> User suggested librarian IDs.
 	 */
-	public function get_librarians( $user_id = null, bool $as_objects = false ) {
+	public function get_librarians( $user_id = null, bool $as_objects = false, int $posts_per_page = -1 ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
@@ -384,7 +385,13 @@ class Bridge_Library_Users {
 		$post_ids = array_filter( (array) get_field( 'librarians', 'user_' . $user_id ) );
 
 		if ( $as_objects ) {
-			$post_ids = array_map( 'get_post', $post_ids );
+			$args = array(
+				'post_type'      => 'librarian',
+				'posts_per_page' => $posts_per_page,
+				'post__in'       => $post_ids,
+			);
+
+			$post_ids = ( new WP_Query( $args ) )->posts;
 		}
 
 		return array_filter( $post_ids );
@@ -395,12 +402,13 @@ class Bridge_Library_Users {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|null $user_id WP user ID.
-	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param int|null $user_id        WP user ID.
+	 * @param bool     $as_objects     Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param int      $posts_per_page Number of results to return. Defaults to all.
 	 *
 	 * @return array<int, int|string|\WP_Post> User Primo favorites IDs.
 	 */
-	public function get_primo_favorites( $user_id = null, bool $as_objects = false ) {
+	public function get_primo_favorites( $user_id = null, bool $as_objects = false, int $posts_per_page = -1 ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
@@ -409,7 +417,13 @@ class Bridge_Library_Users {
 		$post_ids = array_filter( (array) get_field( 'primo_favorites', 'user_' . $user_id ) );
 
 		if ( $as_objects ) {
-			$post_ids = array_map( 'get_post', $post_ids );
+			$args = array(
+				'post_type'      => 'resource',
+				'posts_per_page' => $posts_per_page,
+				'post__in'       => $post_ids,
+			);
+
+			$post_ids = ( new WP_Query( $args ) )->posts;
 		}
 
 		return array_filter( $post_ids );
