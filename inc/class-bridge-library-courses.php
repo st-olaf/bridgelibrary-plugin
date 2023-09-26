@@ -202,6 +202,8 @@ class Bridge_Library_Courses extends Bridge_Library {
 					$term_names[] = $this_year . '-Spring';
 					break;
 
+				case 'July': // Not part of the Fall term, but should display upcoming courses.
+				case 'August': // Not part of the Fall term, but should display upcoming courses.
 				case 'September':
 				case 'October':
 				case 'November':
