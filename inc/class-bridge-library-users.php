@@ -491,6 +491,8 @@ class Bridge_Library_Users {
 	 */
 	public function update_user_data( $user_login, $user ) {
 
+		error_log( 'Updating user data for ' . $user->user_email );
+
 		// Sync courses synchronously.
 		$this->cache_user_courses( $user->ID );
 
