@@ -185,7 +185,6 @@ class Bridge_Library_Courses extends Bridge_Library {
 			}
 		} elseif ( 'carleton.edu' === $user_institution ) {
 			switch ( $date->format( 'F' ) ) {
-				case 'December':
 				case 'January':
 				case 'February':
 					$term_names[] = $this_year . '-Winter';
@@ -206,6 +205,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 				case 'September':
 				case 'October':
 				case 'November':
+				case 'December':
 					$term_names[] = $this_year . '-Fall';
 					break;
 			}
