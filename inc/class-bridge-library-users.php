@@ -241,13 +241,14 @@ class Bridge_Library_Users {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|null            $user_id    WP user ID.
-	 * @param bool                $as_objects Whether to return results as objects or IDs. Defaults to IDs.
-	 * @param array<int|\WP_Term> $terms      Optional term ID(s) or object(s) to limit the courses.
+	 * @param int|null            $user_id        WP user ID.
+	 * @param bool                $as_objects     Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param int                 $posts_per_page Number of results to return. Defaults to all.
+	 * @param array<int|\WP_Term> $terms          Optional term ID(s) or object(s) to limit the courses.
 	 *
 	 * @return array<int, int|string|\WP_Post> User course IDs or objects.
 	 */
-	public function get_courses( $user_id = null, bool $as_objects = false, $terms = array() ) {
+	public function get_courses( $user_id = null, bool $as_objects = false, int $posts_per_page = -1, array $terms = array() ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
@@ -262,7 +263,7 @@ class Bridge_Library_Users {
 		if ( $as_objects ) {
 			$args = array(
 				'post_type'      => 'course',
-				'posts_per_page' => -1,
+				'posts_per_page' => $posts_per_page,
 				'post__in'       => $post_ids,
 			);
 
@@ -302,7 +303,7 @@ class Bridge_Library_Users {
 	public function get_current_term_courses( $user_id = null ) {
 		$current_term_ids = Bridge_Library_Courses::get_instance()->current_course_term_ids();
 
-		return $this->get_courses( $user_id, true, $current_term_ids );
+		return $this->get_courses( $user_id, true, -1, $current_term_ids );
 	}
 
 	/**
@@ -337,12 +338,13 @@ class Bridge_Library_Users {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|null $user_id WP user ID.
-	 * @param bool     $as_objects Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param int|null $user_id        WP user ID.
+	 * @param bool     $as_objects     Whether to return results as objects or IDs. Defaults to IDs.
+	 * @param int      $posts_per_page Number of results to return. Defaults to all.
 	 *
 	 * @return array<int, int|string|\WP_Post> User resource IDs or objects.
 	 */
-	public function get_resources( $user_id = null, bool $as_objects = false ) {
+	public function get_resources( $user_id = null, bool $as_objects = false, int $posts_per_page = -1 ) {
 		if ( is_null( $user_id ) ) {
 			$user    = wp_get_current_user();
 			$user_id = $user->ID;
@@ -353,7 +355,7 @@ class Bridge_Library_Users {
 		if ( $as_objects ) {
 			$args = array(
 				'post_type'      => 'resource',
-				'posts_per_page' => -1,
+				'posts_per_page' => $posts_per_page,
 				'post__in'       => $post_ids,
 			);
 
@@ -1683,12 +1685,13 @@ class Bridge_Library_Users {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|string $user_id    Optional user ID. Defaults to logged-in user.
-	 * @param bool       $as_objects Whether to return posts as objects or IDs. Defaults to IDs.
+	 * @param int|string $user_id        Optional user ID. Defaults to logged-in user.
+	 * @param bool       $as_objects     Whether to return posts as objects or IDs. Defaults to IDs.
+	 * @param int        $posts_per_page Number of results to return. Defaults to all.
 	 *
 	 * @return array<int, int|string|\WP_Post> User favorite posts.
 	 */
-	public function get_favorite_posts( $user_id = 0, bool $as_objects = false ) {
+	public function get_favorite_posts( $user_id = 0, bool $as_objects = false, int $posts_per_page = -1 ) {
 		if ( 0 === $user_id ) {
 			$user_id = get_current_user_id();
 		}
@@ -1702,7 +1705,7 @@ class Bridge_Library_Users {
 					'resource',
 				),
 				'post__in'       => $post_ids,
-				'posts_per_page' => -1,
+				'posts_per_page' => $posts_per_page,
 			);
 
 			return ( new WP_Query( $args ) )->posts;
