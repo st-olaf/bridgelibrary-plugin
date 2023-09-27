@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] — 2023-09-27
+
+- Tweak: tweak Carleton schedule
+- Bugfix: fix daily Libguides import
+- Bugfix: prevent n+1 queries for librarians and favorites
+- Bugfix: fix current course queries for staff users
+
 ## [1.6.0] — 2023-09-20
 
 - Feature: add daily LibGuides assets import
