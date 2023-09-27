@@ -268,19 +268,19 @@ class Bridge_Library_Users {
 			);
 
 			if ( $terms ) {
-				$args['tax_query'] = array(
-					array(
-						'taxonomy' => 'course_term',
-						'terms'    => array_map(
-							function( $term ) {
-								if ( $term instanceof WP_Term ) {
-									return $term->term_id;
-								}
+				$args['tax_query']['relation'] = 'AND';
+				$args['tax_query'][] = array(
+					'taxonomy' => 'course_term',
+					'field'    => 'term_id',
+					'terms'    => array_map(
+						function( $term ) {
+							if ( $term instanceof WP_Term ) {
+								return $term->term_id;
+							}
 
-								return $term;
-							},
-							$terms
-						),
+							return $term;
+						},
+						$terms
 					),
 				);
 			}
@@ -771,12 +771,16 @@ class Bridge_Library_Users {
 			$domain      = $this->get_domain();
 			$institution = str_replace( array_flip( $this->institution_term_mapping ), $this->institution_term_mapping, $domain );
 
-			$tax_query = array(
-				array(
-					'taxonomy' => 'institution',
-					'field'    => 'slug',
-					'terms'    => $institution,
-				),
+			$tax_query = $query->get( 'tax_query' );
+
+			if ( ! $tax_query ) {
+				$tax_query = array();
+			}
+
+			$tax_query[] = array(
+				'taxonomy' => 'institution',
+				'field'    => 'slug',
+				'terms'    => $institution,
 			);
 
 			$query->set( 'tax_query', $tax_query );
