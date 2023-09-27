@@ -126,7 +126,7 @@ class Bridge_Library_Resources extends Bridge_Library {
 		add_action( 'acf/save_post', array( $this, 'cache_metadata' ), 10 );
 
 		// Schedule automatic updates.
-		add_action( 'bridge_library_schedule_daily', array( $this, 'background_update_resources()' ), 10 );
+		add_action( 'bridge_library_schedule_daily', array( $this, 'background_update_resources' ), 10 );
 
 		// Add to department related resources.
 		add_action( 'acf/update_value/key=field_5cc327908d3f4', array( $this, 'save_department_resources' ), 8, 3 );
