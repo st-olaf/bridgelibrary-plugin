@@ -285,7 +285,13 @@ class Bridge_Library_Users {
 				);
 			}
 
-			$post_ids = ( new WP_Query( $args ) )->posts;
+			$posts = ( new WP_Query( $args ) )->posts;
+
+			if ( $posts_per_page > -1 && count( $posts ) > $posts_per_page ) {
+				return array_slice( $posts, 0, $posts_per_page );
+			}
+
+			return $posts;
 		}
 
 		return array_filter( $post_ids );
@@ -363,7 +369,13 @@ class Bridge_Library_Users {
 				'post__in'       => $post_ids,
 			);
 
-			$post_ids = ( new WP_Query( $args ) )->posts;
+			$posts = ( new WP_Query( $args ) )->posts;
+
+			if ( $posts_per_page > -1 && count( $posts ) > $posts_per_page ) {
+				return array_slice( $posts, 0, $posts_per_page );
+			}
+
+			return $posts;
 		}
 
 		return array_filter( $post_ids );
@@ -399,7 +411,13 @@ class Bridge_Library_Users {
 				'post__in'       => $post_ids,
 			);
 
-			$post_ids = ( new WP_Query( $args ) )->posts;
+			$posts = ( new WP_Query( $args ) )->posts;
+
+			if ( $posts_per_page > -1 && count( $posts ) > $posts_per_page ) {
+				return array_slice( $posts, 0, $posts_per_page );
+			}
+
+			return $posts;
 		}
 
 		return array_filter( $post_ids );
@@ -435,7 +453,13 @@ class Bridge_Library_Users {
 				'post__in'       => $post_ids,
 			);
 
-			$post_ids = ( new WP_Query( $args ) )->posts;
+			$posts = ( new WP_Query( $args ) )->posts;
+
+			if ( $posts_per_page > -1 && count( $posts ) > $posts_per_page ) {
+				return array_slice( $posts, 0, $posts_per_page );
+			}
+
+			return $posts;
 		}
 
 		return array_filter( $post_ids );
@@ -1742,7 +1766,13 @@ class Bridge_Library_Users {
 				'posts_per_page' => $posts_per_page,
 			);
 
-			return ( new WP_Query( $args ) )->posts;
+			$posts = ( new WP_Query( $args ) )->posts;
+
+			if ( $posts_per_page > -1 && count( $posts ) > $posts_per_page ) {
+				return array_slice( $posts, 0, $posts_per_page );
+			}
+
+			return $posts;
 		}
 
 		return $post_ids;
