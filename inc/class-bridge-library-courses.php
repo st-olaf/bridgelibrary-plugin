@@ -43,7 +43,7 @@ class Bridge_Library_Courses extends Bridge_Library {
 		'WI' => 'Winter',
 		'SP' => 'Spring',
 		'FA' => 'Fall',
-		'IN' => 'Interim',
+		'IN' => 'January', /** Changed from 'Interim' to 'January' */
 		'S1' => 'Summer 1',
 		'S2' => 'Summer 2',
 	);
